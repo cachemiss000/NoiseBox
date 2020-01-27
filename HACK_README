@@ -1,0 +1,7 @@
+Modifications made to the environment:
+
+1. At the suggestion of https://github.com/oaubert/python-vlc/issues/118 - change vlc.py line 163 to "'./' + libname" :eyeroll:
+2. At the suggestion of https://dev.getsol.us/T5893 -
+  * run CMD
+  * navigate to your VLC folder (assuming "C:\Program Files\VideoLAN\VLC")
+  * Run "vlc-cache-gen "C:\Program Files\VideoLAN\VLC\plugins"
