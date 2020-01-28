@@ -6,7 +6,8 @@ from queue import Queue
 import sys
 import collections
 import shlex
-from typing import Optional
+from typing import Optional, Generator
+
 
 def echo(argv):
     print(argv.join(" "))
@@ -20,7 +21,7 @@ class ConsoleOutput(object):
         self.queue = queue
         self.terminate = False
 
-    def commands(self, timeout: Optional[float]=None):
+    def commands(self, timeout: Optional[float]=None) -> Generator[Command, None, None]:
         """Yields commands in a blocking fashion as a generator object."""
         while not self.terminate:
             c = self.queue.get(block=True, timeout=timeout)

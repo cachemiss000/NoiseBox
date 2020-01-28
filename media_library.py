@@ -37,7 +37,7 @@ class MediaLibrary(object):
     def add_song(self, song: Song, expect_overwrite: bool=False) -> None:
         """Add a song from the song map. Use the stored alias as the alias in the map."""
         if (song.alias in self.song_map and not expect_overwrite):
-            raise SongAlreadyExistsException("Song '%s' already exists in the library as '%s'" % song, self.song_map[song.alias])
+            raise SongAlreadyExistsException("Song '%s' already exists in the library as '%s'" % (song, self.song_map[song.alias]))
         self.song_map[song.alias] = song
 
     def get_song(self, song_alias: str) -> Song:
