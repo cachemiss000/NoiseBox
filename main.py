@@ -6,6 +6,7 @@ import time
 
 TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Final Artwork\Music\HNEW.wav'
 
+
 def main_play():
     ml = MediaLibrary()
     controller = Controller(ml)
@@ -13,6 +14,7 @@ def main_play():
 
     controller.play("test")
     time.sleep(15)
+
 
 def main_cmd():
     console = Console()
