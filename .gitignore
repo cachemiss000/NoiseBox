@@ -1,5 +1,6 @@
 /venv64/
 /venv/
+/logs/
 /.idea/misc.xml
 /.idea/vcs.xml
 /.idea/inspectionProfiles/profiles_settings.xml

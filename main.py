@@ -20,7 +20,7 @@ TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Final Artwork\Music\HNEW
 _NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
-                    filename="%s/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"),))
+                    filename="%s/logs/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"),))
 logger = logging.getLogger("media-player")
 
 
@@ -39,11 +39,17 @@ def main_cmd():
     console = Console()
     q = console.start()
 
-    c = commands.AddSong(controller)
 
-    commands_dict = {
-        c.name: c,
-    }
+    # "Normal" commands, which only need the controller.
+    commands_dict = {}
+    for class_defn in [
+        commands.AddSong,
+        commands.ListSongs
+    ]:
+        c = class_defn(controller)
+        commands_dict[c.name] = c
+
+    # Special commands.
     commands_dict["help"] = commands.Help(commands_dict)
     commands_dict["commands"] = commands.ListCommands(commands_dict)
 

@@ -19,6 +19,17 @@ class AddSong(Command):
         """Overrides parent "process" function."""
         self.controller.media_library.add_song(media_library.Song(alias=song_alias, uri=song_path))
 
+class ListSongs(Command):
+
+    def __init__(self, controller: Controller):
+        ap = argparse.ArgumentParser(description="Lists all songs in the library")
+        super().__init__("listsongs", ap)
+        self.controller = controller
+
+    def do_function(self):
+        songs = self.controller.media_library.list_songs()
+        for song in songs:
+            print("  %s: %s" % (song.alias, song.uri))
 
 class Help(Command):
     def __init__(self, command_dict: Dict[str, Command]):
@@ -36,7 +47,6 @@ class Help(Command):
             return
         print(self.command_dict[command].help_string())
         return
-
 
 class ListCommands(Command):
     def __init__(self, command_dict: Dict[str, Command]):

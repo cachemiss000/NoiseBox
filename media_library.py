@@ -48,6 +48,9 @@ class MediaLibrary(object):
         song = self.song_map[song_alias]
         return Song(alias=song.alias, uri=song.uri)
 
+    def list_songs(self) -> List[Song]:
+        return self.song_map.values()
+
     def get_playlist(self, playlist_name: str) -> List[str]:
         if  playlist_name not in self.playlists:
             raise PlaylistNotFoundException("Playlist '%s' not found in playlist collection '%s' when adding song '%s'" % (playlist_name, self.playlists.keys(), self.song_map.get(song_alias) if song_alias in self.song_map else song_alias))
