@@ -10,6 +10,12 @@ class Song(object):
     def __str__(self):
         return "Song{alias: '%s', uri: '%s'}" % (self.alias, self.uri)
 
+    def __eq__(self, other):
+        if not isinstance(other, Song):
+            return False
+        if self.alias == other.alias and self.uri == other.uri:
+            return True
+
 class SongAlreadyExistsException(Exception):
     """Thrown when a song with a given alias already exists in the Media Library"""
     pass
