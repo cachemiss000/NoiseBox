@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import List
 from argparse import ArgumentParser
 
-logger = logging.getLogger()
+logger = logging.getLogger("media-player")
 
 class InvalidCommandUseException(Exception):
     pass

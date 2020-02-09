@@ -10,16 +10,18 @@ from console import Console
 from controller import Controller
 from media_library import MediaLibrary
 from media_library import Song
+from datetime import datetime
 import time
+import pathlib
 
 TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Final Artwork\Music\HNEW.wav'
 
 # TODO(igorham): Adjust this travesty so it goes to a log file like a sane log >.>
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-logger = logging.getLogger(__name__)
-h = logging.StreamHandler(sys.stderr)
-h.flush = sys.stderr.flush
-logger.addHandler(h)
+_NOW = datetime.now()
+PATH = pathlib.Path(__file__).parent.absolute()
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
+                    filename="%s/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"),))
+logger = logging.getLogger("media-player")
 
 
 def main_play():
@@ -52,10 +54,6 @@ def main_cmd():
             print("Command not found: '%s' - discarding args '%s'" % (input.command, input.arguments))
         if q.terminate:
             break
-        # Kinda a bad idea, but like...
-        # Remove if this causes problems.
-        # And really remove once we move logging to a file WHERE IT BELONGS.
-        logger.handlers[0].flush()
     console.write("Exiting now...")
 
 
