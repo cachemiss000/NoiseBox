@@ -1,6 +1,5 @@
-
-
 import vlc
+
 
 class UnspecifiedVLCError(Exception):
     """Reserved for errors with VLC we don't really have control over."""
