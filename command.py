@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 
 logger = logging.getLogger("media-player")
 
+
 class InvalidCommandUseException(Exception):
     pass
 
