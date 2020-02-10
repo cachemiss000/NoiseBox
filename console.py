@@ -12,7 +12,9 @@ from typing import Optional, Generator
 def echo(argv):
     print(argv.join(" "))
 
+
 Command = collections.namedtuple("Command", ("command", "arguments"), defaults=[list])
+
 
 class ConsoleOutput(object):
     """Holds output from the console object."""
