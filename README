@@ -1,0 +1,28 @@
+STREAM MEDIA PLAYER
+========================
+
+A media player built on VLC meant to enhance song flow & increase control without detracting attention from the important
+stuff at hand. Almost as good as having a DJ!
+
+Planned features:
+  * Build playlists, playable with a single button press
+  * Describing & maybe tagging songs, accessible wherever VLC can access songs.
+  * Interrupt playlists with either a single song, or with many songs, then return to the original playlist
+  * Fade between songs when switching abruptly to avoid that awkward hard cut.
+  * Save & load entire presets, with multiple playlists and many songs - to allow for easy switching between shows
+  * Move all your songs into local folder for easier file management
+  * Integrate all of the above through a stream deck, using the command line
+  * Built on VLC, so no fuss or muss with file compatability! (No Spotify etc support planned.... ever,
+        sorry. Contributions integrating with spotipy etc welcome.)
+
+Basic architecture is as follows:
+  * Control all of your setup through a commandline client you run in a terminal
+  * Add/remove songs, define presets & shortcuts, do file management, etc through a simple command prompt interface
+  * Keep this client running during your stream so it can receive commands remotely.
+  * When preparing to go live, use a "deck client" to control the flow of music during your stream - another commandline
+        client, but meant to be kicked off at a button press and terminating quickly.
+  * The deck_client opens remote connections to the commandline client, telling it what to play and when
+  * Simple state commands will allow you to adjust behavior quickly and flexibly
+
+
+Still in production - stay tuned for more updates. Planning v1.0 by late April 2020.
