@@ -1,6 +1,8 @@
 from typing import List
 import os
 
+from exceptions import UserException
+
 
 def _check_file_exists(song_uri):
     if os.path.isfile(song_uri):
@@ -11,35 +13,37 @@ def _check_file_exists(song_uri):
 class Song(object):
     """Represents a single song, to be fed into the Media Library."""
 
-    def __init__(self, alias: str, uri: str):
+    def __init__(self, alias: str, uri: str, description: str = ""):
         self.alias = alias
         _check_file_exists(uri)
         self.uri = uri
+        self.description = description
 
     def __str__(self):
-        return "Song{alias: '%s', uri: '%s'}" % (self.alias, self.uri)
+        return "Song{alias: '%s', uri: '%s', description: '%s'}" % (self.alias, self.uri, self.description)
 
     def __repr__(self):
         return str(self)
 
     def __eq__(self, other):
+        """We explicitly ignore the "description" field because it's not a 'key'."""
         if not isinstance(other, Song):
             return False
         if self.alias == other.alias and self.uri == other.uri:
             return True
 
 
-class NotFoundException(Exception):
+class NotFoundException(UserException):
     """Thrown when a song with a given alias hasn't been registered with the library yet."""
     pass
 
 
-class AlreadyExistsException(Exception):
+class AlreadyExistsException(UserException):
     """Thrown when a playlist with a given name already exists."""
     pass
 
 
-class IllegalArgument(Exception):
+class IllegalArgument(UserException):
     """Thrown when an input argument is invalid."""
     pass
 

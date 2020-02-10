@@ -1,22 +1,20 @@
-import argparse
 import logging
 import os
-import sys
-from typing import Dict
-
 import commands
-from command import Command
 from console import Console
 from controller import Controller
+from exceptions import UserException
 from media_library import MediaLibrary
 from media_library import Song
 from datetime import datetime
 import time
 import pathlib
 
-TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Final Artwork\Music\HNEW.wav'
+from print_controller import print_msg
 
-# TODO(igorham): Adjust this travesty so it goes to a log file like a sane log >.>
+TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Music\HNEW.wav'
+
+
 _NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
@@ -39,12 +37,13 @@ def main_cmd():
     console = Console()
     q = console.start()
 
-
     # "Normal" commands, which only need the controller.
     commands_dict = {}
     for class_defn in [
         commands.AddSong,
-        commands.ListSongs
+        commands.ListSongs,
+        commands.CreatePlaylist,
+        commands.AddSongToPlaylist,
     ]:
         c = class_defn(controller)
         commands_dict[c.name] = c
@@ -55,9 +54,16 @@ def main_cmd():
 
     for input in q.commands():
         if input.command in commands_dict:
-            commands_dict[input.command].process(input.arguments)
+            try:
+                commands_dict[input.command].process(input.arguments)
+            except UserException as e:
+                print(e.user_error_message)
+            except Exception as e:
+                print(type(e).__name__)
+                print(e)
+
         else:
-            print("Command not found: '%s' - discarding args '%s'" % (input.command, input.arguments))
+            print_msg("Command not found: '%s' - discarding args '%s'" % (input.command, input.arguments))
         if q.terminate:
             break
     console.write("Exiting now...")
