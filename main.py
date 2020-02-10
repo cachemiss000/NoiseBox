@@ -44,6 +44,9 @@ def main_cmd():
         commands.ListSongs,
         commands.CreatePlaylist,
         commands.AddSongToPlaylist,
+        commands.SaveLibrary,
+        commands.LoadLibrary,
+        commands.DescribeSong,
     ]:
         c = class_defn(controller)
         commands_dict[c.name] = c

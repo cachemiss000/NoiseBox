@@ -10,7 +10,7 @@ COUNTER_DICT = defaultdict(lambda: 0)
 FILE = []
 
 
-def song(name: str = "", uri: str = ""):
+def song(name: str = "", uri: str = "", description="test_description"):
     if name == "":
         test_c = COUNTER_DICT["song_name"]
         name = "test-%04d" % (test_c,)
@@ -22,7 +22,7 @@ def song(name: str = "", uri: str = ""):
         FILE.append(f)
         uri = f.name
 
-    return Song(name, uri)
+    return Song(name, uri, description)
 
 
 class SongTests(unittest.TestCase):
@@ -159,7 +159,8 @@ class PlaylistTests(unittest.TestCase):
         ml.create_playlist("test")
         ml.add_song(s)
 
-        self.assertRaisesRegex(media_library.IllegalArgument, ".*Song{.*Song", lambda: ml.add_song_to_playlist(s, "test"))
+        self.assertRaisesRegex(media_library.IllegalArgument, ".*Song{.*Song",
+                               lambda: ml.add_song_to_playlist(s, "test"))
 
     def test_overwrite_erases_playlist(self):
         ml = MediaLibrary()
@@ -170,6 +171,87 @@ class PlaylistTests(unittest.TestCase):
         ml.create_playlist("test", expect_overwrite=True)
 
         self.assertListEqual(ml.get_playlist("test"), [])
+
+
+class SongTest(unittest.TestCase):
+    def test_to_primitive(self):
+        s = song()
+        self.assertDictEqual(
+            s.to_primitive(),
+            {
+                "version": Song.VERSION,
+                "alias": s.alias,
+                "uri": s.uri,
+                "description": s.description,
+            })
+
+    def test_to_from(self):
+        s = song()
+        output = Song.from_primitive(s.to_primitive())
+        self.assertEqual(s, output)
+        # Need to test this field separately because it's not checked by the eq method.
+        self.assertEqual(s.description, output.description)
+
+    def test_v1_parse(self):
+        s = song()  # make a song so we have a valid URI.
+        dict = {
+            media_library.VERSION_FIELD: 1.0,
+            Song.ALIAS_FIELD: "something_cool",
+            Song.URI_FIELD: s.uri,
+            Song.DESCRIPTION_FIELD: "yo, cool cat",
+        }
+
+        expected_song = song(name="something_cool", uri=s.uri, description="yo, cool cat")
+        self.assertEqual(Song.from_primitive(dict), expected_song)
+
+        # We need to check this because description isn't checked by the eq function.
+        self.assertEqual(Song.from_primitive(dict).description, expected_song.description)
+
+
+class MediaLibrarySerializationTest(unittest.TestCase):
+    def test_empty_to_primitive(self):
+        ml = MediaLibrary()
+        self.assertEqual(
+            ml.to_primitive(), {
+                media_library.VERSION_FIELD: MediaLibrary.VERSION,
+                MediaLibrary.SONGS_FIELD: [],
+                MediaLibrary.PLAYLIST_FIELD: {}
+            })
+
+    def test_filled_library_to_primitive(self):
+        ml = MediaLibrary()
+        s1 = song()
+        ml.add_song(s1)
+        ml.create_playlist("test")
+        ml.add_song_to_playlist(s1.alias, "test")
+        self.assertEqual(
+            ml.to_primitive(), {
+                media_library.VERSION_FIELD: MediaLibrary.VERSION,
+                MediaLibrary.SONGS_FIELD: [s1.to_primitive()],
+                MediaLibrary.PLAYLIST_FIELD: {"test": [s1.alias]},
+            }
+        )
+
+    def test_to_from(self):
+        ml = MediaLibrary()
+        s1 = song()
+        ml.add_song(s1)
+        ml.create_playlist("test")
+        ml.add_song_to_playlist(s1.alias, "test")
+        self.assertEqual(MediaLibrary.from_primitive(ml.to_primitive()), ml)
+
+    def test_v1_parse(self):
+        ml = MediaLibrary()
+        s1 = song()
+        ml.add_song(s1)
+        ml.create_playlist("test")
+        ml.add_song_to_playlist(s1.alias, "test")
+        self.assertEqual(MediaLibrary.parse_v1({
+            media_library.VERSION_FIELD: 1.0,
+            MediaLibrary.SONGS_FIELD: [s1.to_primitive()],
+            MediaLibrary.PLAYLIST_FIELD: {"test": [s1.alias]},
+        }), ml)
+
 
 if __name__ == '__main__':
     unittest.main()

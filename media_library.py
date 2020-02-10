@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict
 import os
 
-from exceptions import UserException
+from exceptions import UserException, SystemException
 
 
 def _check_file_exists(song_uri):
@@ -10,8 +10,19 @@ def _check_file_exists(song_uri):
     raise NotFoundException("Could not find file '%s'" % (song_uri,))
 
 
+class BadFormatException(SystemException):
+    pass
+
+
+VERSION_FIELD = "version"
+
+
 class Song(object):
     """Represents a single song, to be fed into the Media Library."""
+    VERSION = 1.0
+    ALIAS_FIELD = "alias"
+    URI_FIELD = "uri"
+    DESCRIPTION_FIELD = "description"
 
     def __init__(self, alias: str, uri: str, description: str = ""):
         self.alias = alias
@@ -25,12 +36,38 @@ class Song(object):
     def __repr__(self):
         return str(self)
 
+    @staticmethod
+    def parse_v1(primitive: Dict[str, str]):
+        return Song(primitive["alias"], primitive["uri"], primitive.get("description", ""))
+
+    def to_primitive(self) -> Dict[str, object]:
+        return {
+            VERSION_FIELD: self.VERSION,
+            Song.ALIAS_FIELD: self.alias,
+            Song.URI_FIELD: self.uri,
+            Song.DESCRIPTION_FIELD: self.description if self.description is not None else "",
+        }
+
+    @staticmethod
+    def from_primitive(primitive: Dict[str, object]):
+        version = primitive[VERSION_FIELD]
+        if not isinstance(version, float):
+            raise BadFormatException("Invalid primitive '%s': bad version field. Expected float, got '%s'." % (
+                primitive, type(version).__name__))
+
+        return SONG_VERSION_PARSER[version](primitive)
+
     def __eq__(self, other):
         """We explicitly ignore the "description" field because it's not a 'key'."""
         if not isinstance(other, Song):
             return False
         if self.alias == other.alias and self.uri == other.uri:
             return True
+
+
+SONG_VERSION_PARSER = {
+    1.0: Song.parse_v1
+}
 
 
 class NotFoundException(UserException):
@@ -57,9 +94,52 @@ class MediaLibrary(object):
     Makes defensive copies on every "get" function.
      """
 
+    # Version number. Always update when updating to_primitives.
+    VERSION = 1.0
+    SONGS_FIELD = "songs"
+    PLAYLIST_FIELD = "playlists"
+
     def __init__(self):
         self.song_map = {}
         self.playlists = {}
+
+    def to_primitive(self) -> Dict[str, object]:
+        """Dump to a json-dump-able object"""
+        return {
+            VERSION_FIELD: self.VERSION,
+            MediaLibrary.SONGS_FIELD: list(s.to_primitive() for s in self.song_map.values()),
+            # In version 1.0, this is str -> List[str] mappings.
+            MediaLibrary.PLAYLIST_FIELD: self.playlists,
+        }
+
+    def __str__(self):
+        return "MediaLibrary%s" % (self.to_primitive(),)
+
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __eq__(self, other):
+        if not isinstance(other, MediaLibrary):
+            return False
+        return self.song_map == other.song_map and self.playlists == other.playlists
+
+    @staticmethod
+    def from_primitive(primitive: Dict[str, object]):
+        version = primitive[VERSION_FIELD]
+        if not isinstance(version, float):
+            raise BadFormatException("Invalid primitive '%s': bad version field. Expected float, got '%s'." % (
+                primitive, type(version).__name__))
+
+        return MEDIA_LIBRARY_VERSION_PARSER[version](primitive)
+
+    @staticmethod
+    def parse_v1(primitive: Dict[str, object]):
+        ml = MediaLibrary()
+        songs = [Song.from_primitive(song) for song in primitive.get(MediaLibrary.SONGS_FIELD, [])]
+        ml.song_map = dict((song.alias, song) for song in songs)
+        ml.playlists = primitive.get(MediaLibrary.PLAYLIST_FIELD, [])
+        return ml
 
     def add_song(self, song: Song, expect_overwrite: bool = False) -> None:
         """Add a song from the song map. Use the stored alias as the alias in the map."""
@@ -109,3 +189,8 @@ class MediaLibrary(object):
 
     def remove_from_playlist(self, song_alias: str, playlist_name: str):
         self.get_playlist(playlist_name).remove(song_alias)
+
+
+MEDIA_LIBRARY_VERSION_PARSER = {
+    1.0: MediaLibrary.parse_v1
+}

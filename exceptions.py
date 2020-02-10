@@ -9,3 +9,8 @@ class UserException(Exception):
 
     def get_error_message(self) -> str:
         return self.user_error_message
+
+
+class SystemException(Exception):
+    """Used to indicate logical inconsistencies - e.g. bad format in serialized data."""
+    pass
