@@ -133,9 +133,9 @@ class DescribeSong(Command):
         self.controller = controller
 
     def do_function(self, song_alias="", description=""):
-        if song_alias == "" or song_alias == None:
+        if song_alias == "" or song_alias is None:
             raise IllegalArgument("Expected a name for the song. Instead got '%s'" % (song_alias,))
-        if description == "" or description == None:
+        if description == "" or description is None:
             raise IllegalArgument("Expected a description for the song. Instead got '%s'" % (description,))
         song = self.controller.media_library.get_song(song_alias)
         song.description = description
