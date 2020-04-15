@@ -1,5 +1,7 @@
 import logging
 import os
+import traceback
+
 import commands
 from console import Console
 from controller import Controller
@@ -40,8 +42,14 @@ def main_cmd():
     # "Normal" commands, which only need the controller.
     commands_dict = {}
     for class_defn in [
+        commands.ListAudioDevices,
+        commands.GetDevice,
+        commands.SetDevice,
         commands.AddSong,
         commands.ListSongs,
+        commands.PlaySong,
+        commands.Pause,
+        commands.Stop,
         commands.CreatePlaylist,
         commands.AddSongToPlaylist,
         commands.SaveLibrary,
@@ -62,8 +70,8 @@ def main_cmd():
             except UserException as e:
                 print(e.user_error_message)
             except Exception as e:
-                print(type(e).__name__)
-                print(e)
+                traceback.print_exc()
+                time.sleep(1)
 
         else:
             print_msg("Command not found: '%s' - discarding args '%s'" % (input.command, input.arguments))

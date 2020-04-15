@@ -20,6 +20,39 @@ class SafeArgumentParser(argparse.ArgumentParser):
         print_msg(message)
 
 
+class ListAudioDevices(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="List audio devices")
+        super().__init__("listdevices", ap)
+        self.controller = controller
+
+    def do_function(self):
+        print_msg("Devices: %s" % (self.controller.list_devices()))
+
+
+class SetDevice(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="List audio devices")
+        ap.add_argument("device_index", help="The index of the device to set as the output")
+        super().__init__("setdevice", ap)
+        self.controller = controller
+
+    def do_function(self, device_index=0):
+        self.controller.set_device(int(device_index))
+
+
+class GetDevice(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Show the current audio device")
+        super().__init__("getdevice", ap)
+        self.controller = controller
+
+    def do_function(self):
+        print_msg(self.controller.get_device())
+
 class AddSong(Command):
 
     def __init__(self, controller: Controller):
@@ -42,6 +75,36 @@ class AddSong(Command):
         self.controller.media_library.add_song(
             media_library.Song(alias=song_alias, uri=song_path, description=description))
 
+
+class PlaySong(Command):
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Play a single song")
+        ap.add_argument("song_alias", help="Alias of the song to play")
+        super().__init__("playsong", ap)
+        self.controller = controller
+
+    def do_function(self, song_alias=""):
+        self.controller.play(song_alias)
+
+class Pause(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Toggle pause the playing song")
+        super().__init__("pause", ap)
+        self.controller = controller
+
+    def do_function(self):
+        self.controller.pause()
+
+class Stop(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Stop the currently playing song")
+        super().__init__("stop", ap)
+        self.controller = controller
+
+    def do_function(self):
+        self.controller.stop()
 
 class CreatePlaylist(Command):
 
@@ -140,6 +203,7 @@ class DescribeSong(Command):
         song = self.controller.media_library.get_song(song_alias)
         song.description = description
         self.controller.media_library.add_song(song, expect_overwrite=True)
+
 
 class Help(Command):
     def __init__(self, command_dict: Dict[str, Command]):
