@@ -12,8 +12,8 @@ Planned features:
   * Save & load entire presets, with multiple playlists and many songs - to allow for easy switching between shows
   * Move all your songs into local folder for easier file management
   * Integrate all of the above through a stream deck, using the command line
-  * Built on VLC, so no fuss or muss with file compatability! (No Spotify etc support planned.... ever,
-        sorry. Contributions integrating with spotipy etc welcome.)
+  * Built on VLC, so no fuss or muss with file compatibility! (No Spotify etc support planned.... ever,
+        sorry. Contributions integrating with the spotipy library etc welcome.)
 
 Basic architecture is as follows:
   * Control all of your setup through a commandline client you run in a terminal
@@ -25,4 +25,4 @@ Basic architecture is as follows:
   * Simple state commands will allow you to adjust behavior quickly and flexibly
 
 
-Still in production - stay tuned for more updates. Planning v1.0 by late May 2020.
+Still in production - stay tuned for more updates. Planning v1.0 sometime after the apocalypse ends.
