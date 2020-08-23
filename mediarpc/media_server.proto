@@ -1,0 +1,13 @@
+// Pretend I put some license information up here.
+
+
+syntax = "proto2";
+
+package mediarpc;
+
+service MediaControl {
+  rpc Play (PlayRequest) returns (PlayReply) {}
+}
+
+
+message PlayRequest {}
