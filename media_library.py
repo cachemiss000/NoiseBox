@@ -168,6 +168,16 @@ class MediaLibrary(object):
                 playlist_name, self.playlists.keys()))
         return list(self.playlists[playlist_name])
 
+    def get(self, name: str) -> List[str]:
+        """Gets whatever the identifier points at - preferring playlists, then falling back to individual songs.
+
+        If the identifier refers to a song, return a list with just that song. Otherwise, return the full playlist.
+        """
+        if name in self.playlists:
+            return [self.get_song(song).uri for song in self.get_playlist(name)]
+        return [self.get_song(name).uri]
+
+
     def create_playlist(self, playlist_name: str, expect_overwrite: bool = False) -> None:
         if playlist_name == "":
             raise IllegalArgument("Expected name for playlist, got \"\"")
@@ -184,7 +194,8 @@ class MediaLibrary(object):
             raise IllegalArgument(
                 "Expected object '%s' of type '%s' to be a string song alias" % (
                     song_alias, type(song_alias).__name__), )
-
+        if song_alias not in self.song_map.keys():
+            raise NotFoundException("Couldn't find song '%s'" % (song_alias,))
         self.playlists[playlist_name].append(song_alias)
 
     def remove_from_playlist(self, song_alias: str, playlist_name: str):

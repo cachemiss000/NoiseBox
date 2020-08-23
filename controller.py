@@ -86,6 +86,7 @@ class Controller(object):
         self.devices = AudioDevices(vlc.libvlc_audio_output_device_enum(self.vlc_player.mp))
 
     def play(self, song_alias: str):
+        self.media_library.get(song_alias)
         self.vlc_player.play_song(self.media_library.get_song(song_alias).uri)
 
     def pause(self):
@@ -94,8 +95,8 @@ class Controller(object):
     def stop(self):
         self.vlc_player.stop()
 
-    def prepend_to_playlist(self, song_alias):
-        pass
+    def queue(self, alias: str):
+        self.vlc_player.queue(self.media_library.get(alias))
 
     def list_devices(self) -> List[object]:
         self.devices.free()

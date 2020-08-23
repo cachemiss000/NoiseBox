@@ -48,6 +48,8 @@ def main_cmd():
         commands.AddSong,
         commands.ListSongs,
         commands.PlaySong,
+        commands.Queue,
+        commands.Play,
         commands.Pause,
         commands.Stop,
         commands.CreatePlaylist,

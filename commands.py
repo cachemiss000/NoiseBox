@@ -86,6 +86,26 @@ class PlaySong(Command):
     def do_function(self, song_alias=""):
         self.controller.play(song_alias)
 
+
+class Queue(Command):
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Queue up a set of things")
+        ap.add_argument("alias", help="Alias of the song or playlist to queue")
+        super().__init__("queue", ap)
+        self.controller = controller
+
+    def do_function(self, alias=""):
+        self.controller.queue(alias)
+
+class Play(Command):
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Start playing")
+        super().__init__("play", ap)
+        self.controller = controller
+
+    def do_function(self):
+        self.controller.vlc_player.play()
+
 class Pause(Command):
 
     def __init__(self, controller: Controller):
@@ -117,14 +137,13 @@ class CreatePlaylist(Command):
     def do_function(self, playlist_name=""):
         self.controller.media_library.create_playlist(playlist_name=playlist_name)
 
-
 class AddSongToPlaylist(Command):
 
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Add a song to a playlist")
         ap.add_argument("playlist_name", help="The name of the playlist to add the song to")
         ap.add_argument("song_alias", help="The alias of the song to add to the playlist")
-        super().__init__("addsongtoplaylist", ap)
+        super().__init__("add", ap)
         self.controller = controller
 
     def do_function(self, playlist_name="", song_alias=""):

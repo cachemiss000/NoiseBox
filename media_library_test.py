@@ -102,6 +102,13 @@ class PlaylistTests(unittest.TestCase):
 
         self.assertDictEqual(ml.playlists, {"something": [s.alias]})
 
+    def test_song_missing(self):
+        ml = MediaLibrary()
+        s1 = song()
+        ml.add_song(s1)
+        ml.create_playlist("test")
+        self.assertRaises(media_library.NotFoundException, lambda: ml.add_song_to_playlist("garbage", "test"))
+
     def test_add_multiple_songs(self):
         ml = MediaLibrary()
         s1 = song()

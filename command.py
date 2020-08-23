@@ -20,7 +20,7 @@ class Command(object):
         self.arg_parser = arg_parser
 
     def process(self, argv: List[str]):
-        logger.info("Processing command: '%s", argv)
+        logger.info("Processing command: %s - '%s", self.__name,  argv)
         self.do_function(**vars(self.arg_parser.parse_args(args=argv)))
 
     @abstractmethod
