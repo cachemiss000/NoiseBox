@@ -202,5 +202,18 @@ class InterruptOracleTest(unittest.TestCase):
         self.assertListEqual(collected, expected)
 
 
+class RepeatingOracleTest(unittest.TestCase):
+
+    def test_100_repetitions(self):
+        songs = ["1", "2", "3", "4", "5"]
+        o = oracles.RepeatingOracle(songs)
+
+        # Collect builds a list of 100, so we'll get "songs" 20 times over.
+        collected = collect(o)
+
+        self.assertListEqual(collected, songs * 20)
+        self.assertIsNotNone(o.next_song())
+
+
 if __name__ == '__main__':
     unittest.main()

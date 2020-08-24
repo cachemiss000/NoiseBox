@@ -105,3 +105,24 @@ class InterruptOracle(Oracle):
 
     def interrupt(self, oracle: Union[Oracle, None]):
         self.__interrupt_oracle = oracle
+
+    def clear_interrupt(self):
+        self.__interrupt_oracle = None
+
+
+class RepeatingOracle(Oracle):
+    """
+    Play a playlist, but forever... Will repeat the input list indefinitely.
+    """
+
+    def __init__(self, playlist: List[str]):
+        self.playlist = playlist
+        self.pointer = -1
+
+    def next_song(self) -> str:
+        if self.playlist is None:
+            return None
+        self.pointer += 1
+        self.pointer = self.pointer % len(self.playlist)
+
+        return self.playlist[self.pointer]
