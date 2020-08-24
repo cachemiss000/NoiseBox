@@ -53,6 +53,7 @@ class GetDevice(Command):
     def do_function(self):
         print_msg(self.controller.get_device())
 
+
 class AddSong(Command):
 
     def __init__(self, controller: Controller):
@@ -97,6 +98,7 @@ class Queue(Command):
     def do_function(self, alias=""):
         self.controller.queue(alias)
 
+
 class Play(Command):
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Start playing")
@@ -105,6 +107,7 @@ class Play(Command):
 
     def do_function(self):
         self.controller.vlc_player.play()
+
 
 class Pause(Command):
 
@@ -116,6 +119,7 @@ class Pause(Command):
     def do_function(self):
         self.controller.pause()
 
+
 class Stop(Command):
 
     def __init__(self, controller: Controller):
@@ -125,6 +129,7 @@ class Stop(Command):
 
     def do_function(self):
         self.controller.stop()
+
 
 class CreatePlaylist(Command):
 
@@ -136,6 +141,7 @@ class CreatePlaylist(Command):
 
     def do_function(self, playlist_name=""):
         self.controller.media_library.create_playlist(playlist_name=playlist_name)
+
 
 class AddSongToPlaylist(Command):
 
