@@ -115,7 +115,6 @@ class MediaLibrary(object):
     def __str__(self):
         return "MediaLibrary%s" % (self.to_primitive(),)
 
-
     def __repr__(self):
         return self.__str__()
 
@@ -175,8 +174,11 @@ class MediaLibrary(object):
         """
         if name in self.playlists:
             return [self.get_song(song).uri for song in self.get_playlist(name)]
-        return [self.get_song(name).uri]
+        if name not in self.playlists.keys() and name not in self.song_map.keys():
+            raise NotFoundException("Could not find item in playlists: '%s'\nor songs: '%s'" % (
+                                    self.playlists.keys(), self.song_map.keys()))
 
+        return [self.get_song(name).uri]
 
     def create_playlist(self, playlist_name: str, expect_overwrite: bool = False) -> None:
         if playlist_name == "":
