@@ -115,17 +115,31 @@ class InterruptOracle(Oracle):
 
 class RepeatingOracle(Oracle):
     """
-    Play a playlist, but forever... Will repeat the input list indefinitely.
+    Play a playlist, but forever... or at least the number of "times" passed in initially.
     """
 
-    def __init__(self, playlist: List[str]):
+    def __init__(self, playlist: List[str], times=None):
         self.playlist = playlist
+        # We subtract 1 here because we go through the list once by default before resetting in "next_song".
+        # If we didn't, we'd go through the list x+1 times.
+        self.times = times - 1 if times is not None else None
         self.pointer = -1
 
     def next_song(self) -> str:
         if self.playlist is None:
             return None
         self.pointer += 1
-        self.pointer = self.pointer % len(self.playlist)
+
+        # If we have repeat on forever, or we need to repeat and there are repeats left.
+        if self.times is None or (self.pointer >= len(self.playlist) and self.times > 0):
+            self.pointer = self.pointer % len(self.playlist)
+
+            # Sanity check.
+            if self.times is not None:
+                self.times -= 1
+
+        # No more repetitions.
+        if self.pointer >= len(self.playlist):
+            return None
 
         return self.playlist[self.pointer]

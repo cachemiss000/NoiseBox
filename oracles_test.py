@@ -234,6 +234,21 @@ class RepeatingOracleTest(unittest.TestCase):
         self.assertListEqual(collected, songs * 20)
         self.assertIsNotNone(o.next_song())
 
+    def test_5_repetitions(self):
+        songs = ["1", "2", "3", "4"]
+        o = oracles.RepeatingOracle(songs, 3)
+
+        collected = collect(o)
+
+        self.assertListEqual(collected, songs * 3)
+
+    def test_none_as_playlist(self):
+        o1 = oracles.RepeatingOracle(None)
+        o2 = oracles.RepeatingOracle(None, 52)
+
+        self.assertIsNone(o1.next_song())
+        self.assertIsNone(o2.next_song())
+
 
 if __name__ == '__main__':
     unittest.main()
