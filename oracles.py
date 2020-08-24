@@ -63,6 +63,9 @@ class ChainOracle(Oracle):
             return
         self.__oracles.append(oracle)
 
+    def clear(self):
+        self.__oracles.clear()
+
 
 class SwitchOracle(Oracle):
     """

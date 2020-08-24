@@ -104,6 +104,26 @@ class ChainTest(unittest.TestCase):
         self.assertIsNone(song0)
         self.assertListEqual(collect(o), songs * 2)
 
+    def test_clear(self):
+        songs1 = ["1", "2", "3"]
+        p1 = oracles.PlaylistOracle(songs1)
+        songs2 = ["4", "5", "6"]
+        p2 = oracles.PlaylistOracle(songs2)
+
+        # Add p1, only collect the first two, clear,
+        # collect 2 of p2, then clear again and collect one last song.
+        o = oracles.ChainOracle()
+        o.add(p1)
+        collected = [o.next_song(), o.next_song()]
+        o.clear()
+        o.add(p2)
+        collected.extend([o.next_song(), o.next_song()])
+        o.clear()
+        collected.append(o.next_song())
+
+        self.assertListEqual(collected, ["1", "2", "4", "5", None])
+
+
 
 class TestSwitchOracle(unittest.TestCase):
 
