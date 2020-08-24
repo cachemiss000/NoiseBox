@@ -106,7 +106,8 @@ class Play(Command):
         self.controller = controller
 
     def do_function(self):
-        self.controller.vlc_player.play()
+        if not self.controller.vlc_player.playing:
+            self.controller.vlc_player.next_song()
 
 
 class Pause(Command):
