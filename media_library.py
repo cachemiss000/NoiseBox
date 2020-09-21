@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import os
 
 from exceptions import UserException, SystemException
@@ -160,6 +160,9 @@ class MediaLibrary(object):
 
     def list_songs(self) -> List[Song]:
         return list(self.song_map.values())
+
+    def list_playlists(self) -> List[Tuple[str, List[str]]]:
+        return list((key, self.playlists[key]) for key in self.playlists.keys())
 
     def get_playlist(self, playlist_name: str) -> List[str]:
         if playlist_name not in self.playlists:

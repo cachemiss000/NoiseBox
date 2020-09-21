@@ -172,6 +172,18 @@ class ListSongs(Command):
             else:
                 print_msg("  %s: %s" % (song.alias, song.uri))
 
+class ListPlaylists(Command):
+
+    def __init__(self, controller: Controller):
+        ap = SafeArgumentParser(description="Lists all playlists in the library")
+        super().__init__("listplaylists", ap)
+        self.controller = controller
+
+    def do_function(self):
+        playlists = self.controller.media_library.list_playlists()
+        for playlist in playlists:
+                print_msg("  %s: %s" % (playlist[0], playlist[1]))
+
 
 class SaveLibrary(Command):
     """Save the current library to a file in the MediaLibrary sub-folder."""

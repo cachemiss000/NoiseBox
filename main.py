@@ -35,6 +35,7 @@ def main_cmd():
         commands.SetDevice,
         commands.AddSong,
         commands.ListSongs,
+        commands.ListPlaylists,
         commands.PlaySong,
         commands.Queue,
         commands.Play,
