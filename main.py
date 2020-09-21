@@ -14,23 +14,11 @@ import pathlib
 
 from print_controller import print_msg
 
-TEST_SONG = 'X:\Google Drive\Public Fantasticide\Assets\Music\HNEW.wav'
-
-
 _NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
                     filename="%s/logs/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"),))
 logger = logging.getLogger("media-player")
-
-
-def main_play():
-    ml = MediaLibrary()
-    controller = Controller(ml)
-    ml.add_song(Song(alias="test", uri=TEST_SONG))
-
-    controller.play("test")
-    time.sleep(15)
 
 
 def main_cmd():
