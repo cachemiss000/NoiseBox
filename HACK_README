@@ -5,3 +5,7 @@ Modifications made to the environment:
   * run CMD
   * navigate to your VLC folder (assuming "C:\Program Files\VideoLAN\VLC")
   * Run "vlc-cache-gen "C:\Program Files\VideoLAN\VLC\plugins"
+
+3. Protobufs are required for development. If you're working in Windows, you can download the "protoc" binary from
+https://github.com/protocolbuffers/protobuf/releases, and then place it on your path. You can then generate
+the proto binaries required for the python files.
