@@ -1,13 +1,117 @@
 // Pretend I put some license information up here.
 
-
 syntax = "proto2";
 
 package mediarpc;
 
 service MediaControl {
   rpc Play (PlayRequest) returns (PlayReply) {}
+  rpc Pause (PauseRequest) returns (PauseReply) {}
+  rpc NextSong (NextSongRequest) returns (NextSongReply) {}
+  rpc SetOracle (SetOracleRequest) returns (SetOracleResponse) {}
+  rpc OracleUpdate (OracleUpdateRequest) returns (OracleUpdateResponse) {}
 }
 
+message Oracle {
+  optional int64 id = 1;
+  oneof oracle {
+    NullOracle null = 2;
+    PlaylistOracle playlist = 3;
+    RepeatingOracle repeating = 4;
+    ChainOracle chain = 5;
+    SwitchOracle switch = 6;
+    InterruptOracle interruptable = 7;
+  }
+}
+
+message NullOracle {}
+
+message PlaylistOracle {
+  repeated string media_names = 1;
+}
+
+message RepeatingOracle {
+  repeated string media_names = 1;
+  optional int64 times = 2;
+}
+
+message ChainOracle {
+  repeated Oracle oracle_queue = 1;
+}
+
+message SwitchOracle {
+  optional Oracle current_oracle = 1;
+}
+
+message InterruptOracle {
+  optional Oracle default_oracle = 1;
+}
+
+message SetOracleRequest {
+  optional Oracle oracle = 1;
+}
+
+message OracleUpdateRequest {
+  optional int64 oracle_id = 1;
+  oneof UpdateType {
+    ChainOracleUpdate chain_update = 2;
+    SwitchOracleUpdate switch_update = 3;
+    InterruptUpdate interrupt_update = 4;
+  }
+}
+
+message OracleUpdateResponse {
+  repeated OracleUpdateError error = 1;
+}
+
+message ChainOracleUpdate {
+  enum Command {
+    /* Add another Oracle to the end of the current list. */
+    ADD = 1;
+
+    /* Remove all Oracles from the list, so that "None" will be returned until ADD is called again. */
+    CLEAR = 2;
+  }
+  optional Command command = 1;
+  repeated Oracle added_oracles = 2;
+}
+
+message SwitchOracleUpdate {
+  enum Command {
+    /* Set the current Oracle.*/
+    SET = 1;
+
+    /* Clear the current Oracle, which means this Oracle will only return "None" until "SET" is called again. */
+    CLEAR = 2;
+  }
+  optional Command command = 1;
+  optional Oracle new_oracle = 2;
+}
+
+message InterruptUpdate {
+  enum Command {
+    /* Interrupt the current set of songs with a new Oracle once "next_song" is called. */
+    INTERRUPT = 1;
+    /* Forget the current interrupt and return to the 'default' set of songs. */
+    CLEAR_INTERRUPT = 2;
+  }
+  optional Command command = 1;
+  optional Oracle new_interrupt_oracle = 2;
+}
+
+message SetOracleResponse {}
 
 message PlayRequest {}
+message PlayReply {}
+message PauseRequest {}
+message PauseReply {}
+message NextSongRequest {}
+message NextSongReply {}
+
+message OracleUpdateError {
+  optional string message = 1;
+  optional Oracle reference_oracle = 2;
+
+  // We can only hope the implementer is so generous...
+  optional string stack_trace = 3;
+}
