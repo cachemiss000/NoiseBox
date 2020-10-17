@@ -327,6 +327,20 @@ class SwitchOracleTest(unittest.TestCase):
         self.assertEqual(new_first_song_from_p2_rv, "2")
 
 
+    def test_memoizing_null(self):
+        songs1 = ["1"]
+        p1 = oracles.PlaylistOracle(songs1)
+        o = oracles.SwitchOracle()
+
+        o.set_oracle(None)
+        none_song = o.current_song()
+        o.set_oracle(p1)
+        songs_collected = collect(o)
+
+        self.assertIsNone(none_song)
+        self.assertListEqual(songs_collected, [None, "1"])
+
+
 class InterruptOracleTest(unittest.TestCase):
 
     def test_default_behavior(self):
