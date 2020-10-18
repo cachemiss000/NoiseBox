@@ -1,3 +1,12 @@
+"""
+Implements a commandline console that supports some basic debugging and generic handling of input commands.
+
+This is a bit more complicated than you might expect because the user will expect commands to be interpreted in a
+non-blocking fashion, and because there are a lot of race conditions when you start doing stuff like that.
+
+As a result,
+"""
+
 from __future__ import generators
 
 import threading
@@ -49,6 +58,10 @@ class Console(object):
     """Represents a console.
 
     Non-blockingly puts lines of input into the queue when they're interpreted as commands.
+
+    To use this, you create the object, then call "start()" to begin processing input. You can then call "write"
+    to write messages to the user, while the "input" pipe passed in during __init__ will be continually monitored for
+    commands from the user.
     """
 
     def __init__(self, input=sys.stdin, output=sys.stdout):
@@ -66,6 +79,7 @@ class Console(object):
         return self.console_output
 
     def write(self, message):
+        """Write a message to output to the user.."""
         self.output.write(message + "\n")
         self.output.flush()
 
@@ -99,6 +113,11 @@ class Console(object):
             console_out.add_command(command)
 
     def _run(self, console_out: ConsoleOutput):
+        """Continually write command prompts and read input commands from the commandline.
+
+        Called by the thread manager in "start()", should not be called more than once during a program's runtime for
+        a given "input" and "output" - not just a given "console" object.
+        """
         while True:
             self.output.write(">>> ")
             self.output.flush()

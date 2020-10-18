@@ -1,10 +1,10 @@
+"""Tests for console.py"""
+
 import unittest
-from io import IOBase
-from queue import Queue
-from typing import Tuple, Optional
 
 from console import ConsoleOutput, Command, Console
 from console import Console
+
 
 class ConsoleTest(unittest.TestCase):
     def test_write_parsed_correctly(self):
@@ -44,6 +44,7 @@ class ConsoleTest(unittest.TestCase):
         commands = list(c_out.commands(timeout=1.5))
 
         self.assertListEqual(commands, [])
+
 
 if __name__ == '__main__':
     unittest.main()
