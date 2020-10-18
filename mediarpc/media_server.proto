@@ -15,12 +15,12 @@ service MediaControl {
 message Oracle {
   optional int64 id = 1;
   oneof oracle {
-    NullOracle null = 2;
-    PlaylistOracle playlist = 3;
-    RepeatingOracle repeating = 4;
-    ChainOracle chain = 5;
-    SwitchOracle switch = 6;
-    InterruptOracle interruptable = 7;
+    NullOracle null_oracle = 2;
+    PlaylistOracle playlist_oracle = 3;
+    RepeatingOracle repeating_oracle = 4;
+    ChainOracle chain_oracle = 5;
+    SwitchOracle switch_oracle = 6;
+    InterruptOracle interruptable_oracle = 7;
   }
 }
 

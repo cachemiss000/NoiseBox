@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xa8\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12$\n\x04null\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12,\n\x08playlist\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12.\n\trepeating\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12&\n\x05\x63hain\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12(\n\x06switch\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x32\n\rinterruptable\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0b\n\tPlayReply\"\x0e\n\x0cPauseRequest\"\x0c\n\nPauseReply\"\x11\n\x0fNextSongRequest\"\x0f\n\rNextSongReply\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xd8\x02\n\x0cMediaControl\x12\x34\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x13.mediarpc.PlayReply\"\x00\x12\x37\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x14.mediarpc.PauseReply\"\x00\x12@\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x17.mediarpc.NextSongReply\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
+  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xd2\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x39\n\x14interruptable_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0b\n\tPlayReply\"\x0e\n\x0cPauseRequest\"\x0c\n\nPauseReply\"\x11\n\x0fNextSongRequest\"\x0f\n\rNextSongReply\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xd8\x02\n\x0cMediaControl\x12\x34\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x13.mediarpc.PlayReply\"\x00\x12\x37\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x14.mediarpc.PauseReply\"\x00\x12@\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x17.mediarpc.NextSongReply\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
 )
 
 
@@ -44,8 +44,8 @@ _CHAINORACLEUPDATE_COMMAND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1072,
-  serialized_end=1101,
+  serialized_start=1114,
+  serialized_end=1143,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINORACLEUPDATE_COMMAND)
 
@@ -69,8 +69,8 @@ _SWITCHORACLEUPDATE_COMMAND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1219,
-  serialized_end=1248,
+  serialized_start=1261,
+  serialized_end=1290,
 )
 _sym_db.RegisterEnumDescriptor(_SWITCHORACLEUPDATE_COMMAND)
 
@@ -94,8 +94,8 @@ _INTERRUPTUPDATE_COMMAND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1370,
-  serialized_end=1415,
+  serialized_start=1412,
+  serialized_end=1457,
 )
 _sym_db.RegisterEnumDescriptor(_INTERRUPTUPDATE_COMMAND)
 
@@ -116,42 +116,42 @@ _ORACLE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='null', full_name='mediarpc.Oracle.null', index=1,
+      name='null_oracle', full_name='mediarpc.Oracle.null_oracle', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='playlist', full_name='mediarpc.Oracle.playlist', index=2,
+      name='playlist_oracle', full_name='mediarpc.Oracle.playlist_oracle', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='repeating', full_name='mediarpc.Oracle.repeating', index=3,
+      name='repeating_oracle', full_name='mediarpc.Oracle.repeating_oracle', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='chain', full_name='mediarpc.Oracle.chain', index=4,
+      name='chain_oracle', full_name='mediarpc.Oracle.chain_oracle', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='switch', full_name='mediarpc.Oracle.switch', index=5,
+      name='switch_oracle', full_name='mediarpc.Oracle.switch_oracle', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='interruptable', full_name='mediarpc.Oracle.interruptable', index=6,
+      name='interruptable_oracle', full_name='mediarpc.Oracle.interruptable_oracle', index=6,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -175,7 +175,7 @@ _ORACLE = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=33,
-  serialized_end=329,
+  serialized_end=371,
 )
 
 
@@ -199,8 +199,8 @@ _NULLORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=331,
-  serialized_end=343,
+  serialized_start=373,
+  serialized_end=385,
 )
 
 
@@ -231,8 +231,8 @@ _PLAYLISTORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=345,
-  serialized_end=382,
+  serialized_start=387,
+  serialized_end=424,
 )
 
 
@@ -270,8 +270,8 @@ _REPEATINGORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=384,
-  serialized_end=437,
+  serialized_start=426,
+  serialized_end=479,
 )
 
 
@@ -302,8 +302,8 @@ _CHAINORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=439,
-  serialized_end=492,
+  serialized_start=481,
+  serialized_end=534,
 )
 
 
@@ -334,8 +334,8 @@ _SWITCHORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=494,
-  serialized_end=550,
+  serialized_start=536,
+  serialized_end=592,
 )
 
 
@@ -366,8 +366,8 @@ _INTERRUPTORACLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=552,
-  serialized_end=611,
+  serialized_start=594,
+  serialized_end=653,
 )
 
 
@@ -398,8 +398,8 @@ _SETORACLEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=665,
+  serialized_start=655,
+  serialized_end=707,
 )
 
 
@@ -456,8 +456,8 @@ _ORACLEUPDATEREQUEST = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=668,
-  serialized_end=885,
+  serialized_start=710,
+  serialized_end=927,
 )
 
 
@@ -488,8 +488,8 @@ _ORACLEUPDATERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=887,
-  serialized_end=953,
+  serialized_start=929,
+  serialized_end=995,
 )
 
 
@@ -528,8 +528,8 @@ _CHAINORACLEUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=956,
-  serialized_end=1101,
+  serialized_start=998,
+  serialized_end=1143,
 )
 
 
@@ -568,8 +568,8 @@ _SWITCHORACLEUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1104,
-  serialized_end=1248,
+  serialized_start=1146,
+  serialized_end=1290,
 )
 
 
@@ -608,8 +608,8 @@ _INTERRUPTUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1251,
-  serialized_end=1415,
+  serialized_start=1293,
+  serialized_end=1457,
 )
 
 
@@ -633,8 +633,8 @@ _SETORACLERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1417,
-  serialized_end=1436,
+  serialized_start=1459,
+  serialized_end=1478,
 )
 
 
@@ -658,8 +658,8 @@ _PLAYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1438,
-  serialized_end=1451,
+  serialized_start=1480,
+  serialized_end=1493,
 )
 
 
@@ -683,8 +683,8 @@ _PLAYREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1453,
-  serialized_end=1464,
+  serialized_start=1495,
+  serialized_end=1506,
 )
 
 
@@ -708,8 +708,8 @@ _PAUSEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1466,
-  serialized_end=1480,
+  serialized_start=1508,
+  serialized_end=1522,
 )
 
 
@@ -733,8 +733,8 @@ _PAUSEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1482,
-  serialized_end=1494,
+  serialized_start=1524,
+  serialized_end=1536,
 )
 
 
@@ -758,8 +758,8 @@ _NEXTSONGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1496,
-  serialized_end=1513,
+  serialized_start=1538,
+  serialized_end=1555,
 )
 
 
@@ -783,8 +783,8 @@ _NEXTSONGREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1515,
-  serialized_end=1530,
+  serialized_start=1557,
+  serialized_end=1572,
 )
 
 
@@ -829,34 +829,34 @@ _ORACLEUPDATEERROR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1532,
-  serialized_end=1633,
+  serialized_start=1574,
+  serialized_end=1675,
 )
 
-_ORACLE.fields_by_name['null'].message_type = _NULLORACLE
-_ORACLE.fields_by_name['playlist'].message_type = _PLAYLISTORACLE
-_ORACLE.fields_by_name['repeating'].message_type = _REPEATINGORACLE
-_ORACLE.fields_by_name['chain'].message_type = _CHAINORACLE
-_ORACLE.fields_by_name['switch'].message_type = _SWITCHORACLE
-_ORACLE.fields_by_name['interruptable'].message_type = _INTERRUPTORACLE
+_ORACLE.fields_by_name['null_oracle'].message_type = _NULLORACLE
+_ORACLE.fields_by_name['playlist_oracle'].message_type = _PLAYLISTORACLE
+_ORACLE.fields_by_name['repeating_oracle'].message_type = _REPEATINGORACLE
+_ORACLE.fields_by_name['chain_oracle'].message_type = _CHAINORACLE
+_ORACLE.fields_by_name['switch_oracle'].message_type = _SWITCHORACLE
+_ORACLE.fields_by_name['interruptable_oracle'].message_type = _INTERRUPTORACLE
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['null'])
-_ORACLE.fields_by_name['null'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['null_oracle'])
+_ORACLE.fields_by_name['null_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['playlist'])
-_ORACLE.fields_by_name['playlist'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['playlist_oracle'])
+_ORACLE.fields_by_name['playlist_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['repeating'])
-_ORACLE.fields_by_name['repeating'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['repeating_oracle'])
+_ORACLE.fields_by_name['repeating_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['chain'])
-_ORACLE.fields_by_name['chain'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['chain_oracle'])
+_ORACLE.fields_by_name['chain_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['switch'])
-_ORACLE.fields_by_name['switch'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['switch_oracle'])
+_ORACLE.fields_by_name['switch_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _ORACLE.oneofs_by_name['oracle'].fields.append(
-  _ORACLE.fields_by_name['interruptable'])
-_ORACLE.fields_by_name['interruptable'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
+  _ORACLE.fields_by_name['interruptable_oracle'])
+_ORACLE.fields_by_name['interruptable_oracle'].containing_oneof = _ORACLE.oneofs_by_name['oracle']
 _CHAINORACLE.fields_by_name['oracle_queue'].message_type = _ORACLE
 _SWITCHORACLE.fields_by_name['current_oracle'].message_type = _ORACLE
 _INTERRUPTORACLE.fields_by_name['default_oracle'].message_type = _ORACLE
@@ -1063,8 +1063,8 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1636,
-  serialized_end=1980,
+  serialized_start=1678,
+  serialized_end=2022,
   methods=[
   _descriptor.MethodDescriptor(
     name='Play',
