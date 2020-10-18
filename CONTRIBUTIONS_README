@@ -1,0 +1,53 @@
+This files lay out the expectations when contributing to this codebase:
+
+TESTING:
+  * All code should be unit tested or component tested. Reserve end to end tests covering a full binary for
+  basic functionality checks.
+  * All tests should use the "arrange, act, assert" idiom (see below). If you can't figure out how to phrase
+  a test in the "arrange, act, assert" fashion, or you don't know what that idiom means, ask.
+  * Tests should cover obvious and non-obvious edge cases. If you have a comment describing functionality, that
+  should be under test
+
+COMMENTING:
+  * In-line comments should be reserved for situations where it is not clear what is going on at first glance,
+  and should be used exceptionally sparingly. Complicated algorithms, unintuitive code, sharp corners, and
+  surprising edge cases all warrant in-line comments.
+  * All functions longer than ~10 lines, all public functions, and all files should have comments explaining
+  what they're doing at a high level, and in the case of functions, what each argument does if it's not
+  obvious (if 'obviousness' is in question, then it's not obvious). You should also explain any edge cases
+  or unintuitive behavior, and anything else the user might need to know.
+
+STYLE
+  * Functions use snake_case, constants use SCREAMING_SNAKE_CASE, class names use CapitalizedWords.
+  * Use descriptive variable names for long-lived variable names. For short-lived variables, use letters
+  or generic names. If you can't track a variable's life end-to-end through a page of text (roughly: 40 rows)
+  consider it long-lived
+  * Strive for clarity. If you find yourself nesting more than 2 if statements or more than 2 for loops, consider
+  extracting methods or cleaning up your logic. Ask if you can't figure it out.
+  * Strive for minimalism. Do not create functions longer than ~70 rows if possible, avoid multi-line expressions,
+  and keep file and class interfaces short, clean, and well-defined.
+
+PULL REQUESTS
+  * All changes should either be "logic", "new files", or "formatting". Do not group those changes together where
+  possible (e.g. make separate commits for "logic" changes and "formatting" changes)
+  * Keep individual changes small. 100-300 lines is the "sweet spot" for "logic" changes. Adding new files/modules
+  can result in longer code, but you should wait to integrate those files with other modules until a different change.
+  Formatting changes should be done by machines, and can be arbitrarily large as long as it's all easy to verify
+  * All commits should do a single "thing", to the extent reasonable. You should describe this "thing" in the first
+  line of the commit, and it should be, roughly speaking, less than 70-100 characters.
+
+PYTHON LANGUAGE FEATURES
+  * No python language features are disallowed at time of writing. However, I encourage you to use the 'easiest to
+  read' version of code, rather than the 'shortest to write' version. This means using generators and other functional
+  programming sparingly when imperative programming will do.
+
+
+-----------------------------------
+
+ARRANGE, ACT, ASSERT:
+This codebase uses the "Arrange, act, assert" idiom - where the first block of code is used to arrange
+test fixtures, the second block is to perform the actions under test and collect the results in variables,
+and the last block is used to assert that the results collected from the 'act' block look like they're
+supposed to.
+
+Where it might be unclear where these blocks begin and end, they're spelled out in comments.
