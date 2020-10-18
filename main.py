@@ -1,3 +1,7 @@
+"""
+The main module for a commandline console controlling the vlc-controller codebase.
+"""
+
 import logging
 import os
 import traceback
@@ -7,7 +11,6 @@ from console import Console
 from controller import Controller
 from exceptions import UserException
 from media_library import MediaLibrary
-from media_library import Song
 from datetime import datetime
 import time
 import pathlib
