@@ -1,3 +1,7 @@
+"""
+This module defines objects used to manage a media library pointing at audio files in a file system.
+"""
+
 from typing import List, Dict, Tuple
 import os
 
@@ -38,9 +42,11 @@ class Song(object):
 
     @staticmethod
     def parse_v1(primitive: Dict[str, str]):
+        """Used to parse the first serialization version of a song from json."""
         return Song(primitive["alias"], primitive["uri"], primitive.get("description", ""))
 
     def to_primitive(self) -> Dict[str, object]:
+        """Transforms 'self' to a dict that can be serialized."""
         return {
             VERSION_FIELD: self.VERSION,
             Song.ALIAS_FIELD: self.alias,
@@ -50,6 +56,7 @@ class Song(object):
 
     @staticmethod
     def from_primitive(primitive: Dict[str, object]):
+        """Transforms a dict (presumably read from json) into a Song object."""
         version = primitive[VERSION_FIELD]
         if not isinstance(version, float):
             raise BadFormatException("Invalid primitive '%s': bad version field. Expected float, got '%s'." % (
@@ -65,6 +72,8 @@ class Song(object):
             return True
 
 
+# We use this dict so that, when we update the logic required to serialize a song, we can
+# use the appropriate function to turn it into a song object.
 SONG_VERSION_PARSER = {
     1.0: Song.parse_v1
 }
@@ -125,6 +134,7 @@ class MediaLibrary(object):
 
     @staticmethod
     def from_primitive(primitive: Dict[str, object]):
+        """Creates a MediaLibrary object from an input primitive dict."""
         version = primitive[VERSION_FIELD]
         if not isinstance(version, float):
             raise BadFormatException("Invalid primitive '%s': bad version field. Expected float, got '%s'." % (
@@ -134,6 +144,7 @@ class MediaLibrary(object):
 
     @staticmethod
     def parse_v1(primitive: Dict[str, object]):
+        """Parses a MediaLibrary object from a dict using the v1 schema."""
         ml = MediaLibrary()
         songs = [Song.from_primitive(song) for song in primitive.get(MediaLibrary.SONGS_FIELD, [])]
         ml.song_map = dict((song.alias, song) for song in songs)
@@ -159,12 +170,15 @@ class MediaLibrary(object):
         return Song(alias=song.alias, uri=song.uri)
 
     def list_songs(self) -> List[Song]:
+        """Lists all songs as Song objects in the current library."""
         return list(self.song_map.values())
 
     def list_playlists(self) -> List[Tuple[str, List[str]]]:
+        """Lists all playlists. Returns a list of tuples containing the Playlist name and a list of Song aliases."""
         return list((key, self.playlists[key]) for key in self.playlists.keys())
 
     def get_playlist(self, playlist_name: str) -> List[str]:
+        """Returns a list of songs for the corresponding input playlist name."""
         if playlist_name not in self.playlists:
             raise NotFoundException("Playlist '%s' not found in playlist collection '%s'" % (
                 playlist_name, self.playlists.keys()))
@@ -184,6 +198,7 @@ class MediaLibrary(object):
         return [self.get_song(name).uri]
 
     def create_playlist(self, playlist_name: str, expect_overwrite: bool = False) -> None:
+        """Creates a new playlist with the given playlist_name. Can optionally overwrite an existing playlist."""
         if playlist_name == "":
             raise IllegalArgument("Expected name for playlist, got \"\"")
         existing_playlist = self.playlists.get(playlist_name, None)
@@ -193,6 +208,7 @@ class MediaLibrary(object):
         self.playlists[playlist_name] = []
 
     def add_song_to_playlist(self, song_alias: str, playlist_name: str) -> None:
+        """Add a song to a playlist based on the input song_alias. The song alias must already exist in the library."""
         if playlist_name not in self.playlists:
             raise NotFoundException("Couldn't find playlist '%s' when adding song '%s'" % (playlist_name, song_alias))
         if not isinstance(song_alias, str):
@@ -207,6 +223,7 @@ class MediaLibrary(object):
         self.get_playlist(playlist_name).remove(song_alias)
 
 
+# Used to map schema versions to functions that can understand and handle that schema.
 MEDIA_LIBRARY_VERSION_PARSER = {
     1.0: MediaLibrary.parse_v1
 }

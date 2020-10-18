@@ -1,3 +1,6 @@
+"""
+Tests for media_library.py.
+"""
 import unittest
 
 import media_library
