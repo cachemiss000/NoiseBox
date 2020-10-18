@@ -1,3 +1,15 @@
+"""
+This module defines idioms and classes used to manipulate playlists during playback programmatically.
+
+"Oracles" are objects that understand what song is playing, and what song to play next. Through defining
+a variety of implementations, you can setup a system to ensure the desired playback of songs over time. This
+module both defines the 'oracle' class, as well as many of those implementations.
+
+Because these objects are inherently mutable, the interfaces require a number of guarantees and contracts, and
+also come with a slew of edge cases. Be careful when manipulating any code that looks 'fishy' or 'complicated'
+in this file - while the tests cover a lot of the weird edge cases, it's impossible to guarantee they cover
+everything.
+"""
 from typing import List, Union
 
 

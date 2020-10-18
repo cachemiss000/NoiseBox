@@ -1,3 +1,7 @@
+"""
+Tests for oracles.py.
+"""
+
 import itertools
 import unittest
 
