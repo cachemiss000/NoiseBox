@@ -1,3 +1,11 @@
+"""The objects in this module control the base "vlc" library.
+
+In particular, it acts as an abstraction layer so clients don't need to worry about all
+the finicky hacky bits required to deal with the vlc library directly.
+
+This is also a good layer to reimplement if you want to provide multiple audio backends (e.g. Spotipy).
+"""
+
 from typing import List
 
 import vlc
@@ -15,6 +23,10 @@ class UseAfterFreeException(Exception):
 
 
 class AudioDevice(object):
+    """Represents a single audio output device.
+
+    We use this so we can have a handle for potential audio outputs provided by Windows or whatever.
+    """
 
     def __init__(self, audio_output_device: AudioOutputDevice):
         self.contents = audio_output_device.contents
@@ -27,8 +39,22 @@ class AudioDevice(object):
 
 
 class AudioDevices(object):
+    """Represents a list of Audio Devices and interfaces with VLC to manage said list.
 
+    This object requires active memory management. VLC uses pointers and such to manage audio device objects, and will
+    leak memory and potentially other badness if you don't proactively call "free" once this object is no longer in
+    use. (Yay c libraries adapted to python.)
+
+    This class assumes you're using it from the command line, and so a lot of important information is available
+    primarily through str(self) and repr(self). If you want to use this class programmatically, I suggest implementing
+    new methods to access the user_device_map and device_name_map **and then updating this comment**.
+    """
     def __init__(self, audio_device_enum: AudioOutputDevice):
+        """Initialization for the Audio Devices method.
+
+        :param audio_device_enum: The first audio device returned by VLC, used to build up the full list of audio
+          devices.
+        """
         self.device_list_ptr = audio_device_enum
         device_list = AudioDevices._build_devices(audio_device_enum)
         # The user uses this map to say "I want to play on device 3" instead of "I want to play on device <hex garbage>"
@@ -42,9 +68,14 @@ class AudioDevices(object):
         self._valid = True
 
     def valid(self):
+        """If this returns false, the object has been freed."""
         return self._valid
 
     def free(self):
+        """Call this once you are done with the audio device list.
+
+        This might happen if you are, for instance, refreshing the list of audio devices with a new list.
+        """
         if self.valid():
             vlc.libvlc_audio_output_device_list_release(self.device_list_ptr)
             self._valid = False
@@ -60,16 +91,30 @@ class AudioDevices(object):
             return "<Invalid object - already freed>"
         return repr(self.user_device_map)
 
-    def device_for_index(self, index: int):
+    def device_for_index(self, index: int) -> AudioDevice:
+        """Returns an AudioDevice object based on the index.
+
+        You can find the index of an audio device using the str() function's output, or if it hasn't already been done,
+        by implementing a function that returns the list of AudioDevices mapped to numbers directly.
+        """
         if not self.valid():
             raise UseAfterFreeException()
         return self.user_device_map[index]
 
     def device_from_device_name(self, device_name:str):
+        """Returns an audio device based on the name, as indicated by str(self).
+
+        This class was really mostly intended to be used pretty close to the command line...
+        """
         return self.device_name_map[device_name]
 
     @staticmethod
     def _build_devices(audio_output_device: AudioOutputDevice) -> List[AudioDevice]:
+        """Build a list of audio devices as passed in through VLC
+
+        VLC uses a linked list to pass around Audio Devices. As a result, we need to build the actual list by traversing
+        the linked list and turning it into a python list so there's a bit more sane way to refer to devices.
+        """
         cur = audio_output_device
         output = []
         while cur:
@@ -131,9 +176,11 @@ class Controller(object):
         self.vlc_player.next_song()
 
     def pause(self):
+        """Toggle pausing playback."""
         self.vlc_player.toggle_pause()
 
     def stop(self):
+        """Stops current playback."""
         self.vlc_player.stop()
 
     def queue(self, alias: str):
@@ -155,19 +202,16 @@ class Controller(object):
         songs = self.media_library.get(alias)
         self.queueing_oracle.append(oracles.RepeatingOracle(songs, times))
 
-    def list_devices(self) -> List[object]:
+    def list_devices(self) -> str:
+        """Lists the current audio devices as a string."""
         self.devices.free()
         self.devices = AudioDevices(vlc.libvlc_audio_output_device_enum(self.vlc_player.mp))
         return str(self.devices)
 
     def set_device(self, device_idx):
+        """Sets the current device using an int index based on 'list_devices' string."""
         self.vlc_player.set_device(self.devices.device_for_index(device_idx).contents.device)
 
     def get_device(self):
+        """Gets a string that describes the audio output devices."""
         return str(self.devices.device_from_device_name(self.vlc_player.mp.audio_output_device_get()))
-
-    def skip(self):
-        pass
-
-    def previous(self):
-        pass

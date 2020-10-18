@@ -1,4 +1,10 @@
+"""Tests controller.py.
+
+Unfortunately, we can't test most of the functionality because they're mostly just 'passthrough's to the VLC module,
+and it'd be too complicated to test correctness in a good way.
+"""
 import unittest
+from typing import List
 from unittest import mock
 from unittest.mock import patch
 
@@ -6,6 +12,7 @@ import controller
 
 
 def create_fake_audio_device(description, next):
+    """Creates a fake audio object that looks like VLC's audio object."""
     device_mock = mock.MagicMock()
     device_mock.contents.description = description
     device_mock.contents.next = next
@@ -19,7 +26,8 @@ def create_fake_audio_device(description, next):
     return device_mock
 
 
-class FakeNull(object):
+class VLCLinkedListNull(object):
+    """Represents a null pointer as you'd see in VLC's linked lists."""
     def __init__(self):
         pass
 
@@ -27,24 +35,18 @@ class FakeNull(object):
         return False
 
     def __eq__(self, other):
-        return isinstance(other, FakeNull)
+        return isinstance(other, VLCLinkedListNull)
 
 
-def build_list(*descriptions):
-    tail = FakeNull()
+def build_list(*descriptions: List[str]):
+    """Builds a list of AudioDevice's as they'd look from VLC using the input list of str descriptions."""
+    tail = VLCLinkedListNull()
     for description in reversed(descriptions):
         bytes_description = bytearray()
         bytes_description.extend(map(ord, description))
         new_item = create_fake_audio_device(description=bytes_description, next=tail)
         tail = new_item
     return tail
-
-
-def vlc_mock(device_list=None):
-    ret_mock = mock.MagicMock()
-    ret_mock.mp.audio_output_device_enum.return_value = device_list
-
-    ret_mock.mp.audio_device
 
 
 class AudioDeviceTest(unittest.TestCase):
