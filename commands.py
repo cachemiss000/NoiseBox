@@ -1,3 +1,10 @@
+"""
+This uses command.py to implement a series of commandline commands.
+
+These commandline commands perform basic functionality for controlling the media library and the media player, allowing
+basic testing from the command line, as well as configuration and scripting for users who know what they're doing.
+"""
+
 import argparse
 from typing import Dict
 
@@ -11,17 +18,18 @@ from print_controller import print_msg
 
 
 class IllegalArgument(UserException):
+    """An exception for illegal commandline arguments"""
     pass
 
 
 class SafeArgumentParser(argparse.ArgumentParser):
-
+    """This handles errors for argparse, so errors get printed out to the commandline console."""
     def error(self, message):
         print_msg(message)
 
 
 class ListAudioDevices(Command):
-
+    """List audio devices to the commandline."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="List audio devices")
         super().__init__("listdevices", ap)
@@ -32,7 +40,7 @@ class ListAudioDevices(Command):
 
 
 class SetDevice(Command):
-
+    """Sets the audio device based on the ListAudioDevices command."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="List audio devices")
         ap.add_argument("device_index", help="The index of the device to set as the output")
@@ -44,7 +52,7 @@ class SetDevice(Command):
 
 
 class GetDevice(Command):
-
+    """Gets the current audio device and prints it to the command line."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Show the current audio device")
         super().__init__("getdevice", ap)
@@ -55,7 +63,7 @@ class GetDevice(Command):
 
 
 class AddSong(Command):
-
+    """Adds a new song to the Media Library."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Adds a new song to the library")
         ap.add_argument("song_alias", help="Alias by which the song shall forevermore be named")
@@ -78,6 +86,7 @@ class AddSong(Command):
 
 
 class PlaySong(Command):
+    """Begins playing a song through the current media device, based on the input song alias."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Play a single song")
         ap.add_argument("song_alias", help="Alias of the song to play")
@@ -89,6 +98,7 @@ class PlaySong(Command):
 
 
 class Queue(Command):
+    """Queues a new song to play after the current set of songs have been played."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Queue up a set of things")
         ap.add_argument("alias", help="Alias of the song or playlist to queue")
@@ -100,6 +110,7 @@ class Queue(Command):
 
 
 class Play(Command):
+    """Begins playing if not currently playing."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Start playing")
         super().__init__("play", ap)
@@ -111,7 +122,7 @@ class Play(Command):
 
 
 class Pause(Command):
-
+    """Pauses the currently playing song."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Toggle pause the playing song")
         super().__init__("pause", ap)
@@ -122,7 +133,7 @@ class Pause(Command):
 
 
 class Stop(Command):
-
+    """Stops the currently playing song."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Stop the currently playing song")
         super().__init__("stop", ap)
@@ -133,7 +144,10 @@ class Stop(Command):
 
 
 class CreatePlaylist(Command):
+    """Creates a new playlist in the media library.
 
+    The playlist starts off empty.
+    """
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Create a new playlist to start adding songs")
         ap.add_argument("playlist_name", help="The name of the playlist being created.")
@@ -145,7 +159,7 @@ class CreatePlaylist(Command):
 
 
 class AddSongToPlaylist(Command):
-
+    """Adds a single song to the playlist based on the input alias."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Add a song to a playlist")
         ap.add_argument("playlist_name", help="The name of the playlist to add the song to")
@@ -158,6 +172,7 @@ class AddSongToPlaylist(Command):
 
 
 class ListSongs(Command):
+    """Lists all songs in the current media library on the commandline."""
 
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Lists all songs in the library")
@@ -173,7 +188,7 @@ class ListSongs(Command):
                 print_msg("  %s: %s" % (song.alias, song.uri))
 
 class ListPlaylists(Command):
-
+    """Lists all playlists in the current media library on the commandline."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Lists all playlists in the library")
         super().__init__("listplaylists", ap)
@@ -226,6 +241,7 @@ class LoadLibrary(Command):
 
 
 class DescribeSong(Command):
+    """Adds a description to a song in the current media library, based on the alias of the song."""
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Adds a description to a song.")
         ap.add_argument("song_alias", help="The alias of the song to update.")
@@ -244,6 +260,7 @@ class DescribeSong(Command):
 
 
 class Help(Command):
+    """Gets help for a given command."""
     def __init__(self, command_dict: Dict[str, Command]):
         ap = SafeArgumentParser("Get help on any command")
         ap.add_argument("command", nargs='?', help="the command on which to receive help")
@@ -263,6 +280,7 @@ class Help(Command):
 
 
 class ListCommands(Command):
+    """Lists all commands."""
     def __init__(self, command_dict: Dict[str, Command]):
         ap = SafeArgumentParser("List commands")
         super().__init__(name="commands", arg_parser=ap)

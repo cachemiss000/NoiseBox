@@ -1,3 +1,6 @@
+"""
+Unittests for commands.py.
+"""
 import unittest
 from typing import List
 
