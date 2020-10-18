@@ -1,4 +1,6 @@
-import logging
+"""
+Spells out some basic, codebase-wide exceptions.
+"""
 
 
 class UserException(Exception):
