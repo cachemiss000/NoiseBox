@@ -15,7 +15,8 @@ COMMENTING:
   * All functions longer than ~10 lines, all public functions, and all files should have comments explaining
   what they're doing at a high level, and in the case of functions, what each argument does if it's not
   obvious (if 'obviousness' is in question, then it's not obvious). You should also explain any edge cases
-  or unintuitive behavior, and anything else the user might need to know.
+  or unintuitive behavior, and anything else the user might need to know. Overrides of public functions in
+  sub classes do not need their own comments, unless they do something unexpected or interesting.
 
 STYLE
   * Functions use snake_case, constants use SCREAMING_SNAKE_CASE, class names use CapitalizedWords.
