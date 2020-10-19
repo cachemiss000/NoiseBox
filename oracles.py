@@ -172,14 +172,28 @@ class ChainOracle(MemoizingOracle):
             self.__oracles.insert(0, PlaylistOracle([]))
             return None
 
-        if self.__oracles[0].current_song() is None:
+        if self.__pointer >= len(self.__oracles):
+            return None
+
+        if self.__oracles[self.__pointer].current_song() is None:
+            # Recursively buzz through the list to see if there are any valid songs. If there aren't,
+            # pretend like we never looked in the first place.
+            if (len(self.__oracles) > self.__pointer):
+                pointer_save = self.__pointer
+                self.__pointer += 1
+                song = self._inner_get_first_song()
+                if song is not None:
+                    return song
+                self.__pointer -= 1
+                #fallthru
+
             # Same as above - make sure we play the first song of the first oracle if it gets updated before we call
             # next_song()
             self.__oracles.insert(0, PlaylistOracle([]))
             return None
 
         self.__has_drawn_from_oracle = True
-        return self.__oracles[0].current_song()
+        return self.__oracles[self.__pointer].current_song()
 
     def add(self, oracle: Union[Oracle, None]):
         if oracle is None:

@@ -84,12 +84,49 @@ class ChainTest(unittest.TestCase):
         songs = ["1", "2", "3"]
         o = oracles.ChainOracle()
         o.add(None)
+        memoized_none_song = o.current_song()
         o.add(oracles.PlaylistOracle([]))
         o.add(oracles.PlaylistOracle(songs))
 
+        self.assertIsNone(memoized_none_song)
         self.assertIsNone(o.current_song())
         # Chop off the "None" from the start because of the first "current_song" call.
         self.assertListEqual(collect(o)[1:], songs)
+
+    def test_empty_oracles_before_valid_oracles_get_ignored(self):
+        songs1 = ["1", "2", "3"]
+        co = oracles.ChainOracle()
+        co.add(oracles.PlaylistOracle([]))
+        co.add(oracles.PlaylistOracle([]))
+        so = oracles.SwitchOracle()
+        co.add(so)
+        co.add(oracles.PlaylistOracle(songs1))
+        songs2 = ["4", "5", "6"]
+
+        collected1 = collect(co)
+        so.set_oracle(oracles.PlaylistOracle(songs2))
+        collected2 = collect(co)
+
+        self.assertListEqual(collected1, ["1", "2", "3"])
+        self.assertListEqual(collected2, [None])
+
+    def test_formerly_empty_oracle_not_ignored_when_filled_before_memoization(self):
+        """This tests what happens when you fill an oracle that used to return null before
+        accessing it for the first time (in this case, so - which unlike the test above, gets
+        filled with songs before we call co.current_song() in collect())"""
+        songs1 = ["1", "2", "3"]
+        co = oracles.ChainOracle()
+        co.add(oracles.PlaylistOracle([]))
+        co.add(oracles.PlaylistOracle([]))
+        so = oracles.SwitchOracle()
+        co.add(so)
+        co.add(oracles.PlaylistOracle(songs1))
+        songs2 = ["4", "5", "6"]
+        so.set_oracle(oracles.PlaylistOracle(songs2))
+
+        collected = collect(co)
+
+        self.assertListEqual(collected, ["4", "5", "6", "1", "2", "3"])
 
     def test_empty_start(self):
         songs = ["1", "2", "3"]
