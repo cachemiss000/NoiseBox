@@ -457,6 +457,11 @@ class RepeatingOracleTest(unittest.TestCase):
         self.assertIsNone(o1.current_song())
         self.assertIsNone(o2.next_song())
 
+    def test_empty_playlist(self):
+        ro = oracles.RepeatingOracle([], 10)
+
+        self.assertListEqual(collect(ro), [None])
+
     def test_current_song_with_repeating(self):
         songs = ["1", "2", "3"]
         o = oracles.RepeatingOracle(songs, 2)
@@ -479,6 +484,13 @@ class RepeatingOracleTest(unittest.TestCase):
         o = oracles.RepeatingOracle(songs)
 
         self.assertEqual(o.next_song(), "2")
+
+    def test_zero_repeats(self):
+        songs = ["1", "2", "3"]
+        o = oracles.RepeatingOracle(songs, 0)
+        collected = collect(o)
+
+        self.assertListEqual(collected, [None])
 
 
 if __name__ == '__main__':

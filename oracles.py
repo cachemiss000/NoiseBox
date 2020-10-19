@@ -185,7 +185,7 @@ class ChainOracle(MemoizingOracle):
                 if song is not None:
                     return song
                 self.__pointer -= 1
-                #fallthru
+                # fallthru
 
             # Same as above - make sure we play the first song of the first oracle if it gets updated before we call
             # next_song()
@@ -336,6 +336,13 @@ class RepeatingOracle(Oracle):
             return None
         self.__pointer += 1
 
+        # If the user passed in 0, or a negative number as the number of times to repeat.
+        if self.times is not None and self.times < 0:
+            return None
+
+        if self.__playlist is None or len(self.__playlist) == 0:
+            return None
+
         # If we have repeat on forever, or we need to repeat and there are repeats left.
         if self.times is None or (self.__pointer >= len(self.__playlist) and self.times > 0):
             self.__pointer = self.__pointer % len(self.__playlist)
@@ -351,6 +358,15 @@ class RepeatingOracle(Oracle):
         return self.__playlist[self.__pointer]
 
     def current_song(self) -> Union[str, None]:
-        if self.__playlist is None or len(self.__playlist) == 0 or self.__pointer >= len(self.__playlist):
+        # User did not specify a playlist.
+        if self.__playlist is None:
+            return None
+
+        # User passed in 0 or negative repeats - we subtract 1 during initialization to make math easier.
+        if self.times is not None and self.times < 0:
+            return None
+
+        # Empty playlist or we've already passed the playlist ending.
+        if len(self.__playlist) == 0 or self.__pointer >= len(self.__playlist):
             return None
         return self.__playlist[self.__pointer]
