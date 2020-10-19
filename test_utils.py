@@ -1,3 +1,8 @@
+"""Defines utils used in unit tests.
+
+This should ideally be tested at some point, likely once we have more than one
+function (collect, at time of writing)
+"""
 from typing import List
 
 import oracles
