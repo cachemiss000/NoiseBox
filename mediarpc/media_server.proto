@@ -20,7 +20,7 @@ message Oracle {
     RepeatingOracle repeating_oracle = 4;
     ChainOracle chain_oracle = 5;
     SwitchOracle switch_oracle = 6;
-    InterruptOracle interruptable_oracle = 7;
+    InterruptOracle interrupt_oracle = 7;
   }
 }
 
