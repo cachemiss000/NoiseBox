@@ -4,7 +4,7 @@ syntax = "proto2";
 
 package mediarpc;
 
-service MediaControl {
+service MediaControlService {
   rpc Play (PlayRequest) returns (PlayReply) {}
   rpc Pause (PauseRequest) returns (PauseReply) {}
   rpc NextSong (NextSongRequest) returns (NextSongReply) {}

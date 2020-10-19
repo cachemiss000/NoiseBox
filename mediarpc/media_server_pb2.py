@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0b\n\tPlayReply\"\x0e\n\x0cPauseRequest\"\x0c\n\nPauseReply\"\x11\n\x0fNextSongRequest\"\x0f\n\rNextSongReply\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xd8\x02\n\x0cMediaControl\x12\x34\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x13.mediarpc.PlayReply\"\x00\x12\x37\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x14.mediarpc.PauseReply\"\x00\x12@\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x17.mediarpc.NextSongReply\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
+  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0b\n\tPlayReply\"\x0e\n\x0cPauseRequest\"\x0c\n\nPauseReply\"\x11\n\x0fNextSongRequest\"\x0f\n\rNextSongReply\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xdf\x02\n\x13MediaControlService\x12\x34\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x13.mediarpc.PlayReply\"\x00\x12\x37\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x14.mediarpc.PauseReply\"\x00\x12@\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x17.mediarpc.NextSongReply\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
 )
 
 
@@ -1056,19 +1056,19 @@ _sym_db.RegisterMessage(OracleUpdateError)
 
 
 
-_MEDIACONTROL = _descriptor.ServiceDescriptor(
-  name='MediaControl',
-  full_name='mediarpc.MediaControl',
+_MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
+  name='MediaControlService',
+  full_name='mediarpc.MediaControlService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=1674,
-  serialized_end=2018,
+  serialized_end=2025,
   methods=[
   _descriptor.MethodDescriptor(
     name='Play',
-    full_name='mediarpc.MediaControl.Play',
+    full_name='mediarpc.MediaControlService.Play',
     index=0,
     containing_service=None,
     input_type=_PLAYREQUEST,
@@ -1078,7 +1078,7 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='Pause',
-    full_name='mediarpc.MediaControl.Pause',
+    full_name='mediarpc.MediaControlService.Pause',
     index=1,
     containing_service=None,
     input_type=_PAUSEREQUEST,
@@ -1088,7 +1088,7 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='NextSong',
-    full_name='mediarpc.MediaControl.NextSong',
+    full_name='mediarpc.MediaControlService.NextSong',
     index=2,
     containing_service=None,
     input_type=_NEXTSONGREQUEST,
@@ -1098,7 +1098,7 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='SetOracle',
-    full_name='mediarpc.MediaControl.SetOracle',
+    full_name='mediarpc.MediaControlService.SetOracle',
     index=3,
     containing_service=None,
     input_type=_SETORACLEREQUEST,
@@ -1108,7 +1108,7 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='OracleUpdate',
-    full_name='mediarpc.MediaControl.OracleUpdate',
+    full_name='mediarpc.MediaControlService.OracleUpdate',
     index=4,
     containing_service=None,
     input_type=_ORACLEUPDATEREQUEST,
@@ -1117,8 +1117,8 @@ _MEDIACONTROL = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_MEDIACONTROL)
+_sym_db.RegisterServiceDescriptor(_MEDIACONTROLSERVICE)
 
-DESCRIPTOR.services_by_name['MediaControl'] = _MEDIACONTROL
+DESCRIPTOR.services_by_name['MediaControlService'] = _MEDIACONTROLSERVICE
 
 # @@protoc_insertion_point(module_scope)
