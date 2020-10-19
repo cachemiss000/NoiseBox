@@ -1,6 +1,16 @@
+"""
+This module implements a wrapper around the VLC media player object.
+
+This module is UNTESTED because it's nearly impossible to test a contract with a library like vlc.py *well*.
+This *should* be handled by e2e or component tests, but it's unclear how to test media playback. Instead,
+the goal should be to keep this class as small as simple as possible, with an easy interface we can easily
+mock - so that any problems are quickly and immediately apparent with minimal hand-testing, and so that
+mock implementations of his class can be used as a stand-in for vlc in classes further up the call stack
+when it comes to testing.
+"""
+
 import logging
 from time import sleep
-from typing import List
 
 import vlc
 
@@ -20,6 +30,7 @@ def next_song_cb(player):
 
 
 class Player(object):
+    """Wraps the VLC object in order to play media."""
     def __init__(self):
         self.mp = vlc.MediaPlayer()
         self.manager = self.mp.event_manager()
@@ -28,10 +39,15 @@ class Player(object):
         self.current_oracle = None
 
     def play_oracle(self, oracle):
+        """Start playing songs as dictated by a given oracle.
+
+        This will start playing oracle.next_song() as soon as the current song is done.
+        """
         self.current_oracle = oracle
         self.next_song()
 
     def play_song(self, song_uri):
+        """Play a given song_uri."""
         # TODO: This is a decent stub, but I need to start work on encapsulating the garbage VLC interface.
         media = vlc.Media(song_uri)
         self.mp.set_media(media)
@@ -40,6 +56,11 @@ class Player(object):
             raise UnspecifiedVLCError("Encountered error while playing uri '%s', check the logs?" % (song_uri,))
 
     def next_song(self):
+        """Start playing the next song from self.current_oracle.
+
+        NOTE: This function DOES NOT work if called from a different thread than the thread used to create
+        this object, afaict.
+        """
         self.stop()
         if self.current_oracle is None:
             return
@@ -57,12 +78,15 @@ class Player(object):
         self.manager.event_attach(vlc.EventType.MediaPlayerEndReached, next_song_cb(self))
 
     def pause(self):
+        """Pause the current media playback."""
         self.mp.set_pause(True)
 
     def resume(self):
+        """Unpause current media playback."""
         self.mp.set_pause(False)
 
     def toggle_pause(self):
+        """Toggle media playback pause."""
         self.mp.pause()
 
     def stop(self):
