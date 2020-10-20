@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0b\n\tPlayReply\"\x0e\n\x0cPauseRequest\"\x0c\n\nPauseReply\"\x11\n\x0fNextSongRequest\"\x0f\n\rNextSongReply\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xdf\x02\n\x13MediaControlService\x12\x34\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x13.mediarpc.PlayReply\"\x00\x12\x37\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x14.mediarpc.PauseReply\"\x00\x12@\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x17.mediarpc.NextSongReply\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
+  serialized_pb=b'\n\x12media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0e\n\x0cPlayResponse\"\x0e\n\x0cPauseRequest\"\x0f\n\rPauseResponse\"\x11\n\x0fNextSongRequest\"\x12\n\x10NextSongResponse\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xe8\x02\n\x13MediaControlService\x12\x37\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x16.mediarpc.PlayResponse\"\x00\x12:\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x17.mediarpc.PauseResponse\"\x00\x12\x43\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x1a.mediarpc.NextSongResponse\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
 )
 
 
@@ -663,9 +663,9 @@ _PLAYREQUEST = _descriptor.Descriptor(
 )
 
 
-_PLAYREPLY = _descriptor.Descriptor(
-  name='PlayReply',
-  full_name='mediarpc.PlayReply',
+_PLAYRESPONSE = _descriptor.Descriptor(
+  name='PlayResponse',
+  full_name='mediarpc.PlayResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -684,7 +684,7 @@ _PLAYREPLY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1491,
-  serialized_end=1502,
+  serialized_end=1505,
 )
 
 
@@ -708,14 +708,14 @@ _PAUSEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1504,
-  serialized_end=1518,
+  serialized_start=1507,
+  serialized_end=1521,
 )
 
 
-_PAUSEREPLY = _descriptor.Descriptor(
-  name='PauseReply',
-  full_name='mediarpc.PauseReply',
+_PAUSERESPONSE = _descriptor.Descriptor(
+  name='PauseResponse',
+  full_name='mediarpc.PauseResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -733,8 +733,8 @@ _PAUSEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1520,
-  serialized_end=1532,
+  serialized_start=1523,
+  serialized_end=1538,
 )
 
 
@@ -758,14 +758,14 @@ _NEXTSONGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1534,
-  serialized_end=1551,
+  serialized_start=1540,
+  serialized_end=1557,
 )
 
 
-_NEXTSONGREPLY = _descriptor.Descriptor(
-  name='NextSongReply',
-  full_name='mediarpc.NextSongReply',
+_NEXTSONGRESPONSE = _descriptor.Descriptor(
+  name='NextSongResponse',
+  full_name='mediarpc.NextSongResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -783,8 +783,8 @@ _NEXTSONGREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1553,
-  serialized_end=1568,
+  serialized_start=1559,
+  serialized_end=1577,
 )
 
 
@@ -829,8 +829,8 @@ _ORACLEUPDATEERROR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1570,
-  serialized_end=1671,
+  serialized_start=1579,
+  serialized_end=1680,
 )
 
 _ORACLE.fields_by_name['null_oracle'].message_type = _NULLORACLE
@@ -899,11 +899,11 @@ DESCRIPTOR.message_types_by_name['SwitchOracleUpdate'] = _SWITCHORACLEUPDATE
 DESCRIPTOR.message_types_by_name['InterruptUpdate'] = _INTERRUPTUPDATE
 DESCRIPTOR.message_types_by_name['SetOracleResponse'] = _SETORACLERESPONSE
 DESCRIPTOR.message_types_by_name['PlayRequest'] = _PLAYREQUEST
-DESCRIPTOR.message_types_by_name['PlayReply'] = _PLAYREPLY
+DESCRIPTOR.message_types_by_name['PlayResponse'] = _PLAYRESPONSE
 DESCRIPTOR.message_types_by_name['PauseRequest'] = _PAUSEREQUEST
-DESCRIPTOR.message_types_by_name['PauseReply'] = _PAUSEREPLY
+DESCRIPTOR.message_types_by_name['PauseResponse'] = _PAUSERESPONSE
 DESCRIPTOR.message_types_by_name['NextSongRequest'] = _NEXTSONGREQUEST
-DESCRIPTOR.message_types_by_name['NextSongReply'] = _NEXTSONGREPLY
+DESCRIPTOR.message_types_by_name['NextSongResponse'] = _NEXTSONGRESPONSE
 DESCRIPTOR.message_types_by_name['OracleUpdateError'] = _ORACLEUPDATEERROR
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -1012,12 +1012,12 @@ PlayRequest = _reflection.GeneratedProtocolMessageType('PlayRequest', (_message.
   })
 _sym_db.RegisterMessage(PlayRequest)
 
-PlayReply = _reflection.GeneratedProtocolMessageType('PlayReply', (_message.Message,), {
-  'DESCRIPTOR' : _PLAYREPLY,
+PlayResponse = _reflection.GeneratedProtocolMessageType('PlayResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PLAYRESPONSE,
   '__module__' : 'media_server_pb2'
-  # @@protoc_insertion_point(class_scope:mediarpc.PlayReply)
+  # @@protoc_insertion_point(class_scope:mediarpc.PlayResponse)
   })
-_sym_db.RegisterMessage(PlayReply)
+_sym_db.RegisterMessage(PlayResponse)
 
 PauseRequest = _reflection.GeneratedProtocolMessageType('PauseRequest', (_message.Message,), {
   'DESCRIPTOR' : _PAUSEREQUEST,
@@ -1026,12 +1026,12 @@ PauseRequest = _reflection.GeneratedProtocolMessageType('PauseRequest', (_messag
   })
 _sym_db.RegisterMessage(PauseRequest)
 
-PauseReply = _reflection.GeneratedProtocolMessageType('PauseReply', (_message.Message,), {
-  'DESCRIPTOR' : _PAUSEREPLY,
+PauseResponse = _reflection.GeneratedProtocolMessageType('PauseResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PAUSERESPONSE,
   '__module__' : 'media_server_pb2'
-  # @@protoc_insertion_point(class_scope:mediarpc.PauseReply)
+  # @@protoc_insertion_point(class_scope:mediarpc.PauseResponse)
   })
-_sym_db.RegisterMessage(PauseReply)
+_sym_db.RegisterMessage(PauseResponse)
 
 NextSongRequest = _reflection.GeneratedProtocolMessageType('NextSongRequest', (_message.Message,), {
   'DESCRIPTOR' : _NEXTSONGREQUEST,
@@ -1040,12 +1040,12 @@ NextSongRequest = _reflection.GeneratedProtocolMessageType('NextSongRequest', (_
   })
 _sym_db.RegisterMessage(NextSongRequest)
 
-NextSongReply = _reflection.GeneratedProtocolMessageType('NextSongReply', (_message.Message,), {
-  'DESCRIPTOR' : _NEXTSONGREPLY,
+NextSongResponse = _reflection.GeneratedProtocolMessageType('NextSongResponse', (_message.Message,), {
+  'DESCRIPTOR' : _NEXTSONGRESPONSE,
   '__module__' : 'media_server_pb2'
-  # @@protoc_insertion_point(class_scope:mediarpc.NextSongReply)
+  # @@protoc_insertion_point(class_scope:mediarpc.NextSongResponse)
   })
-_sym_db.RegisterMessage(NextSongReply)
+_sym_db.RegisterMessage(NextSongResponse)
 
 OracleUpdateError = _reflection.GeneratedProtocolMessageType('OracleUpdateError', (_message.Message,), {
   'DESCRIPTOR' : _ORACLEUPDATEERROR,
@@ -1063,8 +1063,8 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1674,
-  serialized_end=2025,
+  serialized_start=1683,
+  serialized_end=2043,
   methods=[
   _descriptor.MethodDescriptor(
     name='Play',
@@ -1072,7 +1072,7 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_PLAYREQUEST,
-    output_type=_PLAYREPLY,
+    output_type=_PLAYRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
@@ -1082,7 +1082,7 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
     index=1,
     containing_service=None,
     input_type=_PAUSEREQUEST,
-    output_type=_PAUSEREPLY,
+    output_type=_PAUSERESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
@@ -1092,7 +1092,7 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
     index=2,
     containing_service=None,
     input_type=_NEXTSONGREQUEST,
-    output_type=_NEXTSONGREPLY,
+    output_type=_NEXTSONGRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

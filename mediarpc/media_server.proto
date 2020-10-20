@@ -5,9 +5,9 @@ syntax = "proto2";
 package mediarpc;
 
 service MediaControlService {
-  rpc Play (PlayRequest) returns (PlayReply) {}
-  rpc Pause (PauseRequest) returns (PauseReply) {}
-  rpc NextSong (NextSongRequest) returns (NextSongReply) {}
+  rpc Play (PlayRequest) returns (PlayResponse) {}
+  rpc Pause (PauseRequest) returns (PauseResponse) {}
+  rpc NextSong (NextSongRequest) returns (NextSongResponse) {}
   rpc SetOracle (SetOracleRequest) returns (SetOracleResponse) {}
   rpc OracleUpdate (OracleUpdateRequest) returns (OracleUpdateResponse) {}
 }
@@ -102,11 +102,11 @@ message InterruptUpdate {
 message SetOracleResponse {}
 
 message PlayRequest {}
-message PlayReply {}
+message PlayResponse {}
 message PauseRequest {}
-message PauseReply {}
+message PauseResponse {}
 message NextSongRequest {}
-message NextSongReply {}
+message NextSongResponse {}
 
 message OracleUpdateError {
   optional string message = 1;
