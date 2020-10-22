@@ -4,8 +4,8 @@ from media_server.proto into oracles from oracles.py.
 """
 import itertools
 import unittest
-import test_utils as utils
-import oracles
+from common import test_utils as utils
+from medialogic import oracles
 import mediarpc.media_server_pb2 as ms_pb
 import mediarpc.proto_converter as converter
 

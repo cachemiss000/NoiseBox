@@ -6,16 +6,16 @@ import logging
 import os
 import traceback
 
-import commands
-from console import Console
-from controller import Controller
-from exceptions import UserException
-from media_library import MediaLibrary
+from localcli import commands
+from localcli.console import Console
+from medialogic.controller import Controller
+from common.exceptions import UserException
+from medialogic.media_library import MediaLibrary
 from datetime import datetime
 import time
 import pathlib
 
-from print_controller import print_msg
+from localcli.print_controller import print_msg
 
 _NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()

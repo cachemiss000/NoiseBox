@@ -1,0 +1,77 @@
+[33m4cee0ac[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit: Refactor: Move most files into their own packages.
+[33mb646827[m HEAD@{1}: reset: moving to b646
+[33mb7b45e2[m HEAD@{2}: reset: moving to b7b4
+[33md13de4d[m HEAD@{3}: reset: moving to d13d
+[33mb646827[m HEAD@{4}: reset: moving to b646
+[33md13de4d[m HEAD@{5}: reset: moving to d13d
+[33mb646827[m HEAD@{6}: reset: moving to b6468275c388ced56d9496024e45299e1b48f52c
+[33md13de4d[m HEAD@{7}: commit: Revert "Refactor: Move most files into their own packages."
+[33mb7b45e2[m HEAD@{8}: commit: Refactor: Move most files into their own packages.
+[33mb646827[m HEAD@{9}: commit: Add the 'grpc' generated file, which handles all the 'server'-y and 'client'-y python stuff.
+[33m563173b[m HEAD@{10}: commit: Change "Reply" to "Repsponse". This is the way.
+[33m05a6e5b[m HEAD@{11}: commit: Quick name change. Add "service" to make it clear in written code what the "MediaControl" object is.
+[33m28876a5[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{12}: commit: Create a protoconverter module, which converts Oracle protos into oracle objects.
+[33m2ee7251[m HEAD@{13}: commit: Ensure that passing in a repeat count of 0 to a Repeating Oracle makes it not play any songs, and fix a bug with empty playlists on samesuch.
+[33mc46f947[m HEAD@{14}: commit: Modify some functionality in chain_oracle so that it doesn't automatically return None on current_song() when the first oracle is empty.
+[33mf4e10f7[m HEAD@{15}: commit: Make InterruptOracle's more sensible in the Oracle proto.
+[33m0fbae1f[m HEAD@{16}: commit: Bring test_utils.py's comments up to snuff.
+[33mc73b43e[m HEAD@{17}: commit: Bring print_controller.py's comments up to snuff.
+[33m8ca286e[m HEAD@{18}: commit: Bring player.py's comments up to snuff.
+[33me20a67f[m HEAD@{19}: commit: Minor change to the contributions guidelines.
+[33m22522c9[m HEAD@{20}: commit: Bring oracles.py and oracles_test.py's comments up to snuff.
+[33m02d24d9[m HEAD@{21}: commit: Bring media_library.py and media_library_test.py's comments up to snuff.
+[33m2f00c91[m HEAD@{22}: commit: Bring main.py's comments up to snuff.
+[33m36236a3[m HEAD@{23}: commit: Bring exceptions.py's comments up to snuff.
+[33m477a9b1[m HEAD@{24}: commit: Bring controller.py and controller_test.py's comments up to snuff.
+[33md0e8879[m HEAD@{25}: commit: Bring comments up to snuff with console.py and console_test.py.
+[33mfabcd9b[m HEAD@{26}: commit: Brign commands.py and family up to snuff on comments.
+[33mdca6a27[m HEAD@{27}: commit: Bring 'command.py' up to snuff on comments.
+[33meb414cd[m HEAD@{28}: commit: Extract 'collect' to a new file in order to make it accessible to multiple tests.
+[33m90f1e4b[m HEAD@{29}: commit: Update some names, and then refresh the pb2 output using protoc to reflect the changes.
+[33md560929[m HEAD@{30}: commit: Adding a "contributions readme" in case anyone decides to contribute.
+[33mb0f7284[m HEAD@{31}: commit: Add "null" test for the switch oracle
+[33mdf6424c[m HEAD@{32}: commit: Create The Schema that will define the outward interface of the python microservice meant for playing media.
+[33m9c70ddc[m HEAD@{33}: commit: Another small .gitignore update.
+[33m1a96b96[m HEAD@{34}: commit: Yeah you have to use protobufs now. Update the HACK guide.
+[33m6ce37b5[m HEAD@{35}: commit: Add a "listplaylists" command even though it will likely be short lived before the coming Proto update.
+[33m146a70b[m HEAD@{36}: commit: Another small gitignore update
+[33m103e835[m HEAD@{37}: commit: Remove some test code.
+[33m32d00fe[m HEAD@{38}: commit: Overhaul Oracles so they distinguish between "current" and "next" songs.
+[33m4037ec2[m HEAD@{39}: commit: Update gitignore with the project dictionary.
+[33maca1cc9[m HEAD@{40}: commit: Start building in long-term playing functionality into the controller and player
+[33m2485973[m HEAD@{41}: commit: Add a quick error message in
+[33m666d38c[m HEAD@{42}: commit: Add in an "x times" functionality to the repeating oracle.
+[33m61f8b12[m HEAD@{43}: reset: moving to 61f8b126a61e34b3ca8549ed2477726ef05e7010
+[33maf8b6e0[m HEAD@{44}: commit: Add in an "x times" functionality to the repeating oracle.
+[33m61f8b12[m HEAD@{45}: reset: moving to 61f8b126a61e34b3ca8549ed2477726ef05e7010
+[33me6a504b[m HEAD@{46}: commit: Add in an "x times" functionality to the repeating oracle.
+[33m61f8b12[m HEAD@{47}: commit: Formatting.
+[33ma753f9d[m HEAD@{48}: commit: Add a "clear" to the ChainOracle, because sometimes you *do* want the music to stop.
+[33m301df78[m HEAD@{49}: commit: Add in a new RepeatingOracle, because sometimes you don't want the music to stop.
+[33m108f62b[m HEAD@{50}: commit: HAHAHAHAHA MAY 2020 V1.0, GOOD ONE PAST-ME.
+[33m092fd45[m HEAD@{51}: commit: Add tests
+[33m8d4def6[m HEAD@{52}: reset: moving to 8d4def65aae203e86d148a3bfa42103eef1f9f78
+[33ma5f9b2b[m HEAD@{53}: commit: Add tests
+[33m8d4def6[m HEAD@{54}: commit: Begin replacing the code I checked in last commit with Oracle code.
+[33mbdfbfa6[m HEAD@{55}: commit (amend): Adding "play" and "queue" functionality
+[33m16821a1[m HEAD@{56}: commit: Adding "play" and "queue" functionality, only to probably completely rewrite how they work in the next few commits
+[33m05b64e0[m HEAD@{57}: commit: Very very early stub of the RPC server specification
+[33me0f7b54[m HEAD@{58}: commit: Minor readme updates to clarify wtf, and make timelines more realistic.
+[33m56a82ec[m HEAD@{59}: commit: Add a number of commands + audio device switching capability.
+[33mf63536b[m HEAD@{60}: commit: Minor lint changes
+[33m707cd35[m HEAD@{61}: commit: Add a README so people don't wonder WTF they're looking at when they look this up on GitHub.
+[33mc3cb6a7[m HEAD@{62}: commit: Add Media Libraries folder to the git ignore.
+[33m1e3bb6b[m HEAD@{63}: commit: Setup serialization for the Media Library, add in "save/load" commands.
+[33m0fdbef3[m HEAD@{64}: commit: Fix printing, stop crashing on bad args, add commands.
+[33m7970105[m HEAD@{65}: commit: Minor formatting fix.
+[33m10c8b65[m HEAD@{66}: commit: Minor formatting fix.
+[33m9250363[m HEAD@{67}: commit: Minor formatting fix.
+[33m50dd305[m HEAD@{68}: commit: Add in unit testing for media_library, checks for files & minor functionality changes.
+[33m13196f8[m HEAD@{69}: commit: Add in some unit testing for commands.py, add in some print managing.
+[33m16140fb[m HEAD@{70}: commit: Add in a new command "listsongs"
+[33m794f035[m HEAD@{71}: commit: Log to a file, make everything use the same logger.
+[33m9f36565[m HEAD@{72}: commit: Add .gitignore
+[33m4a69176[m HEAD@{73}: commit: Add in a new commands concept so that we begin to have real structure to hang stuff on.
+[33mb4fc6f8[m HEAD@{74}: commit: Minor formatting.
+[33md536e04[m HEAD@{75}: commit: Add in console functionality, so that you can issue commands (which currently do nothing)
+[33mc316cde[m HEAD@{76}: commit (initial): Initial commit

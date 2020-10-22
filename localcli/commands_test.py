@@ -4,10 +4,10 @@ Unittests for commands.py.
 import unittest
 from typing import List
 
-import commands
-from commands import AddSong, IllegalArgument
-from controller import Controller
-from media_library import MediaLibrary, Song
+from localcli import commands
+from localcli.commands import AddSong, IllegalArgument
+from medialogic.controller import Controller
+from medialogic.media_library import MediaLibrary, Song
 
 
 def get_controller() -> Controller:

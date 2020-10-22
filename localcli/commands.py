@@ -8,13 +8,13 @@ basic testing from the command line, as well as configuration and scripting for 
 import argparse
 from typing import Dict
 
-import media_library
+from medialogic import media_library
 import json
 import pathlib
-from command import Command
-from controller import Controller
-from exceptions import UserException
-from print_controller import print_msg
+from common.command import Command
+from medialogic.controller import Controller
+from common.exceptions import UserException
+from localcli.print_controller import print_msg
 
 
 class IllegalArgument(UserException):

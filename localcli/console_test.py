@@ -2,8 +2,8 @@
 
 import unittest
 
-from console import ConsoleOutput, Command, Console
-from console import Console
+from localcli.console import Command
+from localcli.console import Console
 
 
 class ConsoleTest(unittest.TestCase):

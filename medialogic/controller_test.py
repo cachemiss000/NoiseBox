@@ -8,7 +8,7 @@ from typing import List
 from unittest import mock
 from unittest.mock import patch
 
-import controller
+from medialogic import controller
 
 
 def create_fake_audio_device(description, next):

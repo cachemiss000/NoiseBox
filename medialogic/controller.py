@@ -11,9 +11,9 @@ from typing import List
 import vlc
 from vlc import AudioOutputDevice
 
-import oracles
-from media_library import MediaLibrary
-from player import Player
+from medialogic import oracles
+from medialogic.media_library import MediaLibrary
+from medialogic.player import Player
 
 FREED_ERROR_STRING = "Invalid object - already freed."
 DEFAULT_ENCODING = 'utf-8'

@@ -5,7 +5,7 @@ This module defines objects used to manage a media library pointing at audio fil
 from typing import List, Dict, Tuple
 import os
 
-from exceptions import UserException, SystemException
+from common.exceptions import UserException, SystemException
 
 
 def _check_file_exists(song_uri):

@@ -5,7 +5,7 @@ function (collect, at time of writing)
 """
 from typing import List
 
-import oracles
+from medialogic import oracles
 
 
 def collect(oracle: oracles.Oracle) -> List[str]:

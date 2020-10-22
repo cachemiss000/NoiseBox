@@ -10,7 +10,7 @@ to your function by adding another entry.
 """
 
 import mediarpc.media_server_pb2 as ms_pb
-import oracles
+from medialogic import oracles
 
 ORACLE_FIELD_NAME = "oracle"
 

@@ -3,8 +3,8 @@ Tests for media_library.py.
 """
 import unittest
 
-import media_library
-from media_library import MediaLibrary, Song
+from medialogic import media_library
+from medialogic.media_library import MediaLibrary, Song
 from collections import defaultdict
 import tempfile
 

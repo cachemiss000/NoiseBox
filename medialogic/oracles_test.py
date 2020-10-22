@@ -5,8 +5,8 @@ Tests for oracles.py.
 import itertools
 import unittest
 
-import oracles
-from test_utils import collect
+from medialogic import oracles
+from common.test_utils import collect
 
 
 class PlaylistTest(unittest.TestCase):
