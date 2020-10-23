@@ -56,5 +56,5 @@ class Command(object):
 
     @property
     def name(self):
-        """Name of the command. Used in main.py to map console strings to Command implementations."""
+        """Name of the command. Used in main.py.py to map console strings to Command implementations."""
         return self.__name.lower()
