@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import media_server_pb2 as media__server__pb2
+from mediarpc import media_server_pb2 as mediarpc_dot_media__server__pb2
 
 
 class MediaControlServiceStub(object):
@@ -16,28 +16,28 @@ class MediaControlServiceStub(object):
         """
         self.Play = channel.unary_unary(
                 '/mediarpc.MediaControlService/Play',
-                request_serializer=media__server__pb2.PlayRequest.SerializeToString,
-                response_deserializer=media__server__pb2.PlayResponse.FromString,
+                request_serializer=mediarpc_dot_media__server__pb2.PlayRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.PlayResponse.FromString,
                 )
         self.Pause = channel.unary_unary(
                 '/mediarpc.MediaControlService/Pause',
-                request_serializer=media__server__pb2.PauseRequest.SerializeToString,
-                response_deserializer=media__server__pb2.PauseResponse.FromString,
+                request_serializer=mediarpc_dot_media__server__pb2.PauseRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.PauseResponse.FromString,
                 )
         self.NextSong = channel.unary_unary(
                 '/mediarpc.MediaControlService/NextSong',
-                request_serializer=media__server__pb2.NextSongRequest.SerializeToString,
-                response_deserializer=media__server__pb2.NextSongResponse.FromString,
+                request_serializer=mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
                 )
         self.SetOracle = channel.unary_unary(
                 '/mediarpc.MediaControlService/SetOracle',
-                request_serializer=media__server__pb2.SetOracleRequest.SerializeToString,
-                response_deserializer=media__server__pb2.SetOracleResponse.FromString,
+                request_serializer=mediarpc_dot_media__server__pb2.SetOracleRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.SetOracleResponse.FromString,
                 )
         self.OracleUpdate = channel.unary_unary(
                 '/mediarpc.MediaControlService/OracleUpdate',
-                request_serializer=media__server__pb2.OracleUpdateRequest.SerializeToString,
-                response_deserializer=media__server__pb2.OracleUpdateResponse.FromString,
+                request_serializer=mediarpc_dot_media__server__pb2.OracleUpdateRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.OracleUpdateResponse.FromString,
                 )
 
 
@@ -79,28 +79,28 @@ def add_MediaControlServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Play': grpc.unary_unary_rpc_method_handler(
                     servicer.Play,
-                    request_deserializer=media__server__pb2.PlayRequest.FromString,
-                    response_serializer=media__server__pb2.PlayResponse.SerializeToString,
+                    request_deserializer=mediarpc_dot_media__server__pb2.PlayRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.PlayResponse.SerializeToString,
             ),
             'Pause': grpc.unary_unary_rpc_method_handler(
                     servicer.Pause,
-                    request_deserializer=media__server__pb2.PauseRequest.FromString,
-                    response_serializer=media__server__pb2.PauseResponse.SerializeToString,
+                    request_deserializer=mediarpc_dot_media__server__pb2.PauseRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.PauseResponse.SerializeToString,
             ),
             'NextSong': grpc.unary_unary_rpc_method_handler(
                     servicer.NextSong,
-                    request_deserializer=media__server__pb2.NextSongRequest.FromString,
-                    response_serializer=media__server__pb2.NextSongResponse.SerializeToString,
+                    request_deserializer=mediarpc_dot_media__server__pb2.NextSongRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.NextSongResponse.SerializeToString,
             ),
             'SetOracle': grpc.unary_unary_rpc_method_handler(
                     servicer.SetOracle,
-                    request_deserializer=media__server__pb2.SetOracleRequest.FromString,
-                    response_serializer=media__server__pb2.SetOracleResponse.SerializeToString,
+                    request_deserializer=mediarpc_dot_media__server__pb2.SetOracleRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.SetOracleResponse.SerializeToString,
             ),
             'OracleUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.OracleUpdate,
-                    request_deserializer=media__server__pb2.OracleUpdateRequest.FromString,
-                    response_serializer=media__server__pb2.OracleUpdateResponse.SerializeToString,
+                    request_deserializer=mediarpc_dot_media__server__pb2.OracleUpdateRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.OracleUpdateResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -124,8 +124,8 @@ class MediaControlService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/Play',
-            media__server__pb2.PlayRequest.SerializeToString,
-            media__server__pb2.PlayResponse.FromString,
+            mediarpc_dot_media__server__pb2.PlayRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.PlayResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -141,8 +141,8 @@ class MediaControlService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/Pause',
-            media__server__pb2.PauseRequest.SerializeToString,
-            media__server__pb2.PauseResponse.FromString,
+            mediarpc_dot_media__server__pb2.PauseRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.PauseResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -158,8 +158,8 @@ class MediaControlService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/NextSong',
-            media__server__pb2.NextSongRequest.SerializeToString,
-            media__server__pb2.NextSongResponse.FromString,
+            mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -175,8 +175,8 @@ class MediaControlService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/SetOracle',
-            media__server__pb2.SetOracleRequest.SerializeToString,
-            media__server__pb2.SetOracleResponse.FromString,
+            mediarpc_dot_media__server__pb2.SetOracleRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.SetOracleResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -192,7 +192,7 @@ class MediaControlService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/OracleUpdate',
-            media__server__pb2.OracleUpdateRequest.SerializeToString,
-            media__server__pb2.OracleUpdateResponse.FromString,
+            mediarpc_dot_media__server__pb2.OracleUpdateRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.OracleUpdateResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
