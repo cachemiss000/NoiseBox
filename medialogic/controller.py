@@ -179,6 +179,9 @@ class Controller(object):
         """Toggle pausing playback."""
         self.vlc_player.toggle_pause()
 
+    def resume(self):
+        self.vlc_player.resume()
+
     def stop(self):
         """Stops current playback."""
         self.vlc_player.stop()
