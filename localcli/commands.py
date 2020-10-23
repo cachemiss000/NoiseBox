@@ -5,9 +5,7 @@ These commandline commands perform basic functionality for controlling the media
 basic testing from the command line, as well as configuration and scripting for users who know what they're doing.
 """
 
-import argparse
-from typing import Dict
-
+from common.safe_arg_parse import SafeArgumentParser
 from medialogic import media_library
 import json
 import pathlib
@@ -20,12 +18,6 @@ from localcli.print_controller import print_msg
 class IllegalArgument(UserException):
     """An exception for illegal commandline arguments"""
     pass
-
-
-class SafeArgumentParser(argparse.ArgumentParser):
-    """This handles errors for argparse, so errors get printed out to the commandline console."""
-    def error(self, message):
-        print_msg(message)
 
 
 class ListAudioDevices(Command):
@@ -234,7 +226,7 @@ class LoadLibrary(Command):
         if library_name == "" or library_name is None:
             raise IllegalArgument("Expected a name for the library. Instead got '%s'" % (library_name,))
 
-        file = open("%s/Media Libraries/%s.json" % (pathlib.Path(__file__).parent.absolute(), library_name), mode="r")
+        file = open("%s/../Media Libraries/%s.json" % (pathlib.Path(__file__).parent.absolute(), library_name), mode="r")
         json_str = file.read()
         ml_primitive = json.loads(json_str)
         self.controller.media_library = media_library.MediaLibrary.from_primitive(ml_primitive)
@@ -259,32 +251,3 @@ class DescribeSong(Command):
         self.controller.media_library.add_song(song, expect_overwrite=True)
 
 
-class Help(Command):
-    """Gets help for a given command."""
-    def __init__(self, command_dict: Dict[str, Command]):
-        ap = SafeArgumentParser("Get help on any command")
-        ap.add_argument("command", nargs='?', help="the command on which to receive help")
-        super().__init__(name="help", arg_parser=ap)
-        self.command_dict = command_dict
-
-    def do_function(self, command=""):
-        if command is None:
-            print_msg(self.help_string())
-            return
-        if command not in self.command_dict:
-            print_msg(
-                "Cannot find command '%s'.\n\nAvailable commands: '%s'" % (command, self.command_dict.keys()))
-            return
-        print_msg(self.command_dict[command].help_string())
-        return
-
-
-class ListCommands(Command):
-    """Lists all commands."""
-    def __init__(self, command_dict: Dict[str, Command]):
-        ap = SafeArgumentParser("List commands")
-        super().__init__(name="commands", arg_parser=ap)
-        self.command_dict = command_dict
-
-    def do_function(self):
-        print_msg("Available commands: [\n  %s\n]" % ("\n  ".join(self.command_dict)))
