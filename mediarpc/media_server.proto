@@ -8,6 +8,8 @@ service MediaControlService {
   rpc Play (PlayRequest) returns (PlayResponse) {}
   rpc Pause (PauseRequest) returns (PauseResponse) {}
   rpc NextSong (NextSongRequest) returns (NextSongResponse) {}
+  rpc ListSongs (ListSongsRequest) returns (ListSongsResponse) {}
+  rpc ListPlaylists (ListPlaylistsRequest) returns (ListPlaylistsResponse) {}
   rpc SetOracle (SetOracleRequest) returns (SetOracleResponse) {}
   rpc OracleUpdate (OracleUpdateRequest) returns (OracleUpdateResponse) {}
 }
@@ -107,6 +109,31 @@ message PauseRequest {}
 message PauseResponse {}
 message NextSongRequest {}
 message NextSongResponse {}
+
+message ListSongsRequest {
+  optional string page_token = 1;
+  optional int64 max_num_entries = 2;
+}
+
+message Song{
+  optional string song_alias = 1;
+  optional string song_uri = 2;
+}
+
+message ListSongsResponse{
+  repeated Song song = 1;
+  optional string next_page_token = 2;
+}
+
+message ListPlaylistsRequest {
+  optional string page_token = 1;
+  optional int64 max_num_entries = 2;
+}
+
+message ListPlaylistsResponse {
+  repeated string playlist_names = 1;
+  optional string next_page_token = 2;
+}
 
 message OracleUpdateError {
   optional string message = 1;

@@ -29,6 +29,16 @@ class MediaControlServiceStub(object):
                 request_serializer=mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
                 )
+        self.ListSongs = channel.unary_unary(
+                '/mediarpc.MediaControlService/ListSongs',
+                request_serializer=mediarpc_dot_media__server__pb2.ListSongsRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.ListSongsResponse.FromString,
+                )
+        self.ListPlaylists = channel.unary_unary(
+                '/mediarpc.MediaControlService/ListPlaylists',
+                request_serializer=mediarpc_dot_media__server__pb2.ListPlaylistsRequest.SerializeToString,
+                response_deserializer=mediarpc_dot_media__server__pb2.ListPlaylistsResponse.FromString,
+                )
         self.SetOracle = channel.unary_unary(
                 '/mediarpc.MediaControlService/SetOracle',
                 request_serializer=mediarpc_dot_media__server__pb2.SetOracleRequest.SerializeToString,
@@ -57,6 +67,18 @@ class MediaControlServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def NextSong(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListSongs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListPlaylists(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -91,6 +113,16 @@ def add_MediaControlServiceServicer_to_server(servicer, server):
                     servicer.NextSong,
                     request_deserializer=mediarpc_dot_media__server__pb2.NextSongRequest.FromString,
                     response_serializer=mediarpc_dot_media__server__pb2.NextSongResponse.SerializeToString,
+            ),
+            'ListSongs': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListSongs,
+                    request_deserializer=mediarpc_dot_media__server__pb2.ListSongsRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.ListSongsResponse.SerializeToString,
+            ),
+            'ListPlaylists': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListPlaylists,
+                    request_deserializer=mediarpc_dot_media__server__pb2.ListPlaylistsRequest.FromString,
+                    response_serializer=mediarpc_dot_media__server__pb2.ListPlaylistsResponse.SerializeToString,
             ),
             'SetOracle': grpc.unary_unary_rpc_method_handler(
                     servicer.SetOracle,
@@ -160,6 +192,40 @@ class MediaControlService(object):
         return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/NextSong',
             mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListSongs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/ListSongs',
+            mediarpc_dot_media__server__pb2.ListSongsRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.ListSongsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListPlaylists(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/ListPlaylists',
+            mediarpc_dot_media__server__pb2.ListPlaylistsRequest.SerializeToString,
+            mediarpc_dot_media__server__pb2.ListPlaylistsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

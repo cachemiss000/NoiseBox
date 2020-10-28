@@ -15,6 +15,7 @@ def main(*argv):
     commands_dict = {}
     for c in [
         commands.PlayCommand,
+        commands.ListPlaylists
     ]:
         instantiated_command = c(stub)
         commands_dict[instantiated_command.name] = instantiated_command

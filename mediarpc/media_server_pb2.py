@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1bmediarpc/media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0e\n\x0cPlayResponse\"\x0e\n\x0cPauseRequest\"\x0f\n\rPauseResponse\"\x11\n\x0fNextSongRequest\"\x12\n\x10NextSongResponse\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\xe8\x02\n\x13MediaControlService\x12\x37\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x16.mediarpc.PlayResponse\"\x00\x12:\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x17.mediarpc.PauseResponse\"\x00\x12\x43\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x1a.mediarpc.NextSongResponse\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
+  serialized_pb=b'\n\x1bmediarpc/media_server.proto\x12\x08mediarpc\"\xce\x02\n\x06Oracle\x12\n\n\x02id\x18\x01 \x01(\x03\x12+\n\x0bnull_oracle\x18\x02 \x01(\x0b\x32\x14.mediarpc.NullOracleH\x00\x12\x33\n\x0fplaylist_oracle\x18\x03 \x01(\x0b\x32\x18.mediarpc.PlaylistOracleH\x00\x12\x35\n\x10repeating_oracle\x18\x04 \x01(\x0b\x32\x19.mediarpc.RepeatingOracleH\x00\x12-\n\x0c\x63hain_oracle\x18\x05 \x01(\x0b\x32\x15.mediarpc.ChainOracleH\x00\x12/\n\rswitch_oracle\x18\x06 \x01(\x0b\x32\x16.mediarpc.SwitchOracleH\x00\x12\x35\n\x10interrupt_oracle\x18\x07 \x01(\x0b\x32\x19.mediarpc.InterruptOracleH\x00\x42\x08\n\x06oracle\"\x0c\n\nNullOracle\"%\n\x0ePlaylistOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\"5\n\x0fRepeatingOracle\x12\x13\n\x0bmedia_names\x18\x01 \x03(\t\x12\r\n\x05times\x18\x02 \x01(\x03\"5\n\x0b\x43hainOracle\x12&\n\x0coracle_queue\x18\x01 \x03(\x0b\x32\x10.mediarpc.Oracle\"8\n\x0cSwitchOracle\x12(\n\x0e\x63urrent_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\";\n\x0fInterruptOracle\x12(\n\x0e\x64\x65\x66\x61ult_oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"4\n\x10SetOracleRequest\x12 \n\x06oracle\x18\x01 \x01(\x0b\x32\x10.mediarpc.Oracle\"\xd9\x01\n\x13OracleUpdateRequest\x12\x11\n\toracle_id\x18\x01 \x01(\x03\x12\x33\n\x0c\x63hain_update\x18\x02 \x01(\x0b\x32\x1b.mediarpc.ChainOracleUpdateH\x00\x12\x35\n\rswitch_update\x18\x03 \x01(\x0b\x32\x1c.mediarpc.SwitchOracleUpdateH\x00\x12\x35\n\x10interrupt_update\x18\x04 \x01(\x0b\x32\x19.mediarpc.InterruptUpdateH\x00\x42\x0c\n\nUpdateType\"B\n\x14OracleUpdateResponse\x12*\n\x05\x65rror\x18\x01 \x03(\x0b\x32\x1b.mediarpc.OracleUpdateError\"\x91\x01\n\x11\x43hainOracleUpdate\x12\x34\n\x07\x63ommand\x18\x01 \x01(\x0e\x32#.mediarpc.ChainOracleUpdate.Command\x12\'\n\radded_oracles\x18\x02 \x03(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03\x41\x44\x44\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\x90\x01\n\x12SwitchOracleUpdate\x12\x35\n\x07\x63ommand\x18\x01 \x01(\x0e\x32$.mediarpc.SwitchOracleUpdate.Command\x12$\n\nnew_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"\x1d\n\x07\x43ommand\x12\x07\n\x03SET\x10\x01\x12\t\n\x05\x43LEAR\x10\x02\"\xa4\x01\n\x0fInterruptUpdate\x12\x32\n\x07\x63ommand\x18\x01 \x01(\x0e\x32!.mediarpc.InterruptUpdate.Command\x12.\n\x14new_interrupt_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\"-\n\x07\x43ommand\x12\r\n\tINTERRUPT\x10\x01\x12\x13\n\x0f\x43LEAR_INTERRUPT\x10\x02\"\x13\n\x11SetOracleResponse\"\r\n\x0bPlayRequest\"\x0e\n\x0cPlayResponse\"\x0e\n\x0cPauseRequest\"\x0f\n\rPauseResponse\"\x11\n\x0fNextSongRequest\"\x12\n\x10NextSongResponse\"?\n\x10ListSongsRequest\x12\x12\n\npage_token\x18\x01 \x01(\t\x12\x17\n\x0fmax_num_entries\x18\x02 \x01(\x03\",\n\x04Song\x12\x12\n\nsong_alias\x18\x01 \x01(\t\x12\x10\n\x08song_uri\x18\x02 \x01(\t\"J\n\x11ListSongsResponse\x12\x1c\n\x04song\x18\x01 \x03(\x0b\x32\x0e.mediarpc.Song\x12\x17\n\x0fnext_page_token\x18\x02 \x01(\t\"C\n\x14ListPlaylistsRequest\x12\x12\n\npage_token\x18\x01 \x01(\t\x12\x17\n\x0fmax_num_entries\x18\x02 \x01(\x03\"H\n\x15ListPlaylistsResponse\x12\x16\n\x0eplaylist_names\x18\x01 \x03(\t\x12\x17\n\x0fnext_page_token\x18\x02 \x01(\t\"e\n\x11OracleUpdateError\x12\x0f\n\x07message\x18\x01 \x01(\t\x12*\n\x10reference_oracle\x18\x02 \x01(\x0b\x32\x10.mediarpc.Oracle\x12\x13\n\x0bstack_trace\x18\x03 \x01(\t2\x84\x04\n\x13MediaControlService\x12\x37\n\x04Play\x12\x15.mediarpc.PlayRequest\x1a\x16.mediarpc.PlayResponse\"\x00\x12:\n\x05Pause\x12\x16.mediarpc.PauseRequest\x1a\x17.mediarpc.PauseResponse\"\x00\x12\x43\n\x08NextSong\x12\x19.mediarpc.NextSongRequest\x1a\x1a.mediarpc.NextSongResponse\"\x00\x12\x46\n\tListSongs\x12\x1a.mediarpc.ListSongsRequest\x1a\x1b.mediarpc.ListSongsResponse\"\x00\x12R\n\rListPlaylists\x12\x1e.mediarpc.ListPlaylistsRequest\x1a\x1f.mediarpc.ListPlaylistsResponse\"\x00\x12\x46\n\tSetOracle\x12\x1a.mediarpc.SetOracleRequest\x1a\x1b.mediarpc.SetOracleResponse\"\x00\x12O\n\x0cOracleUpdate\x12\x1d.mediarpc.OracleUpdateRequest\x1a\x1e.mediarpc.OracleUpdateResponse\"\x00'
 )
 
 
@@ -788,6 +788,201 @@ _NEXTSONGRESPONSE = _descriptor.Descriptor(
 )
 
 
+_LISTSONGSREQUEST = _descriptor.Descriptor(
+  name='ListSongsRequest',
+  full_name='mediarpc.ListSongsRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='page_token', full_name='mediarpc.ListSongsRequest.page_token', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='max_num_entries', full_name='mediarpc.ListSongsRequest.max_num_entries', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1588,
+  serialized_end=1651,
+)
+
+
+_SONG = _descriptor.Descriptor(
+  name='Song',
+  full_name='mediarpc.Song',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='song_alias', full_name='mediarpc.Song.song_alias', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='song_uri', full_name='mediarpc.Song.song_uri', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1653,
+  serialized_end=1697,
+)
+
+
+_LISTSONGSRESPONSE = _descriptor.Descriptor(
+  name='ListSongsResponse',
+  full_name='mediarpc.ListSongsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='song', full_name='mediarpc.ListSongsResponse.song', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='next_page_token', full_name='mediarpc.ListSongsResponse.next_page_token', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1699,
+  serialized_end=1773,
+)
+
+
+_LISTPLAYLISTSREQUEST = _descriptor.Descriptor(
+  name='ListPlaylistsRequest',
+  full_name='mediarpc.ListPlaylistsRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='page_token', full_name='mediarpc.ListPlaylistsRequest.page_token', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='max_num_entries', full_name='mediarpc.ListPlaylistsRequest.max_num_entries', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1775,
+  serialized_end=1842,
+)
+
+
+_LISTPLAYLISTSRESPONSE = _descriptor.Descriptor(
+  name='ListPlaylistsResponse',
+  full_name='mediarpc.ListPlaylistsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='playlist_names', full_name='mediarpc.ListPlaylistsResponse.playlist_names', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='next_page_token', full_name='mediarpc.ListPlaylistsResponse.next_page_token', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1844,
+  serialized_end=1916,
+)
+
+
 _ORACLEUPDATEERROR = _descriptor.Descriptor(
   name='OracleUpdateError',
   full_name='mediarpc.OracleUpdateError',
@@ -829,8 +1024,8 @@ _ORACLEUPDATEERROR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1588,
-  serialized_end=1689,
+  serialized_start=1918,
+  serialized_end=2019,
 )
 
 _ORACLE.fields_by_name['null_oracle'].message_type = _NULLORACLE
@@ -883,6 +1078,7 @@ _SWITCHORACLEUPDATE_COMMAND.containing_type = _SWITCHORACLEUPDATE
 _INTERRUPTUPDATE.fields_by_name['command'].enum_type = _INTERRUPTUPDATE_COMMAND
 _INTERRUPTUPDATE.fields_by_name['new_interrupt_oracle'].message_type = _ORACLE
 _INTERRUPTUPDATE_COMMAND.containing_type = _INTERRUPTUPDATE
+_LISTSONGSRESPONSE.fields_by_name['song'].message_type = _SONG
 _ORACLEUPDATEERROR.fields_by_name['reference_oracle'].message_type = _ORACLE
 DESCRIPTOR.message_types_by_name['Oracle'] = _ORACLE
 DESCRIPTOR.message_types_by_name['NullOracle'] = _NULLORACLE
@@ -904,6 +1100,11 @@ DESCRIPTOR.message_types_by_name['PauseRequest'] = _PAUSEREQUEST
 DESCRIPTOR.message_types_by_name['PauseResponse'] = _PAUSERESPONSE
 DESCRIPTOR.message_types_by_name['NextSongRequest'] = _NEXTSONGREQUEST
 DESCRIPTOR.message_types_by_name['NextSongResponse'] = _NEXTSONGRESPONSE
+DESCRIPTOR.message_types_by_name['ListSongsRequest'] = _LISTSONGSREQUEST
+DESCRIPTOR.message_types_by_name['Song'] = _SONG
+DESCRIPTOR.message_types_by_name['ListSongsResponse'] = _LISTSONGSRESPONSE
+DESCRIPTOR.message_types_by_name['ListPlaylistsRequest'] = _LISTPLAYLISTSREQUEST
+DESCRIPTOR.message_types_by_name['ListPlaylistsResponse'] = _LISTPLAYLISTSRESPONSE
 DESCRIPTOR.message_types_by_name['OracleUpdateError'] = _ORACLEUPDATEERROR
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -1047,6 +1248,41 @@ NextSongResponse = _reflection.GeneratedProtocolMessageType('NextSongResponse', 
   })
 _sym_db.RegisterMessage(NextSongResponse)
 
+ListSongsRequest = _reflection.GeneratedProtocolMessageType('ListSongsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _LISTSONGSREQUEST,
+  '__module__' : 'mediarpc.media_server_pb2'
+  # @@protoc_insertion_point(class_scope:mediarpc.ListSongsRequest)
+  })
+_sym_db.RegisterMessage(ListSongsRequest)
+
+Song = _reflection.GeneratedProtocolMessageType('Song', (_message.Message,), {
+  'DESCRIPTOR' : _SONG,
+  '__module__' : 'mediarpc.media_server_pb2'
+  # @@protoc_insertion_point(class_scope:mediarpc.Song)
+  })
+_sym_db.RegisterMessage(Song)
+
+ListSongsResponse = _reflection.GeneratedProtocolMessageType('ListSongsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _LISTSONGSRESPONSE,
+  '__module__' : 'mediarpc.media_server_pb2'
+  # @@protoc_insertion_point(class_scope:mediarpc.ListSongsResponse)
+  })
+_sym_db.RegisterMessage(ListSongsResponse)
+
+ListPlaylistsRequest = _reflection.GeneratedProtocolMessageType('ListPlaylistsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _LISTPLAYLISTSREQUEST,
+  '__module__' : 'mediarpc.media_server_pb2'
+  # @@protoc_insertion_point(class_scope:mediarpc.ListPlaylistsRequest)
+  })
+_sym_db.RegisterMessage(ListPlaylistsRequest)
+
+ListPlaylistsResponse = _reflection.GeneratedProtocolMessageType('ListPlaylistsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _LISTPLAYLISTSRESPONSE,
+  '__module__' : 'mediarpc.media_server_pb2'
+  # @@protoc_insertion_point(class_scope:mediarpc.ListPlaylistsResponse)
+  })
+_sym_db.RegisterMessage(ListPlaylistsResponse)
+
 OracleUpdateError = _reflection.GeneratedProtocolMessageType('OracleUpdateError', (_message.Message,), {
   'DESCRIPTOR' : _ORACLEUPDATEERROR,
   '__module__' : 'mediarpc.media_server_pb2'
@@ -1063,8 +1299,8 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1692,
-  serialized_end=2052,
+  serialized_start=2022,
+  serialized_end=2538,
   methods=[
   _descriptor.MethodDescriptor(
     name='Play',
@@ -1097,9 +1333,29 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='ListSongs',
+    full_name='mediarpc.MediaControlService.ListSongs',
+    index=3,
+    containing_service=None,
+    input_type=_LISTSONGSREQUEST,
+    output_type=_LISTSONGSRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ListPlaylists',
+    full_name='mediarpc.MediaControlService.ListPlaylists',
+    index=4,
+    containing_service=None,
+    input_type=_LISTPLAYLISTSREQUEST,
+    output_type=_LISTPLAYLISTSRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='SetOracle',
     full_name='mediarpc.MediaControlService.SetOracle',
-    index=3,
+    index=5,
     containing_service=None,
     input_type=_SETORACLEREQUEST,
     output_type=_SETORACLERESPONSE,
@@ -1109,7 +1365,7 @@ _MEDIACONTROLSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='OracleUpdate',
     full_name='mediarpc.MediaControlService.OracleUpdate',
-    index=4,
+    index=6,
     containing_service=None,
     input_type=_ORACLEUPDATEREQUEST,
     output_type=_ORACLEUPDATERESPONSE,
