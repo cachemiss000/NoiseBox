@@ -229,7 +229,7 @@ class LoadLibrary(Command):
         file = open("%s/../Media Libraries/%s.json" % (pathlib.Path(__file__).parent.absolute(), library_name), mode="r")
         json_str = file.read()
         ml_primitive = json.loads(json_str)
-        self.controller.media_library = media_library.MediaLibrary.from_primitive(ml_primitive)
+        self.controller.media_library.copy_from(media_library.MediaLibrary.from_primitive(ml_primitive))
 
 
 class DescribeSong(Command):

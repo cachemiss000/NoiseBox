@@ -161,6 +161,13 @@ class MediaLibrary(object):
                 "Song '%s' already exists in the library as '%s'" % (song, self.song_map[song.alias]))
         self.song_map[song.alias] = song
 
+    def copy_from(self, other) -> None:
+        self.playlists.clear()
+        self.song_map.clear()
+
+        self.playlists.update(other.playlists)
+        self.song_map.update(other.song_map)
+
     def get_song(self, song_alias: str) -> Song:
         """Returns a song from the map."""
         if song_alias not in self.song_map:
@@ -170,12 +177,15 @@ class MediaLibrary(object):
         return Song(alias=song.alias, uri=song.uri)
 
     def list_songs(self) -> List[Song]:
-        """Lists all songs as Song objects in the current library."""
-        return list(self.song_map.values())
+        """Lists all songs as Song objects in the current library.
+
+        This will need to be optimized eventually.
+        """
+        return sorted(list(self.song_map.values()), key=lambda s: s.alias)
 
     def list_playlists(self) -> List[Tuple[str, List[str]]]:
         """Lists all playlists. Returns a list of tuples containing the Playlist name and a list of Song aliases."""
-        return list((key, self.playlists[key]) for key in self.playlists.keys())
+        return sorted(list((key, self.playlists[key]) for key in self.playlists.keys()), key=lambda t: t[0])
 
     def get_playlist(self, playlist_name: str) -> List[str]:
         """Returns a list of songs for the corresponding input playlist name."""
