@@ -4,6 +4,8 @@
 /Media Libraries/
 /.idea/misc.xml
 /.idea/vcs.xml
+/.idea/modules.xml
+/.idea/*
 /.idea/dictionaries/*
 /scratch proto.txt
 /.idea/inspectionProfiles/profiles_settings.xml
