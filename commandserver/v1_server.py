@@ -1,10 +1,11 @@
 import collections
+import websockets
+import json
 from typing import List, Tuple
 
-import commandserver.media_server_pb2 as ms_pb
-import commandserver.media_server_pb2_grpc as ms_pb_grpc
+import commandserver.command_types_v1 as c_types
 from medialogic import media_library, controller
-import grpc
+
 
 DEFAULT_MAX_RESPONSE_SIZE = 200
 
@@ -16,11 +17,45 @@ class OutdatedPageException(Exception):
     pass
 
 
-class MediaServer(ms_pb_grpc.MediaControlService):
+class ErrorResponse(Exception, c_types.Response):
+    pass
+
+
+# Command names in this list do not need a parameter list to execute successfully, and will
+# not be checked for them by the command validation code.
+PARAMETERLESS_COMMANDS = [
+    c_types.TogglePlayCommand.COMMAND_NAME,
+    c_types.NextSongCommand.COMMAND_NAME,
+    c_types.ListSongs.COMMAND_NAME,
+    c_types.ListPlaylistsCommand.COMMAND_NAME,
+]
+
+
+class MediaServer:
     def __init__(self, controller: controller.Controller, media_library: media_library.MediaLibrary):
         super(MediaServer, self).__init__()
         self.media_library = media_library
         self.controller = controller
+
+    @classmethod
+    def parse_command(cls, command: str) -> c_types.Command:
+        """Parses a JSON command from the input string as expected over a raw websocket."""
+        json_result = c_types.Command.from_json(command)
+        if json_result.command_name is None:
+            raise ErrorResponse(command_status=c_types.ResponseState.CLIENT_ERROR,
+                                error_message="Command name must be specified on the input command",
+                                error_data=command)
+
+        if json_result.command_name in PARAMETERLESS_COMMANDS:
+            return  # No error checking needed if it otherwise parsed correctly.
+
+        if json_result.payload is None:
+            raise ErrorResponse(command_status=c_types.ResponseState.CLIENT_ERROR,
+                                error_message="Payload expected for command '%s'" % (json_result.command_name,),
+                                error_data=command)
+
+
+
 
     def Play(self, play_request, context) -> ms_pb.PlayResponse:
         self.controller.resume()

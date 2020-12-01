@@ -1,9 +1,9 @@
 """
-Contains the schema for the V1 CommandServer api - a websocket API used to control the media player remotely.
+Contains the schema for the V1 CommandServer api - a websockets API used to control the media player remotely.
 
 When operating as intended, the server runs locally on the user's computer, and remote applications connect to
 localhost, or other computers in the same local network. Future extensions may change this (e.g. adding control of
-the server through a webproxy)
+the server through a web proxy)
 
 We define the API using only Optional fields, to mitigate errors from minor version changes and prevent field
 lock-in as development continues. The server and client are expected to perform validation on each end to ensure
@@ -18,7 +18,7 @@ As of time of writing (11/30/20) - API is subject to change as development conti
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Protocol
 
 from dataclasses_json import dataclass_json
 
@@ -77,14 +77,24 @@ class ResponseState(Enum):
     # of that command in subsequent commands. Currently unused.
     PENDING = 1
 
-    # Failed successfully - the command failed for normal reasons due to user error
+    # Failed successfully - the command failed for normal reasons due to end user error
     USER_ERROR = 2
 
+    # Failed due to client implementation - the command failed because the client code did something wrong.
+    CLIENT_ERROR = 3
+
     # An error caused the process to fail - e.g. IO error, what have you.
-    FAILURE = 3
+    FAILURE = 4
 
     # Something really went wrong, and failed for an "unexpected" reason resulting in an uncaught exception or the like.
-    INTERNAL_ERROR = 4
+    INTERNAL_ERROR = 5
+
+
+class CommandCls(Protocol):
+    """The protocol defining what a Command payload looks like."""
+
+    # Name of the command to place in the Command.command_name field.
+    COMMAND_NAME: str
 
 
 @dataclass_json
@@ -97,7 +107,8 @@ class Command:
 
     # Details of the command. Should be set for all commands, but interpreted as an empty object if unset.
     # If set, expected to have the fields of the command type corresponding to the command_name field.
-    payload: Optional[Any]
+    payload: Optional[CommandCls]
+
 
 @dataclass_json
 @dataclass
@@ -167,7 +178,7 @@ class ListSongsCommand:
     page_token: Optional[str]
 
     # Maximum number of responses to return. Actual number may be smaller, depending on songs available etc.
-    max_num_entries: Optional[int]
+    max_num_entries: Optional[int] = 30
 
 
 @dataclass_json
@@ -189,11 +200,11 @@ class ListPlaylistsCommand:
 
     COMMAND_NAME = "LIST_PLAYLISTS"
 
-    # Optional token returned by previous ListPLaylists commands.
+    # Optional token returned by previous ListPlaylists commands.
     page_token: Optional[str]
 
     # Maximum number of responses to return. Actual number may be smaller, depending on songs available etc.
-    max_num_entries: Optional[int]
+    max_num_entries: Optional[int] = 30
 
 
 @dataclass_json
