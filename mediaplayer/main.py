@@ -15,8 +15,8 @@ from localcli.console import Console
 from medialogic.controller import Controller
 from common.exceptions import UserException
 from medialogic.media_library import MediaLibrary
-from mediarpc import server
-from mediarpc import media_server_pb2_grpc as ms_pb_grpc
+from commandserver import server
+from commandserver import media_server_pb2_grpc as ms_pb_grpc
 from datetime import datetime
 import time
 import pathlib

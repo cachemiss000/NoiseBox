@@ -1,7 +1,7 @@
 from common import command
 from common.safe_arg_parse import SafeArgumentParser
-from mediarpc import media_server_pb2_grpc as ms_pb_grpc
-from mediarpc import media_server_pb2 as ms_pb
+from commandserver import media_server_pb2_grpc as ms_pb_grpc
+from commandserver import media_server_pb2 as ms_pb
 
 
 class PlayCommand(command.Command):

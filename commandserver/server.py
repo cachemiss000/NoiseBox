@@ -1,8 +1,8 @@
 import collections
 from typing import List, Tuple
 
-import mediarpc.media_server_pb2 as ms_pb
-import mediarpc.media_server_pb2_grpc as ms_pb_grpc
+import commandserver.media_server_pb2 as ms_pb
+import commandserver.media_server_pb2_grpc as ms_pb_grpc
 from medialogic import media_library, controller
 import grpc
 

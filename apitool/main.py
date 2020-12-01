@@ -3,7 +3,7 @@ import sys
 import grpc
 
 import common.commands
-from mediarpc import media_server_pb2_grpc as ms_pb_grpc
+from commandserver import media_server_pb2_grpc as ms_pb_grpc
 
 from apitool import commands
 

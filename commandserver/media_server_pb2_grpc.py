@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from mediarpc import media_server_pb2 as mediarpc_dot_media__server__pb2
+from commandserver import media_server_pb2 as mediarpc_dot_media__server__pb2
 
 
 class MediaControlServiceStub(object):
@@ -15,37 +15,37 @@ class MediaControlServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Play = channel.unary_unary(
-                '/mediarpc.MediaControlService/Play',
+                '/commandserver.MediaControlService/Play',
                 request_serializer=mediarpc_dot_media__server__pb2.PlayRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.PlayResponse.FromString,
                 )
         self.Pause = channel.unary_unary(
-                '/mediarpc.MediaControlService/Pause',
+                '/commandserver.MediaControlService/Pause',
                 request_serializer=mediarpc_dot_media__server__pb2.PauseRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.PauseResponse.FromString,
                 )
         self.NextSong = channel.unary_unary(
-                '/mediarpc.MediaControlService/NextSong',
+                '/commandserver.MediaControlService/NextSong',
                 request_serializer=mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
                 )
         self.ListSongs = channel.unary_unary(
-                '/mediarpc.MediaControlService/ListSongs',
+                '/commandserver.MediaControlService/ListSongs',
                 request_serializer=mediarpc_dot_media__server__pb2.ListSongsRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.ListSongsResponse.FromString,
                 )
         self.ListPlaylists = channel.unary_unary(
-                '/mediarpc.MediaControlService/ListPlaylists',
+                '/commandserver.MediaControlService/ListPlaylists',
                 request_serializer=mediarpc_dot_media__server__pb2.ListPlaylistsRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.ListPlaylistsResponse.FromString,
                 )
         self.SetOracle = channel.unary_unary(
-                '/mediarpc.MediaControlService/SetOracle',
+                '/commandserver.MediaControlService/SetOracle',
                 request_serializer=mediarpc_dot_media__server__pb2.SetOracleRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.SetOracleResponse.FromString,
                 )
         self.OracleUpdate = channel.unary_unary(
-                '/mediarpc.MediaControlService/OracleUpdate',
+                '/commandserver.MediaControlService/OracleUpdate',
                 request_serializer=mediarpc_dot_media__server__pb2.OracleUpdateRequest.SerializeToString,
                 response_deserializer=mediarpc_dot_media__server__pb2.OracleUpdateResponse.FromString,
                 )
@@ -136,7 +136,7 @@ def add_MediaControlServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'mediarpc.MediaControlService', rpc_method_handlers)
+            'commandserver.MediaControlService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -155,7 +155,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/Play',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/Play',
             mediarpc_dot_media__server__pb2.PlayRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.PlayResponse.FromString,
             options, channel_credentials,
@@ -172,7 +172,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/Pause',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/Pause',
             mediarpc_dot_media__server__pb2.PauseRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.PauseResponse.FromString,
             options, channel_credentials,
@@ -189,7 +189,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/NextSong',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/NextSong',
             mediarpc_dot_media__server__pb2.NextSongRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.NextSongResponse.FromString,
             options, channel_credentials,
@@ -206,7 +206,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/ListSongs',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/ListSongs',
             mediarpc_dot_media__server__pb2.ListSongsRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.ListSongsResponse.FromString,
             options, channel_credentials,
@@ -223,7 +223,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/ListPlaylists',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/ListPlaylists',
             mediarpc_dot_media__server__pb2.ListPlaylistsRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.ListPlaylistsResponse.FromString,
             options, channel_credentials,
@@ -240,7 +240,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/SetOracle',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/SetOracle',
             mediarpc_dot_media__server__pb2.SetOracleRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.SetOracleResponse.FromString,
             options, channel_credentials,
@@ -257,7 +257,7 @@ class MediaControlService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mediarpc.MediaControlService/OracleUpdate',
+        return grpc.experimental.unary_unary(request, target, '/commandserver.MediaControlService/OracleUpdate',
             mediarpc_dot_media__server__pb2.OracleUpdateRequest.SerializeToString,
             mediarpc_dot_media__server__pb2.OracleUpdateResponse.FromString,
             options, channel_credentials,

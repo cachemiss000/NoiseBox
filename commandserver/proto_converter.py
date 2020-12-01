@@ -9,7 +9,7 @@ your new oracle proto, and then update the function dictionary at the bottom of 
 to your function by adding another entry.
 """
 
-import mediarpc.media_server_pb2 as ms_pb
+import commandserver.media_server_pb2 as ms_pb
 from medialogic import oracles
 
 ORACLE_FIELD_NAME = "oracle"

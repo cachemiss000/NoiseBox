@@ -6,8 +6,8 @@ import itertools
 import unittest
 from common import test_utils as utils
 from medialogic import oracles
-import mediarpc.media_server_pb2 as ms_pb
-import mediarpc.proto_converter as converter
+import commandserver.media_server_pb2 as ms_pb
+import commandserver.proto_converter as converter
 
 
 def wrap_base_oracle(oracle):
