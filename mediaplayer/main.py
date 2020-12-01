@@ -1,5 +1,5 @@
 """
-The main.py module for a commandline console controlling the vlc-controller codebase.
+The main.py module for a commandline console controlling the NoiseBox.
 """
 
 import logging
@@ -7,16 +7,13 @@ import os
 import traceback
 from concurrent import futures
 
-import grpc
-
 import common.commands
 from localcli import commands
 from localcli.console import Console
 from medialogic.controller import Controller
 from common.exceptions import UserException
 from medialogic.media_library import MediaLibrary
-from commandserver import server
-from commandserver import media_server_pb2_grpc as ms_pb_grpc
+from commandserver import v1_server
 from datetime import datetime
 import time
 import pathlib
@@ -36,7 +33,7 @@ class MediaPlayerMaster(object):
         self.controller = Controller(self.ml)
         self.console = Console()
         self.console_output = self.console.start()
-        self.media_server = server.MediaServer(self.controller, self.ml)
+        self.media_server = v1_server.MediaServer(self.controller, self.ml)
 
     def start_local_cli(self):
         # "Normal" commands, which only need the controller.
