@@ -15,6 +15,7 @@ def create_fake_audio_device(description, next):
     """Creates a fake audio object that looks like VLC's audio object."""
     device_mock = mock.MagicMock()
     device_mock.contents.description = description
+    device_mock.contents.device = description
     device_mock.contents.next = next
     device_mock.freed = False
 
