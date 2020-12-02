@@ -26,6 +26,7 @@ DEFAULT_PORT = 98210
 SERVING_ADDRESS = "/noisebox/command_server/v1"
 
 
+@dataclass_json
 @dataclass
 class Song(object):
     """A song that can be played by the media player."""
@@ -34,15 +35,16 @@ class Song(object):
     name: Optional[str]
 
     # Human-friendly description of the song - only for informational purposes, and maybe un-set.
-    description: Optional[str]
+    description: Optional[str] = None
 
     # Additional metadata, currently unspecified.
-    metadata: Optional[Any]
+    metadata: Optional[Any] = None
 
     # Path of the file from the viewpoint of the local server.
-    local_path: Optional[str]
+    local_path: Optional[str] = None
 
 
+@dataclass_json
 @dataclass
 class Playlist(object):
     """A Playlist of songs that can be played by the media player."""
@@ -52,23 +54,20 @@ class Playlist(object):
     name: Optional[str]
 
     # Human-friendly description of the playlist, picked by the user. Informational purposes only.
-    description: Optional[str]
+    description: Optional[str] = None
 
     # Additional metadata, currently unspecified.
-    metadata: Optional[Any]
+    metadata: Optional[Any] = None
 
     # An ordered list of song aliases - referring to Song.name fields that will play as part of this playlist.
-    songs: Optional[List[str]]
+    songs: Optional[List[str]] = None
 
 
-class ResponseState(Enum):
+class CommandStatus(Enum):
     """Different potential response states, indicating the success or failure of the prompting command.
 
     Should not be instantiated directly.
     """
-
-    def __init__(self):
-        raise NotImplementedError
 
     # Success - the command was performed as-indicated.
     SUCCESS = 0
@@ -90,6 +89,10 @@ class ResponseState(Enum):
     INTERNAL_ERROR = 5
 
 
+# Do it this way because otherwise SUCCESS_TYPES will be an enum, and we just want the frozenset.
+CommandStatus.SUCCESS_TYPES = frozenset([CommandStatus.SUCCESS, CommandStatus.PENDING])
+
+
 class CommandCls(Protocol):
     """The protocol defining what a Command payload looks like."""
 
@@ -107,7 +110,7 @@ class Command:
 
     # Details of the command. Should be set for all commands, but interpreted as an empty object if unset.
     # If set, expected to have the fields of the command type corresponding to the command_name field.
-    payload: Optional[CommandCls]
+    payload: Optional[CommandCls] = None
 
 
 @dataclass_json
@@ -116,14 +119,14 @@ class Response:
     """A response that could return error information."""
 
     # The status of the operation.
-    command_status: Optional[ResponseState]
+    command_status: Optional[CommandStatus]
 
     # A Human-friendly error message, used to understand what happened.
-    error_message: Optional[str]
+    error_message: Optional[str] = None
 
     # Any additional info which might be helpful for debugging. Shape may change depending on the circumstance,
     # server flags, runtime environment, etc etc etc (basically, don't depend on anything in particular)
-    error_data: Optional[Any]
+    error_data: Optional[Any] = None
 
 
 @dataclass_json
@@ -135,7 +138,7 @@ class TogglePlayCommand:
 
     # Optional field which indicates whether the server should play or pause. If unset, the server picks the
     # opposite of the current state.
-    play_state: Optional[bool]
+    play_state: Optional[bool] = None
 
 
 @dataclass_json
@@ -144,7 +147,7 @@ class TogglePlayResponse(Response):
     """Response to a play command."""
 
     # Whether media is now playing or not.
-    new_play_state: Optional[bool]
+    new_play_state: Optional[bool] = None
 
 
 @dataclass_json
@@ -161,10 +164,10 @@ class NextSongResponse(Response):
     """Response to a NextSongCommand."""
 
     # True if a "next" song was found and is now playing.
-    still_playing: Optional[bool]
+    still_playing: Optional[bool] = None
 
     # May contain the current song playing, or is empty if no song is playing or an error occurred.
-    current_song: Optional[str]
+    current_song: Optional[str] = None
 
 
 @dataclass_json
@@ -175,7 +178,7 @@ class ListSongsCommand:
     COMMAND_NAME = "LIST_SONGS"
 
     # Optional token returned by previous ListSong commands
-    page_token: Optional[str]
+    page_token: Optional[str] = None
 
     # Maximum number of responses to return. Actual number may be smaller, depending on songs available etc.
     max_num_entries: Optional[int] = 30
@@ -187,10 +190,10 @@ class ListSongsResponse(Response):
     """The list of currently available songs."""
 
     # The list of songs being returned
-    songs: Optional[List[Song]]
+    songs: Optional[List[Song]] = None
 
     # Token for future "ListSong" commands to pick up at the same spot.
-    page_token: Optional[str]
+    page_token: Optional[str] = None
 
 
 @dataclass_json
@@ -201,7 +204,7 @@ class ListPlaylistsCommand:
     COMMAND_NAME = "LIST_PLAYLISTS"
 
     # Optional token returned by previous ListPlaylists commands.
-    page_token: Optional[str]
+    page_token: Optional[str] = None
 
     # Maximum number of responses to return. Actual number may be smaller, depending on songs available etc.
     max_num_entries: Optional[int] = 30
@@ -209,11 +212,21 @@ class ListPlaylistsCommand:
 
 @dataclass_json
 @dataclass
-class ListPlaylistCommand(Response):
+class ListPlaylistResponse(Response):
     """The list of the currently available playlists."""
 
     # The list of playlists being returned.
-    playlists: Optional[List[Playlist]]
+    playlists: Optional[List[Playlist]] = None
 
     # Token for future "ListPlaylists" commands to pick up at the same spot.
-    page_token: Optional[str]
+    page_token: Optional[str] = None
+
+
+COMMANDS = frozenset([
+    TogglePlayCommand,
+    NextSongCommand,
+    ListSongsCommand,
+    ListPlaylistsCommand,
+])
+
+COMMAND_NAMES = frozenset(map(lambda x: x.COMMAND_NAME, COMMANDS))
