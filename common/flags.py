@@ -35,7 +35,8 @@ class _FlagNamespaceContainer:
         self.flag_function_registry = []
 
         # Used to override sys.argv for testing.
-        # An array of strings. Typically unset.
+        # An array of strings. Typically unset, except in the FLAGS unittest. Other tests should use
+        # the override_flags() method.
         self._override_flags = None
 
     def __getattr__(self, name):
@@ -49,7 +50,10 @@ class _FlagNamespaceContainer:
         return self._flag_namespace.__getattribute__(name)
 
     def init(self):
-        """Add all registered flags to "this" namespace."""
+        """Add all registered flags to "this" namespace.
+
+        Can be called multiple times. Call "FLAGS.reset()" to undo.
+        """
         parser = argparse.ArgumentParser()
         for fn in self.flag_function_registry:
             fn(parser)
@@ -68,6 +72,25 @@ class _FlagNamespaceContainer:
     def register_flag(self, **kwargs):
         """Register a singular flag as with ArgumentParser.add_argument(...)"""
         self.register_flags(lambda parser: parser.add_argument(**kwargs))
+
+    def override_flag(self, key, value):
+        """Override a flag key/value pair for a test.
+
+        Works as a context manager with "with" statements to 'unset' changed flags, for individual test cases.
+        """
+
+        old_value = self._flag_namespace.__getattribute__(key)
+        instance = self
+        class _OverrideContextManager:
+            """Quick and dirty context manager, using scope capture for state management."""
+            def __enter__(self):
+                yield
+
+            def __exit__(self, *args):
+                instance._flag_namespace.__setattr__(key, old_value)
+
+        self._flag_namespace.__setattr__(key, value)
+        return _OverrideContextManager()
 
     def reset(self):
         self._flag_namespace = None
