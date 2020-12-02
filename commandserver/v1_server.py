@@ -26,7 +26,7 @@ class ErrorResponse(Exception, c_types.Response):
 PARAMETERLESS_COMMANDS = [
     c_types.TogglePlayCommand.COMMAND_NAME,
     c_types.NextSongCommand.COMMAND_NAME,
-    c_types.ListSongs.COMMAND_NAME,
+    c_types.ListSongsCommand.COMMAND_NAME,
     c_types.ListPlaylistsCommand.COMMAND_NAME,
 ]
 
