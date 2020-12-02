@@ -175,12 +175,20 @@ class Controller(object):
         self.interrupt_oracle.clear_interrupt()
         self.vlc_player.next_song()
 
-    def pause(self):
-        """Toggle pausing playback."""
-        self.vlc_player.toggle_pause()
+    def toggle_pause(self):
+        """Toggle pausing playback. Returns true if now paused, or false otherwise."""
+        return self.vlc_player.toggle_pause()
 
-    def resume(self):
-        self.vlc_player.resume()
+    def set_pause(self, value: bool):
+        return self.vlc_player.set_pause(value)
+
+    def paused(self) -> bool:
+        """Return true if currently paused, but false in all other cases (incl. stopped)."""
+        return self.vlc_player.paused()
+
+    def playing(self) -> bool:
+        """Returns true if currently playing or about to play (e.g. buffering), and false in all other cases."""
+        return self.vlc_player.playing()
 
     def stop(self):
         """Stops current playback."""

@@ -14,6 +14,12 @@ from time import sleep
 
 import vlc
 
+_VLC_PLAYING_STATES = [
+    vlc.State.Playing,
+    vlc.State.Buffering,
+    vlc.State.Opening,
+]
+
 logger = logging.getLogger("media-player")
 
 
@@ -34,7 +40,6 @@ class Player(object):
     def __init__(self):
         self.mp = vlc.MediaPlayer()
         self.manager = self.mp.event_manager()
-        self.playing = False
         self.device = None
         self.current_oracle = None
 
@@ -77,17 +82,20 @@ class Player(object):
             self.mp.audio_output_device_set(None, self.device)
         self.manager.event_attach(vlc.EventType.MediaPlayerEndReached, next_song_cb(self))
 
-    def pause(self):
+    def set_pause(self, value: bool):
         """Pause the current media playback."""
-        self.mp.set_pause(True)
-
-    def resume(self):
-        """Unpause current media playback."""
-        self.mp.set_pause(False)
+        return self.mp.set_pause(value)
 
     def toggle_pause(self):
-        """Toggle media playback pause."""
+        """Toggle media playback pause. Returns true if now paused, false if playing."""
         self.mp.pause()
+        return not self.playing()
+
+    def paused(self):
+        return self.mp.get_state() == vlc.State.Paused
+
+    def playing(self):
+        return self.mp.get_state() in _VLC_PLAYING_STATES
 
     def stop(self):
         self.mp.stop()

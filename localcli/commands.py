@@ -121,7 +121,7 @@ class Pause(Command):
         self.controller = controller
 
     def do_function(self):
-        self.controller.pause()
+        self.controller.toggle_pause()
 
 
 class Stop(Command):
