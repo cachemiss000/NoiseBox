@@ -8,6 +8,10 @@ FLAGS = flags.FLAGS
 
 
 class TestFlags(unittest.TestCase):
+
+    def setUp(self):
+        FLAGS.reset()
+
     @staticmethod
     def register_flags(parser: argparse.ArgumentParser):
         parser.add_argument("--should_be_true", default=False)
@@ -15,8 +19,10 @@ class TestFlags(unittest.TestCase):
 
     def test_flags(self):
         FLAGS.register_flags(self.register_flags)
+        FLAGS.init()
         self.assertTrue(FLAGS.should_be_true)
 
 
 if __name__ == '__main__':
     unittest.main()
+

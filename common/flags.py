@@ -69,6 +69,10 @@ class _FlagNamespaceContainer:
         """Register a singular flag as with ArgumentParser.add_argument(...)"""
         self.register_flags(lambda parser: parser.add_argument(**kwargs))
 
+    def reset(self):
+        self._flag_namespace = None
+        self.flag_function_registry = []
+        self._override_flags = []
 
 FLAGS = _FlagNamespaceContainer()
 
