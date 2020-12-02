@@ -1,6 +1,6 @@
 import argparse
 
-from localcli.print_controller import print_msg
+from common.print_controller import print_msg
 
 
 class SafeArgumentParser(argparse.ArgumentParser):

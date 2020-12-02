@@ -12,7 +12,7 @@ import pathlib
 from common.command import Command
 from medialogic.controller import Controller
 from common.exceptions import UserException
-from localcli.print_controller import print_msg
+from common.print_controller import print_msg
 
 
 class IllegalArgument(UserException):

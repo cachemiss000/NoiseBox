@@ -7,7 +7,7 @@ from unittest import mock
 
 from localcli import commands
 from localcli.commands import AddSong, IllegalArgument
-from localcli import print_controller
+from common import print_controller
 from medialogic.controller import Controller
 from medialogic.media_library import MediaLibrary, Song
 
