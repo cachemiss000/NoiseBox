@@ -24,6 +24,7 @@ Contraindications:
  * AVOID setting/registering flags outside the global scope.
 """
 import argparse
+import sys
 from typing import Callable
 
 
@@ -57,8 +58,15 @@ class _FlagNamespaceContainer:
         parser = argparse.ArgumentParser()
         for fn in self.flag_function_registry:
             fn(parser)
-
-        self._flag_namespace = parser.parse_args(args=self._override_flags)
+        flags_to_parse = sys.argv if not self._override_flags else self._override_flags
+        if 'unittest' in flags_to_parse[0]:  # ex: "python -m unittest"
+            # We're being run as part of the unittest framework. Quick hack out bad flags
+            try:
+                post_idx = flags_to_parse.index("--")
+                flags_to_parse = flags_to_parse[post_idx + 1:]
+            except ValueError:
+                flags_to_parse = []  # Did not find the '--' after which we should pull flags
+        self._flag_namespace = parser.parse_args(args=flags_to_parse)
 
     def register_flags(self, flag_fn: Callable):
         """Call a function to configure flags in the namespace."""
@@ -81,8 +89,10 @@ class _FlagNamespaceContainer:
 
         old_value = self._flag_namespace.__getattribute__(key)
         instance = self
+
         class _OverrideContextManager:
             """Quick and dirty context manager, using scope capture for state management."""
+
             def __enter__(self):
                 yield
 
@@ -96,6 +106,7 @@ class _FlagNamespaceContainer:
         self._flag_namespace = None
         self.flag_function_registry = []
         self._override_flags = []
+
 
 FLAGS = _FlagNamespaceContainer()
 

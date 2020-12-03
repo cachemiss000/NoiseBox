@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List, Tuple, Optional
 
 import commandserver.command_types_v1 as c_types
-from commandserver import flags as server_flags
+from commandserver import server_flags as server_flags
 from medialogic import media_library, controller
 from common import flags
 
@@ -70,7 +70,7 @@ class MediaServer:
         """Parses a JSON command from the input string as expected over a raw websocket."""
         # infer_missing returns missing fields as None, which is always the desired behavior
         # in our case. Otherwise, empty optional fields would throw.
-        command_result = c_types.Command.from_json(command, infer_missing=True)
+        command_result = c_types.Command.from_json(command, infer_missing=True)  # type: ignore
         if command_result.command_name is None:
             raise ErrorResponse(command_status=c_types.CommandStatus.CLIENT_ERROR,
                                 error_message="Command name must be specified on the input command",
@@ -98,7 +98,7 @@ class MediaServer:
             command = MediaServer.parse_command(command_str)
             if command.command_name == c_types.TogglePlayCommand.COMMAND_NAME:
                 return self.toggle_play(
-                    c_types.TogglePlayCommand.from_dict(command.payload) if command.payload else None)
+                    c_types.TogglePlayCommand.from_dict(command.payload) if command.payload else None)  # type: ignore
         except ErrorResponse as e:
             return e
         except Exception as e:
@@ -106,6 +106,9 @@ class MediaServer:
                 command_status=c_types.CommandStatus.INTERNAL_ERROR,
                 error_message="Unexpected error encountered: '%s'" % (e,),
                 error_data=e)
+        return ErrorResponse(
+            command_status=c_types.CommandStatus.INTERNAL_ERROR,
+            error_message="Unexpected error encountered.")
 
     def toggle_play(self, play_request: Optional[c_types.TogglePlayCommand]) -> c_types.Response:
         """Toggles the play/pause state, with "play" == True.
@@ -163,7 +166,9 @@ class MediaServer:
     #
 
 
-def get_output_page(sequence: List[object], max_length: int, next_page_token: Page) -> Tuple[List[object], Page]:
+def get_output_page(sequence: List[object],
+                    max_length: int,
+                    next_page_token: Optional[Page]) -> Tuple[List[object], Optional[Page]]:
     # Quick little cheat so we can use this code even when no page was provided.
     sequence_hash = str(hash(tuple(sequence)))
     if not next_page_token:
@@ -186,7 +191,7 @@ def page_to_string(page: Page) -> str:
     return bytearray(string, "ascii").hex()
 
 
-def string_to_page(hex_string: str) -> Page:
+def string_to_page(hex_string: str) -> Optional[Page]:
     if not hex_string:
         return None
 

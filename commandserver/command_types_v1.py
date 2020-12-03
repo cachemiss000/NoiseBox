@@ -18,7 +18,7 @@ As of time of writing (11/30/20) - API is subject to change as development conti
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Any, List, Protocol
+from typing import Optional, Any, List, Protocol, Set, Type
 
 from dataclasses_json import dataclass_json
 
@@ -90,7 +90,7 @@ class CommandStatus(Enum):
 
 
 # Do it this way because otherwise SUCCESS_TYPES will be an enum, and we just want the frozenset.
-CommandStatus.SUCCESS_TYPES = frozenset([CommandStatus.SUCCESS, CommandStatus.PENDING])
+CommandStatus.SUCCESS_TYPES = frozenset([CommandStatus.SUCCESS, CommandStatus.PENDING])  # type: ignore
 
 
 class CommandCls(Protocol):
@@ -222,11 +222,6 @@ class ListPlaylistResponse(Response):
     page_token: Optional[str] = None
 
 
-COMMANDS = frozenset([
-    TogglePlayCommand,
-    NextSongCommand,
-    ListSongsCommand,
-    ListPlaylistsCommand,
-])
+COMMANDS: Set[Type[CommandCls]] = {TogglePlayCommand, NextSongCommand, ListSongsCommand, ListPlaylistsCommand}
 
-COMMAND_NAMES = frozenset(map(lambda x: x.COMMAND_NAME, COMMANDS))
+COMMAND_NAMES: Set[str] = set(map(lambda x: x.COMMAND_NAME, COMMANDS))

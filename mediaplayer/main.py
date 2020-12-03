@@ -18,7 +18,7 @@ from datetime import datetime
 import time
 import pathlib
 
-from localcli.print_controller import print_msg
+from common.print_controller import print_msg
 
 _NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()

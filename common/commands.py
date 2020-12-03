@@ -2,7 +2,7 @@ from typing import Dict
 
 from common.command import Command
 from common.safe_arg_parse import SafeArgumentParser
-from localcli.print_controller import print_msg
+from common.print_controller import print_msg
 
 
 class Help(Command):
