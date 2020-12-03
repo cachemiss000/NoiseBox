@@ -33,7 +33,7 @@ class _FlagNamespaceContainer:
 
     def __init__(self):
         self._flag_namespace = None
-        self.flag_function_registry = []
+        self.flag_function_registry = set()
 
         # Used to override sys.argv for testing.
         # An array of strings. Typically unset, except in the FLAGS unittest. Other tests should use
@@ -68,14 +68,16 @@ class _FlagNamespaceContainer:
                 flags_to_parse = []  # Did not find the '--' after which we should pull flags
         self._flag_namespace = parser.parse_args(args=flags_to_parse)
 
-    def register_flags(self, flag_fn: Callable):
+    def require(self, flag_fn: Callable):
         """Call a function to configure flags in the namespace."""
         if self._flag_namespace is not None:
             raise Exception("Cannot add flags after flags have been retrieved."
                             "Did you try to access a FLAGS value at the global scope? "
                             "(hint: don't do that.)")
+        if flag_fn in self.flag_function_registry:
+            return
 
-        self.flag_function_registry.append(flag_fn)
+        self.flag_function_registry.add(flag_fn)
 
     def register_flag(self, **kwargs):
         """Register a singular flag as with ArgumentParser.add_argument(...)"""
@@ -104,15 +106,15 @@ class _FlagNamespaceContainer:
 
     def reset(self):
         self._flag_namespace = None
-        self.flag_function_registry = []
+        self.flag_function_registry = set()
         self._override_flags = []
 
 
 FLAGS = _FlagNamespaceContainer()
 
 
-def register_flags(flag_fn: Callable):
-    return FLAGS.register_flags(flag_fn)
+def require(flag_fn: Callable):
+    return FLAGS.require(flag_fn)
 
 
 def init():
