@@ -1,11 +1,13 @@
 """
 The main.py module for a commandline console controlling the NoiseBox.
 """
-
+import asyncio
 import logging
 import os
 import traceback
 from concurrent import futures
+
+import websockets
 
 import common.commands
 from localcli import commands
@@ -13,7 +15,8 @@ from localcli.console import Console
 from medialogic.controller import Controller
 from common.exceptions import UserException
 from medialogic.media_library import MediaLibrary
-from commandserver import v1_server
+from commandserver import v1_server, websocket_muxer
+from commandserver import command_types_v1 as v1_c_types
 from datetime import datetime
 import time
 import pathlib
@@ -27,7 +30,10 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
 logger = logging.getLogger("media-player")
 THREAD_POOL = futures.ThreadPoolExecutor(max_workers=10)
 
+
 class MediaPlayerMaster(object):
+    # TODO: It'd be nice to make this thing fully-async... as in, including the "CLI" bits.
+
     def __init__(self):
         self.ml = MediaLibrary()
         self.controller = Controller(self.ml)
@@ -79,16 +85,17 @@ class MediaPlayerMaster(object):
                 break
         self.console.write("Exiting now...")
 
-    def start_server(self):
-        grpc_server = grpc.server(THREAD_POOL)
-        ms_pb_grpc.add_MediaControlServiceServicer_to_server(self.media_server, grpc_server)
-        # Copied from protobuf 2 documentation, because that's how you pick ports, right?
-        grpc_server.add_insecure_port('[::]:50051')
-        grpc_server.start()
-        grpc_server.wait_for_termination()
+    async def run_server(self):
+        v1 = v1_server.MediaServer(self.controller, self.ml)
+        muxer = websocket_muxer.WebsocketMuxer()
+        muxer.register(v1_c_types.SERVING_ADDRESS, v1)
+
+        await websockets.serve(muxer.handle_session, "localhost", v1_c_types.DEFAULT_PORT)
+        print_msg("Server running @ ws://localhost:%s...", v1_c_types.DEFAULT_PORT)
 
 
 if __name__ == '__main__':
     mps = MediaPlayerMaster()
     THREAD_POOL.submit(MediaPlayerMaster.start_local_cli, mps)
-    mps.start_server()
+    asyncio.create_task(mps.run_server())
+    asyncio.get_event_loop().run_forever()

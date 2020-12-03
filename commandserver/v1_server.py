@@ -4,13 +4,13 @@ from enum import Enum
 from typing import List, Tuple, Optional
 
 import commandserver.command_types_v1 as c_types
-from commandserver import server_flags as server_flags
+from commandserver import server_flags as server_flags, websocket_muxer
 from medialogic import media_library, controller
 from common import flags
 
 VERSION = "V1"
 FLAGS = flags.FLAGS
-FLAGS.register_flags(server_flags.flags)
+FLAGS.require(server_flags.flags)
 
 # TODO: For type sanity, this NEEDS to be a class. Goddamn.
 Page = collections.namedtuple("Page", ["list_hash", "element"])
@@ -59,7 +59,7 @@ PARAMETERLESS_COMMANDS: List[str] = [
 ]
 
 
-class MediaServer:
+class MediaServer(websocket_muxer.Server):
     def __init__(self, c: controller.Controller, ml: media_library.MediaLibrary):
         super(MediaServer, self).__init__()
         self.media_library = ml
@@ -93,22 +93,24 @@ class MediaServer:
                                 error_data=command)
         return command_result
 
-    def accept(self, command_str: str) -> c_types.Response:
+    def accept(self, command_str: str) -> str:
+        # TODO: We have a bunch of "type: ignore" comments everywhere because mypy can't figure out
+        # a simple decorator.
         try:
             command = MediaServer.parse_command(command_str)
             if command.command_name == c_types.TogglePlayCommand.COMMAND_NAME:
                 return self.toggle_play(
-                    c_types.TogglePlayCommand.from_dict(command.payload) if command.payload else None)  # type: ignore
+                    c_types.TogglePlayCommand.from_dict(command.payload) if command.payload else None).to_json()  # type: ignore
         except ErrorResponse as e:
-            return e
+            return e.to_json()  # type: ignore
         except Exception as e:
             return ErrorResponse(
                 command_status=c_types.CommandStatus.INTERNAL_ERROR,
                 error_message="Unexpected error encountered: '%s'" % (e,),
-                error_data=e)
+                error_data=str(e)).to_json()  # type: ignore
         return ErrorResponse(
             command_status=c_types.CommandStatus.INTERNAL_ERROR,
-            error_message="Unexpected error encountered.")
+            error_message="Unexpected error encountered.").to_json()  # type: ignore
 
     def toggle_play(self, play_request: Optional[c_types.TogglePlayCommand]) -> c_types.Response:
         """Toggles the play/pause state, with "play" == True.

@@ -11,7 +11,6 @@ from medialogic import controller, media_library
 # We can do this because it's a test file, so we know it's top-level :P
 FLAGS = flags.FLAGS
 FLAGS.init()
-FLAGS.override_flag("debug", True)
 
 
 class MockController(Mock):
@@ -42,6 +41,9 @@ def mock_server() -> (server.MediaServer, controller.Controller, media_library.M
 
 
 class CommandParsingTest(unittest.TestCase):
+    def setUp(self):
+        FLAGS.override_flag("debug", True)
+
 
     def test_parameterless_not_empty(self):
         """Sanity test to ensure the next test isn't running on the empty set."""
@@ -100,6 +102,8 @@ def is_successful_response(response: c_types.Response):
 
 
 class PlayCommandTest(unittest.TestCase):
+    def setUp(self):
+        FLAGS.override_flag("debug", True)
 
     @parameterized.expand([(True,), (False,)])
     def test_play_no_arg_toggles(self, starting_play_state):
@@ -107,7 +111,7 @@ class PlayCommandTest(unittest.TestCase):
         command = {"command_name": c_types.TogglePlayCommand.COMMAND_NAME}
         server, c, ml = mock_server()
         c.playing_state = starting_play_state
-        response = server.accept(json.dumps(command))
+        response = c_types.TogglePlayResponse.from_json(server.accept(json.dumps(command)))
         self.assertTrue(is_successful_response(response))
         self.assertIsNone(response.error_message)
         self.assertIsNone(response.error_data)
@@ -131,7 +135,7 @@ class PlayCommandTest(unittest.TestCase):
         }
         server, c, ml = mock_server()
         c.playing_state = not new_play_state
-        response = server.accept(json.dumps(command))
+        response = c_types.TogglePlayResponse.from_json(server.accept(json.dumps(command)))
         self.assertTrue(is_successful_response(response))
         self.assertIsNone(response.error_message)
         self.assertIsNone(response.error_data)
@@ -149,7 +153,7 @@ class PlayCommandTest(unittest.TestCase):
         }
         server, c, ml = mock_server()
         c.playing_state = new_play_state
-        response = server.accept(json.dumps(command))
+        response = c_types.TogglePlayResponse.from_json(server.accept(json.dumps(command)))
         self.assertTrue(is_successful_response(response))
         self.assertEqual(response.new_play_state, new_play_state)
         self.assertEqual(c.playing(), new_play_state)
@@ -176,9 +180,9 @@ class PlayCommandTest(unittest.TestCase):
 
         c.set_pause = c.toggle_pause = throw_ex
 
-        response = server.accept(json.dumps(command))
+        response = c_types.Response.from_json(server.accept(json.dumps(command)))
         self.assertRegex(response.error_message, "Unexpected error.*")
-        self.assertEqual(response.error_data, ex)
+        self.assertEqual(response.error_data, str(ex))
 
     @parameterized.expand([(USE_TOGGLE,), (USE_EXPLICIT_SET,)])
     def test_exception_data_thrown_on_debug(self, command_type):
@@ -200,7 +204,7 @@ class PlayCommandTest(unittest.TestCase):
 
         with FLAGS.override_flag("debug", False):
             c.set_pause = c.toggle_pause = throw_ex
-            response = server.accept(json.dumps(command))
+            response = c_types.TogglePlayResponse.from_json(server.accept(json.dumps(command)))
 
         self.assertRegex(response.error_message, "Unexpected error.*")
         self.assertEqual(response.error_data, None)
