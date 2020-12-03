@@ -6,9 +6,9 @@ the finicky hacky bits required to deal with the vlc library directly.
 This is also a good layer to reimplement if you want to provide multiple audio backends (e.g. Spotipy).
 """
 
-from typing import List
+from typing import List, Optional, Dict
 
-import vlc
+import vlc  # type: ignore
 from vlc import AudioOutputDevice
 
 from medialogic import oracles
@@ -17,6 +17,7 @@ from medialogic.player import Player
 
 FREED_ERROR_STRING = "Invalid object - already freed."
 DEFAULT_ENCODING = 'utf-8'
+
 
 class UseAfterFreeException(Exception):
     pass
@@ -49,6 +50,7 @@ class AudioDevices(object):
     primarily through str(self) and repr(self). If you want to use this class programmatically, I suggest implementing
     new methods to access the user_device_map and device_name_map **and then updating this comment**.
     """
+
     def __init__(self, audio_device_enum: AudioOutputDevice):
         """Initialization for the Audio Devices method.
 
@@ -61,7 +63,7 @@ class AudioDevices(object):
         self.user_device_map = {idx: device for idx, device in enumerate(device_list)}
 
         # This maps system device names back to real devices. "None" equates to "default"
-        self.device_name_map = {None: self.user_device_map.get(0, None)}
+        self.device_name_map: Dict[Optional[str], Optional[AudioDevice]] = {None: self.user_device_map.get(0, None)}
         for device in device_list:
             self.device_name_map[str(device.contents.device, DEFAULT_ENCODING)] = device
 
@@ -101,7 +103,7 @@ class AudioDevices(object):
             raise UseAfterFreeException()
         return self.user_device_map[index]
 
-    def device_from_device_name(self, device_name:str):
+    def device_from_device_name(self, device_name: str):
         """Returns an audio device based on the name, as indicated by str(self).
 
         This class was really mostly intended to be used pretty close to the command line...
@@ -150,9 +152,9 @@ class Controller(object):
       And failing all of the above, we end the current set of songs.
     """
 
-    def __init__(self, media_library: MediaLibrary = None):
+    def __init__(self, media_library: Optional[MediaLibrary] = None):
         if not media_library:
-            media_library = media_library.MediaLibrary()
+            media_library = MediaLibrary()
         self.media_library = media_library
         self.vlc_player = Player()
         self.devices = AudioDevices(vlc.libvlc_audio_output_device_enum(self.vlc_player.mp))
@@ -211,7 +213,7 @@ class Controller(object):
         :param times: The number of times to repeat. If None, repeat forever.
         """
         songs = self.media_library.get(alias)
-        self.queueing_oracle.append(oracles.RepeatingOracle(songs, times))
+        self.queueing_oracle.add(oracles.RepeatingOracle(songs, times))
 
     def list_devices(self) -> str:
         """Lists the current audio devices as a string."""

@@ -10,7 +10,7 @@ also come with a slew of edge cases. Be careful when manipulating any code that 
 in this file - while the tests cover a lot of the weird edge cases, it's impossible to guarantee they cover
 everything.
 """
-from typing import List, Union
+from typing import List, Union, Optional
 
 
 class Oracle(object):
@@ -276,11 +276,11 @@ class InterruptOracle(MemoizingOracle):
     Allows interrupting an oracle, then going back to whatever was being done before.
     """
 
-    def __init__(self, default_oracle: Union[Oracle, None]):
+    def __init__(self, default_oracle: Optional[Oracle]):
         super(InterruptOracle, self).__init__()
-        self.__default_oracle = default_oracle
+        self.__default_oracle: Optional[Oracle] = default_oracle
         self._grabbed_first_song = False
-        self.__interrupt_oracle = None
+        self.__interrupt_oracle: Optional[Oracle] = None
 
     def _inner_next_song(self) -> Union[str, None]:
         if self.__interrupt_oracle is not None:

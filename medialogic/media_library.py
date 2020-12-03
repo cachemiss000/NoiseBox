@@ -2,7 +2,7 @@
 This module defines objects used to manage a media library pointing at audio files in a file system.
 """
 
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 import os
 
 from common.exceptions import UserException, SystemException
@@ -55,7 +55,7 @@ class Song(object):
         }
 
     @staticmethod
-    def from_primitive(primitive: Dict[str, object]):
+    def from_primitive(primitive: Dict[str, str]):
         """Transforms a dict (presumably read from json) into a Song object."""
         version = primitive[VERSION_FIELD]
         if not isinstance(version, float):
@@ -143,7 +143,7 @@ class MediaLibrary(object):
         return MEDIA_LIBRARY_VERSION_PARSER[version](primitive)
 
     @staticmethod
-    def parse_v1(primitive: Dict[str, object]):
+    def parse_v1(primitive: Dict[str, Any]):
         """Parses a MediaLibrary object from a dict using the v1 schema."""
         ml = MediaLibrary()
         songs = [Song.from_primitive(song) for song in primitive.get(MediaLibrary.SONGS_FIELD, [])]

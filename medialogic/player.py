@@ -12,7 +12,7 @@ when it comes to testing.
 import logging
 from time import sleep
 
-import vlc
+import vlc  # type: ignore
 
 _VLC_PLAYING_STATES = [
     vlc.State.Playing,
@@ -37,6 +37,7 @@ def next_song_cb(player):
 
 class Player(object):
     """Wraps the VLC object in order to play media."""
+
     def __init__(self):
         self.mp = vlc.MediaPlayer()
         self.manager = self.mp.event_manager()
