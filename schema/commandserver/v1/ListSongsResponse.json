@@ -1,0 +1,69 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/definitions/Response"
+        },
+        {
+            "type": "object",
+            "properties": {
+                "songs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Song"
+                    }
+                },
+                "page_token": {
+                    "type": "string"
+                }
+            }
+        }
+    ],
+    "description": "The list of currently available songs.",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "definitions": {
+        "Song": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "local_path": {
+                    "type": "string"
+                }
+            },
+            "description": "A song that can be played by the media player."
+        },
+        "Response": {
+            "type": "object",
+            "properties": {
+                "command_status": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
+                },
+                "error_message": {
+                    "type": "string"
+                },
+                "error_data": {
+                    "type": "string"
+                }
+            },
+            "description": "A response that could return error information."
+        }
+    }
+}

@@ -97,5 +97,6 @@ class MediaPlayerMaster(object):
 if __name__ == '__main__':
     mps = MediaPlayerMaster()
     THREAD_POOL.submit(MediaPlayerMaster.start_local_cli, mps)
-    asyncio.create_task(mps.run_server())
-    asyncio.get_event_loop().run_forever()
+    event_loop = asyncio.get_event_loop()
+    event_loop.create_task(mps.run_server())
+    event_loop.run_forever()

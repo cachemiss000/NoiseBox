@@ -1,0 +1,6 @@
+{
+    "type": "object",
+    "properties": {},
+    "description": "Skip to the next song.",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}

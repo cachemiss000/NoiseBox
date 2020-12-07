@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "metadata": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "local_path": {
+            "type": "string"
+        }
+    },
+    "description": "A song that can be played by the media player.",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}

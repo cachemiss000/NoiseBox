@@ -1,0 +1,72 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/definitions/Response"
+        },
+        {
+            "type": "object",
+            "properties": {
+                "playlists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Playlist"
+                    }
+                },
+                "page_token": {
+                    "type": "string"
+                }
+            }
+        }
+    ],
+    "description": "The list of the currently available playlists.",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "definitions": {
+        "Playlist": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "songs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "A Playlist of songs that can be played by the media player."
+        },
+        "Response": {
+            "type": "object",
+            "properties": {
+                "command_status": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
+                },
+                "error_message": {
+                    "type": "string"
+                },
+                "error_data": {
+                    "type": "string"
+                }
+            },
+            "description": "A response that could return error information."
+        }
+    }
+}

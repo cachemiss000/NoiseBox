@@ -1,0 +1,10 @@
+{
+    "type": "object",
+    "properties": {
+        "play_state": {
+            "type": "boolean"
+        }
+    },
+    "description": "Toggle the play state. Can optionally set the media player to the absolute \"play\" or \"pause\" state.",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}

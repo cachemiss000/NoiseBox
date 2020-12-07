@@ -15,20 +15,28 @@ All commands and responses get sent via JSON, wrapped in the Command class to di
 
 As of time of writing (11/30/20) - API is subject to change as development continues.
 """
-
+import json
+import logging
 from dataclasses import dataclass
+from pathlib import Path
+
+from dataclasses_jsonschema import JsonSchemaMixin
 from enum import Enum
-from typing import Optional, Any, List, Protocol, Set, Type
+from typing import Optional, List, Protocol, Set, Type, Dict
 
 from dataclasses_json import dataclass_json
+
+VERSION = 'v1'
 
 DEFAULT_PORT = 98210
 SERVING_ADDRESS = "/noisebox/command_server/v1"
 
+logger = logging.getLogger('%s_schema' % (VERSION,))
+
 
 @dataclass_json
 @dataclass
-class Song(object):
+class Song(JsonSchemaMixin):
     """A song that can be played by the media player."""
 
     # Human-friendly name of the song - must be unique in a media library, and is used to refer to it elsewhere.
@@ -37,8 +45,8 @@ class Song(object):
     # Human-friendly description of the song - only for informational purposes, and maybe un-set.
     description: Optional[str] = None
 
-    # Additional metadata, currently unspecified.
-    metadata: Optional[Any] = None
+    # Additional key-value metadata, currently unspecified.
+    metadata: Optional[Dict[str, str]] = None
 
     # Path of the file from the viewpoint of the local server.
     local_path: Optional[str] = None
@@ -46,7 +54,7 @@ class Song(object):
 
 @dataclass_json
 @dataclass
-class Playlist(object):
+class Playlist(JsonSchemaMixin):
     """A Playlist of songs that can be played by the media player."""
 
     # Human-friendly name of the playlist. Picked by the user. It must be unique in a media library, and
@@ -56,8 +64,8 @@ class Playlist(object):
     # Human-friendly description of the playlist, picked by the user. Informational purposes only.
     description: Optional[str] = None
 
-    # Additional metadata, currently unspecified.
-    metadata: Optional[Any] = None
+    # Additional key-value metadata, currently unspecified.
+    metadata: Optional[Dict[str, str]] = None
 
     # An ordered list of song aliases - referring to Song.name fields that will play as part of this playlist.
     songs: Optional[List[str]] = None
@@ -99,10 +107,15 @@ class CommandCls(Protocol):
     # Name of the command to place in the Command.command_name field.
     COMMAND_NAME: str
 
+    @staticmethod
+    def json_schema():
+        """Implemented by JsonSchemaMixin. Added here to make mypy's typecheck happy."""
+        pass
+
 
 @dataclass_json
 @dataclass
-class Command:
+class Command(JsonSchemaMixin):
     """Wrapper class for all commands."""
 
     # Required field dictating the command type.
@@ -115,7 +128,7 @@ class Command:
 
 @dataclass_json
 @dataclass
-class Response:
+class Response(JsonSchemaMixin):
     """A response that could return error information."""
 
     # The status of the operation.
@@ -126,12 +139,12 @@ class Response:
 
     # Any additional info which might be helpful for debugging. Shape may change depending on the circumstance,
     # server flags, runtime environment, etc etc etc (basically, don't depend on anything in particular)
-    error_data: Optional[Any] = None
+    error_data: Optional[str] = None
 
 
 @dataclass_json
 @dataclass
-class TogglePlayCommand:
+class TogglePlayCommand(JsonSchemaMixin):
     """Toggle the play state. Can optionally set the media player to the absolute "play" or "pause" state."""
 
     COMMAND_NAME = "TOGGLE_PLAY"
@@ -152,7 +165,7 @@ class TogglePlayResponse(Response):
 
 @dataclass_json
 @dataclass
-class NextSongCommand:
+class NextSongCommand(JsonSchemaMixin):
     """Skip to the next song."""
 
     COMMAND_NAME = "NEXT_SONG"
@@ -172,7 +185,7 @@ class NextSongResponse(Response):
 
 @dataclass_json
 @dataclass
-class ListSongsCommand:
+class ListSongsCommand(JsonSchemaMixin):
     """Get a list of valid songs to reference."""
 
     COMMAND_NAME = "LIST_SONGS"
@@ -198,7 +211,7 @@ class ListSongsResponse(Response):
 
 @dataclass_json
 @dataclass
-class ListPlaylistsCommand:
+class ListPlaylistsCommand(JsonSchemaMixin):
     """Get a list of valid playlists to reference."""
 
     COMMAND_NAME = "LIST_PLAYLISTS"
@@ -212,7 +225,7 @@ class ListPlaylistsCommand:
 
 @dataclass_json
 @dataclass
-class ListPlaylistResponse(Response):
+class ListPlaylistsResponse(Response):
     """The list of the currently available playlists."""
 
     # The list of playlists being returned.
@@ -222,6 +235,29 @@ class ListPlaylistResponse(Response):
     page_token: Optional[str] = None
 
 
+def print_schema(base_dir: str):
+    """Write out the JSON schemas for this version's schema to a corresponding subdirectory."""
+    out_dir = Path(base_dir).joinpath(VERSION)
+    out_dir.mkdir(exist_ok=True)
+    logger.info("printing files to: %s..." % (out_dir,))
+    for object_cls in OBJECTS:
+        print_to_file(out_dir, object_cls.__name__, json.dumps(object_cls.json_schema(), indent=4))
+    for command_cls in COMMANDS:
+        print_to_file(out_dir, command_cls.__name__, json.dumps(command_cls.json_schema(), indent=4))
+    for response_cls in RESPONSES:
+        print_to_file(out_dir, response_cls.__name__, json.dumps(response_cls.json_schema(), indent=4))
+    logger.info("finished writing.")
+
+
+def print_to_file(out_dir, name, contents):
+    with open(Path(out_dir.joinpath(name + '.json')), mode='w+t') as file:
+        file.write(contents)
+
+
+OBJECTS: Set[Type[JsonSchemaMixin]] = {Song, Playlist}
 COMMANDS: Set[Type[CommandCls]] = {TogglePlayCommand, NextSongCommand, ListSongsCommand, ListPlaylistsCommand}
+RESPONSES: Set[Type[Response]] = {TogglePlayResponse, NextSongResponse, ListSongsResponse, ListPlaylistsResponse}
+
+_IGNORE_OBJECTS: Set[Type[object]] = {CommandStatus, CommandCls, Command, Response}
 
 COMMAND_NAMES: Set[str] = set(map(lambda x: x.COMMAND_NAME, COMMANDS))

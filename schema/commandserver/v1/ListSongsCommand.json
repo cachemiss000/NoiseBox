@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "properties": {
+        "page_token": {
+            "type": "string"
+        },
+        "max_num_entries": {
+            "type": "integer",
+            "default": 30
+        }
+    },
+    "description": "Get a list of valid songs to reference.",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}
