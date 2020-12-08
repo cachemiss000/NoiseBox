@@ -23,10 +23,15 @@ import pathlib
 
 from common.print_controller import print_msg
 
-_NOW = datetime.now()
 PATH = pathlib.Path(__file__).parent.absolute()
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),
-                    filename="%s/../logs/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"),))
+# TODO: User configurable log paths.
+_NOW = datetime.now()
+LOGS_PATH = "%s/../logs/%s-debug.log" % (PATH, _NOW.strftime("%Y-%m-%d %H.%M.%S"))
+
+# Quick make the parent dir for logs if it doesn't exist
+pathlib.Path(LOGS_PATH).parent.absolute().mkdir(exist_ok=True)
+
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"),filename=LOGS_PATH)
 logger = logging.getLogger("media-player")
 THREAD_POOL = futures.ThreadPoolExecutor(max_workers=10)
 

@@ -10,3 +10,5 @@
 /scratch proto.txt
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vlc-controller.iml
+/js/node_modules/
+/js/package-lock.json

@@ -1,0 +1,27 @@
+{
+  "name": "noisebox-client",
+  "version": "1.0.0",
+  "description": "Client for the NoiseBox media player - https://github.com/igorham000/NoiseBox",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igorham000/NoiseBox.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/igorham000/NoiseBox/issues"
+  },
+  "homepage": "https://github.com/igorham000/NoiseBox#readme",
+  "dependencies": {
+    "@types/lodash": "^4.14.165",
+    "command-line-args": "^5.1.1",
+    "json-schema-to-typescript": "^10.0.0",
+    "lodash": "^4.17.20",
+    "node": "^15.3.0",
+    "typescript": "^4.1.2"
+  }
+}
