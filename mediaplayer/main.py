@@ -94,9 +94,13 @@ class MediaPlayerMaster(object):
         print_msg("Server running @ ws://localhost:%s...", v1_c_types.DEFAULT_PORT)
 
 
-if __name__ == '__main__':
+def run():
     mps = MediaPlayerMaster()
     THREAD_POOL.submit(MediaPlayerMaster.start_local_cli, mps)
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(mps.run_server())
     event_loop.run_forever()
+
+
+if __name__ == '__main__':
+    run()

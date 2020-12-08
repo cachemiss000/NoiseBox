@@ -23,7 +23,7 @@ def print_v1():
     v1.print_schema(out_dir.absolute())
 
 
-def main():
+def run():
     FLAGS.init()
     print_v1()
 
@@ -31,4 +31,4 @@ def main():
 FLAGS.require(build_flags)
 
 if __name__ == '__main__':
-    main()
+    run()
