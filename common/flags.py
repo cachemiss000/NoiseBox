@@ -59,7 +59,7 @@ class _FlagNamespaceContainer:
         for fn in self.flag_function_registry:
             fn(parser)
         flags_to_parse = sys.argv[1:] if not self._override_flags else self._override_flags
-        if 'unittest' in flags_to_parse[0]:  # ex: "python -m unittest"
+        if flags_to_parse and 'unittest' in flags_to_parse[0]:  # ex: "python -m unittest"
             # We're being run as part of the unittest framework. Quick hack out bad flags
             try:
                 post_idx = flags_to_parse.index("--")
