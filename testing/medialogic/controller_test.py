@@ -8,6 +8,8 @@ from typing import List
 from unittest import mock
 from unittest.mock import patch
 
+from absl.testing import absltest
+
 from medialogic import controller
 
 
@@ -80,4 +82,4 @@ class AudioDeviceTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

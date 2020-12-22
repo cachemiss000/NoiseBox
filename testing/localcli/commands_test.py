@@ -5,9 +5,11 @@ import unittest
 from typing import List
 from unittest import mock
 
+from absl.testing import absltest
+
+from common import print_controller
 from localcli import commands
 from localcli.commands import AddSong, IllegalArgument
-from common import print_controller
 from medialogic.controller import Controller
 from medialogic.media_library import MediaLibrary, Song
 
@@ -73,4 +75,4 @@ class ListSongsTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

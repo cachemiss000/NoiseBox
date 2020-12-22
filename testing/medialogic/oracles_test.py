@@ -5,8 +5,10 @@ Tests for oracles.py.
 import itertools
 import unittest
 
-from medialogic import oracles
+from absl.testing import absltest
+
 from common.test_utils import collect
+from medialogic import oracles
 
 
 class PlaylistTest(unittest.TestCase):
@@ -494,4 +496,4 @@ class RepeatingOracleTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

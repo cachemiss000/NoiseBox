@@ -5,6 +5,7 @@ import re
 import unittest
 from collections import Set
 
+from absl.testing import absltest
 from dataclasses_jsonschema import JsonSchemaMixin
 
 from commandserver import command_types_v1 as types
@@ -79,5 +80,6 @@ def get_test_module_classes():
                          hasattr(cls, "__module__") and cls.__module__ == MODULE_PATH]
     return from_right_module
 
+
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

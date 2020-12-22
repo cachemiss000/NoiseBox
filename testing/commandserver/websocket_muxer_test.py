@@ -1,19 +1,16 @@
-import asyncio
 import logging
+import tracemalloc
 import unittest
-from typing import List, Callable, Protocol
-from unittest import mock
+from typing import List
 
 import websockets
-import tracemalloc
+from absl.testing import absltest
 
 from commandserver import websocket_muxer, server_codes, server_exceptions
-from common import flags
+from common.test_utils import FlagsTest
 
 CLOSE_MESSAGE = "close sesame"
 
-FLAGS = flags.FLAGS
-FLAGS.init()
 tracemalloc.start(1000)
 
 
@@ -75,7 +72,7 @@ class WebsocketContextManager:
             await ws.wait_closed()
 
 
-class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
+class WebsocketMuxerTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
 
     def assertConnectionClosedSuccessfully(self, client):
         self.assertEqual(client.close_code, 1000,
@@ -164,4 +161,4 @@ class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

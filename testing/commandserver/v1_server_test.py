@@ -1,16 +1,17 @@
 import json
-import unittest
 from unittest.mock import Mock
 
-from common import flags
+from absl import flags
+from absl.testing import absltest
 from parameterized import parameterized
+
 from commandserver import command_types_v1 as c_types
 from commandserver import v1_server as server
+from common import test_utils
+from common.test_utils import FlagsTest
 from medialogic import controller, media_library
 
-# We can do this because it's a test file, so we know it's top-level :P
 FLAGS = flags.FLAGS
-FLAGS.init()
 
 
 class MockController(Mock):
@@ -40,10 +41,10 @@ def mock_server() -> (server.MediaServer, controller.Controller, media_library.M
     return media_server, c, ml
 
 
-class CommandParsingTest(unittest.TestCase):
+class CommandParsingTest(FlagsTest):
     def setUp(self):
-        FLAGS.override_flag("debug", True)
-
+        super(CommandParsingTest, self).setUp()
+        FLAGS.debug = True
 
     def test_parameterless_not_empty(self):
         """Sanity test to ensure the next test isn't running on the empty set."""
@@ -101,9 +102,10 @@ def is_successful_response(response: c_types.Response):
         raise AssertionError("Received error response from server: '%s'" % (response.error_message,))
 
 
-class PlayCommandTest(unittest.TestCase):
+class PlayCommandTest(FlagsTest):
     def setUp(self):
-        FLAGS.override_flag("debug", True)
+        super(PlayCommandTest, self).setUp()
+        FLAGS.debug = True
 
     @parameterized.expand([(True,), (False,)])
     def test_play_no_arg_toggles(self, starting_play_state):
@@ -202,7 +204,7 @@ class PlayCommandTest(unittest.TestCase):
         def throw_ex(unused_self, arg=None):
             raise Exception("TestyMcTestface")
 
-        with FLAGS.override_flag("debug", False):
+        with test_utils.override_flag("debug", False):
             c.set_pause = c.toggle_pause = throw_ex
             response = c_types.TogglePlayResponse.from_json(server.accept(json.dumps(command)))
 
@@ -211,4 +213,4 @@ class PlayCommandTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

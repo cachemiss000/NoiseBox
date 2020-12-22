@@ -18,13 +18,12 @@ As of time of writing (11/30/20) - API is subject to change as development conti
 import json
 import logging
 from dataclasses import dataclass
-from pathlib import Path
-
-from dataclasses_jsonschema import JsonSchemaMixin
 from enum import Enum
+from pathlib import Path
 from typing import Optional, List, Protocol, Set, Type, Dict
 
 from dataclasses_json import dataclass_json
+from dataclasses_jsonschema import JsonSchemaMixin
 
 VERSION = 'v1'
 
@@ -239,7 +238,7 @@ def print_schema(base_dir: str):
     """Write out the JSON schemas for this version's schema to a corresponding subdirectory."""
     out_dir = Path(base_dir).joinpath(VERSION)
     out_dir.mkdir(exist_ok=True)
-    logger.info("printing files to: %s..." % (out_dir,))
+    logger.info("printing files to: %s..." % (Path(out_dir).joinpath('...'),))
     for object_cls in OBJECTS:
         print_to_file(out_dir, object_cls.__name__, json.dumps(object_cls.json_schema(), indent=4))
     for command_cls in COMMANDS:

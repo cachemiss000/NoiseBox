@@ -1,12 +1,14 @@
 """
 Tests for media_library.py.
 """
+import tempfile
 import unittest
+from collections import defaultdict
+
+from absl.testing import absltest
 
 from medialogic import media_library
 from medialogic.media_library import MediaLibrary, Song
-from collections import defaultdict
-import tempfile
 
 COUNTER_DICT = defaultdict(lambda: 0)
 
@@ -264,4 +266,4 @@ class MediaLibrarySerializationTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

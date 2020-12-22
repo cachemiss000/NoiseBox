@@ -3,14 +3,15 @@ import re
 from typing import Protocol, Dict
 
 import websockets
+from absl import flags
 
-from common import print_controller
-from common import flags
-from commandserver import server_flags
+# Import server flags.
+# noinspection PyUnresolvedReferences
+import commandserver.server_flags
 from commandserver import server_codes, server_exceptions
+from common import print_controller
 
 FLAGS = flags.FLAGS
-FLAGS.require(server_flags.flags)
 
 
 class Server(Protocol):
@@ -34,7 +35,8 @@ class WebsocketMuxer:
     def __init__(self):
         self.servers: Dict[str, Server] = {}
         self.logger = print_controller.logging_printer('websocket_mux',
-                                                       min_error_level_to_print=FLAGS.server_log_level)
+                                                       min_error_level_to_print=
+                                                       logging.getLevelName(FLAGS.server_log_level))
 
     URL_REGEX: re.Pattern = re.compile(r'^/?\w*(/\w*)*/?$')
 

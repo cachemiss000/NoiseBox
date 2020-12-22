@@ -1,16 +1,15 @@
 import collections
 from enum import Enum
-
 from typing import List, Tuple, Optional
 
+from absl import flags
+
 import commandserver.command_types_v1 as c_types
-from commandserver import server_flags as server_flags, websocket_muxer
+from commandserver import websocket_muxer
 from medialogic import media_library, controller
-from common import flags
 
 VERSION = "V1"
 FLAGS = flags.FLAGS
-FLAGS.require(server_flags.flags)
 
 # TODO: For type sanity, this NEEDS to be a class. Goddamn.
 Page = collections.namedtuple("Page", ["list_hash", "element"])
@@ -100,7 +99,8 @@ class MediaServer(websocket_muxer.Server):
             command = MediaServer.parse_command(command_str)
             if command.command_name == c_types.TogglePlayCommand.COMMAND_NAME:
                 return self.toggle_play(
-                    c_types.TogglePlayCommand.from_dict(command.payload) if command.payload else None).to_json()  # type: ignore
+                    c_types.TogglePlayCommand.from_dict(
+                        command.payload) if command.payload else None).to_json()  # type: ignore
         except ErrorResponse as e:
             return e.to_json()  # type: ignore
         except Exception as e:
