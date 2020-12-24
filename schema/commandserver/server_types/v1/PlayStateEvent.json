@@ -1,0 +1,10 @@
+{
+    "type": "object",
+    "properties": {
+        "new_play_state": {
+            "type": "boolean"
+        }
+    },
+    "description": "Tells the client whether the media player is playing or not..",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}

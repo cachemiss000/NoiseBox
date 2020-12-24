@@ -5,7 +5,7 @@ from pathlib import Path
 
 from absl import flags, app
 
-from commandserver import command_types_v1 as v1
+from commandserver.server_types import v1_command_types as v1
 
 FLAGS = flags.FLAGS
 
@@ -20,7 +20,7 @@ def print_v1():
     out_dir = Path.cwd().joinpath(FLAGS.out).joinpath(relative_path_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    v1.print_schema(out_dir.absolute())
+    v1.print_schema(str(out_dir.absolute()))
 
 
 def run(argv):

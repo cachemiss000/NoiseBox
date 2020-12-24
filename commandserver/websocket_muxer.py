@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Protocol, Dict
+from typing import Protocol, Dict, Union
 
 import websockets
 from absl import flags
@@ -10,14 +10,23 @@ from absl import flags
 import commandserver.server_flags
 from commandserver import server_codes, server_exceptions
 from common import print_controller
+from messages.message_map import Message, MessageCls
 
 FLAGS = flags.FLAGS
 
 
+class ClientSession:
+    def __init__(self, ws: websockets.WebSocketServerProtocol):
+        self._ws = ws
+
+    async def send(self, message: Union[Message, MessageCls]):
+        await self._ws.send(message.wrap().to_json())
+
+
 class Server(Protocol):
 
-    def accept(self, message: str) -> str:
-        """Accept a frame from the client, then return the response.
+    async def accept(self, message: str, client: ClientSession) -> None:
+        """Accept a frame from the client.
 
         Cannot block. If you need blocking, log a task in a local datastore quickly and return a handle to it, then
         return the status on subsequent queries from the client.
@@ -58,12 +67,12 @@ class WebsocketMuxer:
             return
 
         await ws.ensure_open()
+        session = ClientSession(ws)
         async for message in ws:
             try:
                 if isinstance(message, bytes):
                     raise server_exceptions.ClientError("this server does not accept binary frames")
-                response = server.accept(message)
-                await ws.send(response)
+                await server.accept(message, session)
             except server_exceptions.CloseConnectionException as e:
                 self.logger.debug("client @ '%s' asked to close the server" % (path,))
                 await ws.close()

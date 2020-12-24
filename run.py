@@ -1,7 +1,7 @@
 from absl import flags, app
 
+from build_schema import build_type_schema as buildschema
 from mediaplayer import main as mediaplayer
-from schema import build_type_schema as buildschema
 
 FLAGS = flags.FLAGS
 

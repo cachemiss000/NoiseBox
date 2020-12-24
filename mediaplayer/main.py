@@ -14,8 +14,8 @@ import websockets
 from absl import app
 
 import common.commands
-from commandserver import command_types_v1 as v1_c_types
 from commandserver import v1_server, websocket_muxer
+from commandserver.server_types import v1_command_types as v1_c_types
 from common.exceptions import UserException
 from common.print_controller import print_msg
 from localcli import commands
