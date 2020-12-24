@@ -301,7 +301,7 @@ def print_to_file(out_dir, name, contents):
         file.write(contents)
 
 
-OBJECTS: Set[Type[JsonSchemaMixin]] = {Song, Playlist}
+OBJECTS: Set[Type[JsonSchemaMixin]] = {Song, Playlist, Event, Command}
 COMMANDS: Set[Type[CommandCls]] = {TogglePlayCommand, NextSongCommand, ListSongsCommand, ListPlaylistsCommand}
 EVENTS: Set[Type[EventCls]] = {PlayStateEvent, SongPlayingEvent, ListSongsEvent, ListPlaylistsEvent, ErrorEvent}
 
@@ -334,7 +334,7 @@ BOOK KEEPING OBJECTS:
   or events, you update these dicts accordingly. The schema auto-generation stuff uses these variables to keep track
   of what does and doesn't need schemas generated for them. 
 """
-_IGNORE_OBJECTS: Set[Type[object]] = {ErrorType, CommandCls, Command, Event, EventCls, ErrorDataEnv, CommandTypeMap,
+_IGNORE_OBJECTS: Set[Type[object]] = {ErrorType, CommandCls, EventCls, ErrorDataEnv, CommandTypeMap,
                                       EventTypeMap}
 
 COMMAND_NAMES: Set[str] = set(map(lambda x: x.MESSAGE_NAME, COMMANDS))

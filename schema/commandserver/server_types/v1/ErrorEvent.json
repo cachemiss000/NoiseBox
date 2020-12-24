@@ -7,10 +7,10 @@
         "error_type": {
             "type": "integer",
             "enum": [
+                0,
+                1,
                 2,
-                3,
-                4,
-                5
+                3
             ]
         },
         "error_data": {
@@ -35,6 +35,6 @@
             "type": "string"
         }
     },
-    "description": "Something bad happened and now the client needs to know about it.",
+    "description": "Something bad happened and the guy on the other end of the wire needs to know about it.\n\n    TODO: This should get added to a generic, versionless schema, then separately copied into the V1 schema.\n    ",
     "$schema": "http://json-schema.org/draft-06/schema#"
 }

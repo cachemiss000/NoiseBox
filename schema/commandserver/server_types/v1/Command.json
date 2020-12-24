@@ -1,0 +1,25 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/definitions/Message"
+        },
+        {
+            "type": "object",
+            "properties": {}
+        }
+    ],
+    "description": "A command is an instruction to do something. Servers receive commands, and then act on them.\n\n    Commands include things like \"stop playing\", \"go to the next song\", \"create a new playlist\", whatever.\n    ",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "definitions": {
+        "Message": {
+            "type": "object",
+            "properties": {
+                "message_name": {
+                    "type": "string"
+                },
+                "payload": {}
+            },
+            "description": "Contains a wrapped MessageCls, including naming information.\n\n    Payload is typically stored in an unprocessed state, because the \"dataclass_json\" library is bad at dealing with\n    type ambiguity. Call \"unwrap\" with the type indicated by the 'message_name' field to get the appropriate message\n    (or, more commonly, use a @message_map annotated class with handle_message(...) to route the message to a function\n    that can handle it).\n\n    Attributes:\n        message_name: Name of the message, as defined in MessageCls.MESSAGE_NAME\n        payload: The meat of the message. Use 'unwrap()' to get this in a programmer-friendly format.\n    "
+        }
+    }
+}
