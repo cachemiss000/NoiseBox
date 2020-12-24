@@ -4,24 +4,24 @@ The main.py module for a commandline console controlling the NoiseBox.
 import asyncio
 import logging
 import os
+import pathlib
+import time
 import traceback
 from concurrent import futures
+from datetime import datetime
 
 import websockets
+from absl import app
 
 import common.commands
+from commandserver import v1_server, websocket_muxer
+from commandserver.server_types import v1_command_types as v1_c_types
+from common.exceptions import UserException
+from common.print_controller import print_msg
 from localcli import commands
 from localcli.console import Console
 from medialogic.controller import Controller
-from common.exceptions import UserException
 from medialogic.media_library import MediaLibrary
-from commandserver import v1_server, websocket_muxer
-from commandserver import command_types_v1 as v1_c_types
-from datetime import datetime
-import time
-import pathlib
-
-from common.print_controller import print_msg
 
 PATH = pathlib.Path(__file__).parent.absolute()
 # TODO: User configurable log paths.
@@ -99,7 +99,7 @@ class MediaPlayerMaster(object):
         print_msg("Server running @ ws://localhost:%s...", v1_c_types.DEFAULT_PORT)
 
 
-def run():
+def run(argv):
     mps = MediaPlayerMaster()
     THREAD_POOL.submit(MediaPlayerMaster.start_local_cli, mps)
     event_loop = asyncio.get_event_loop()
@@ -108,4 +108,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    app.run(run)

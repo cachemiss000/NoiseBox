@@ -1,0 +1,6 @@
+{
+    "type": "object",
+    "properties": {},
+    "description": "Get a list of valid playlists to reference.",
+    "$schema": "http://json-schema.org/draft-06/schema#"
+}

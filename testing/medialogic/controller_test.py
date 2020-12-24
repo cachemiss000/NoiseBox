@@ -4,9 +4,10 @@ Unfortunately, we can't test most of the functionality because they're mostly ju
 and it'd be too complicated to test correctness in a good way.
 """
 import unittest
-from typing import List
 from unittest import mock
 from unittest.mock import patch
+
+from absl.testing import absltest
 
 from medialogic import controller
 
@@ -39,7 +40,7 @@ class VLCLinkedListNull(object):
         return isinstance(other, VLCLinkedListNull)
 
 
-def build_list(*descriptions: List[str]):
+def build_list(*descriptions: str):
     """Builds a list of AudioDevice's as they'd look from VLC using the input list of str descriptions."""
     tail = VLCLinkedListNull()
     for description in reversed(descriptions):
@@ -62,14 +63,14 @@ class AudioDeviceTest(unittest.TestCase):
         devices = controller.AudioDevices(build_list("device_1"))
         devices.free()
         self.assertEqual(str(devices), controller.FREED_ERROR_STRING)
-        assert (free_device_mock.called)
+        assert (free_device_mock.called_count)
 
     @patch('vlc.libvlc_audio_output_device_list_release')
     def testFreeAudioDeviceCausesThrow(self, free_device_mock):
         devices = controller.AudioDevices(build_list("device_1"))
         devices.free()
         self.assertRaises(controller.UseAfterFreeException, lambda: devices.device_for_index(1))
-        assert (free_device_mock.called)
+        assert (free_device_mock.called_count)
 
     def testDeviceForIndex(self):
         devices = controller.AudioDevices(build_list("device_1", "device_2", "device_3"))
@@ -80,4 +81,4 @@ class AudioDeviceTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

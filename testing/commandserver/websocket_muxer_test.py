@@ -1,54 +1,91 @@
 import asyncio
 import logging
+import tracemalloc
 import unittest
-from typing import List, Callable, Protocol
-from unittest import mock
+from dataclasses import dataclass
+from typing import List
 
 import websockets
-import tracemalloc
+from absl.testing import absltest
 
 from commandserver import websocket_muxer, server_codes, server_exceptions
-from common import flags
+from common.test_utils import FlagsTest
+from messages import message_map
 
 CLOSE_MESSAGE = "close sesame"
 
-FLAGS = flags.FLAGS
-FLAGS.init()
 tracemalloc.start(1000)
 
 
 class TestServer(websocket_muxer.Server):
 
-    def __init__(self, expect_list: List[str], response_list: List[str], close_message: str = CLOSE_MESSAGE):
+    def __init__(self, expect_list: List[str], response_list: List[message_map.Message],
+                 close_message: str = CLOSE_MESSAGE):
         self.expect_list = expect_list
         self.response_list = response_list
         self.close_message = close_message
 
-    def accept(self, message: str):
+    async def accept(self, message: str, client: websocket_muxer.ClientSession) -> None:
         if message == self.close_message:
             raise server_exceptions.CloseConnectionException
 
         expected = self.expect_list.pop(0)
         if message != expected:
             raise server_exceptions.ClientError("expected '%s' got '%s'" % (expected, message))
-        return self.response_list.pop(0)
+        await client.send(self.response_list.pop(0))
 
 
 async def send_commands(ws: websockets.WebSocketClientProtocol, messages: List[str],
-                        close_message: str = CLOSE_MESSAGE) -> List[str]:
-    response = []
+                        close_message: str = CLOSE_MESSAGE):
     try:
         for message in messages:
             await ws.send(message)
-            response.append(await ws.recv())
         await ws.send(close_message)
     except websockets.ConnectionClosedError as e:
         logging.exception("Connection closed early")
-        return response
-    return response
+
+
+@dataclass
+class TestMessage(message_map.MessageCls):
+    MESSAGE_NAME = "TEST"
+
+    value: str
+
+
+def messages_from(*argv) -> List[message_map.Message]:
+    return [message_from(arg) for arg in argv]
+
+
+def message_from(message: str) -> message_map.Message:
+    return message_map.Message(message_name=TestMessage.MESSAGE_NAME, payload=TestMessage(value=message))
+
+
+def expected_messages(messages: List[message_map.Message]) -> List[TestMessage]:
+    return [message.payload for message in messages]
+
+
+@message_map.message_map(message_types=[TestMessage])
+class ResponseCollector(message_map.MessageMapTypeHints[message_map.Message, message_map.MessageCls]):
+
+    def __init__(self):
+        self.responses: List[TestMessage] = []
+
+    def with_test(self, test_message: TestMessage):
+        self.responses.append(test_message)
+
+    async def route_responses(self, ws: websockets.WebSocketClientProtocol):
+        async for message in ws:
+            self.handle_message(message_map.Message.from_json(message))
 
 
 class WebsocketContextManager:
+    """Quick and dirty context manager.
+
+    Clients call "connect" to get new client websocket connections, and call "serve" to get new server connections.
+
+    All connections are context-managed, and will be closed at the end of a test as long as the caller calls
+    inside a "with" statement.
+    """
 
     def __init__(self):
         self.websocket_clients = []
@@ -75,7 +112,7 @@ class WebsocketContextManager:
             await ws.wait_closed()
 
 
-class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
+class WebsocketMuxerTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
 
     def assertConnectionClosedSuccessfully(self, client):
         self.assertEqual(client.close_code, 1000,
@@ -86,8 +123,8 @@ class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
                              client.close_code, client.close_reason))
 
     async def test_websocket_startup_and_bad_uri(self):
+        muxer = websocket_muxer.WebsocketMuxer()
         async with WebsocketContextManager() as ws_ctx:
-            muxer = websocket_muxer.WebsocketMuxer()
             await ws_ctx.serve(muxer.handle_session, "localhost", 8765)
 
             client = await ws_ctx.connect("ws://localhost:8765/florgus")
@@ -96,62 +133,72 @@ class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
         self.assertRegex(client.close_reason, "path '.*florgus.*' not found")
 
     async def test_websocket_returns_response(self):
+        muxer = websocket_muxer.WebsocketMuxer()
+        client_commands = ["florgus1", "florgus2", "florgus3"]
+        server_responses = messages_from("blorgus1", "blorgus2", "blorgus3")
+        test_server = TestServer(expect_list=list(client_commands),
+                                 response_list=list(server_responses))
+        rc = ResponseCollector()
+
         async with WebsocketContextManager() as ws_ctx:
-            muxer = websocket_muxer.WebsocketMuxer()
-            client_commands = ["florgus1", "florgus2", "florgus3"]
-            server_responses = ["blorgus1", "blorgus2", "blorgus3"]
-
-            test_server = TestServer(expect_list=list(client_commands),
-                                     response_list=list(server_responses))
             muxer.register("/florgus", test_server)
-
             await ws_ctx.serve(muxer.handle_session, "localhost", 8765)
-
             client = await ws_ctx.connect("ws://localhost:8765/florgus")
-            responses = await send_commands(client, client_commands)
+
+            collection_cr = rc.route_responses(client)
+            commands_cr = send_commands(client, client_commands)
+
+            await asyncio.gather(collection_cr, commands_cr)
 
         self.assertConnectionClosedSuccessfully(client)
-        self.assertListEqual(responses, server_responses)
+        self.assertListEqual(rc.responses, expected_messages(server_responses))
 
     async def test_multiple_paths(self):
+        muxer = websocket_muxer.WebsocketMuxer()
+
+        client_commands_1 = ["florgus1"]
+        server_responses_1 = messages_from("blorgus1")
+        test_server_1 = TestServer(expect_list=list(client_commands_1),
+                                   response_list=list(server_responses_1))
+        muxer.register("/test1", test_server_1)
+        rc1 = ResponseCollector()
+
+        client_commands_2 = ["florgus2"]
+        server_responses_2 = messages_from("blorgus2")
+        test_server_2 = TestServer(expect_list=list(client_commands_2),
+                                   response_list=list(server_responses_2))
+        muxer.register("/test2", test_server_2)
+        rc2 = ResponseCollector()
+
         async with WebsocketContextManager() as ws_ctx:
-            muxer = websocket_muxer.WebsocketMuxer()
-            client_commands_1 = ["florgus1"]
-            client_commands_2 = ["florgus2"]
-            server_responses_1 = ["blorgus1"]
-            server_responses_2 = ["blorgus2"]
-
-            test_server_1 = TestServer(expect_list=list(client_commands_1),
-                                       response_list=list(server_responses_1))
-            test_server_2 = TestServer(expect_list=list(client_commands_2),
-                                       response_list=list(server_responses_2))
-
-            muxer.register("/test1", test_server_1)
-            muxer.register("/test2", test_server_2)
             await ws_ctx.serve(muxer.handle_session, "localhost", 8765)
 
             client_1 = await ws_ctx.connect("ws://localhost:8765/test1")
             client_2 = await ws_ctx.connect("ws://localhost:8765/test2")
-            responses_1 = await send_commands(client_1, client_commands_1)
-            responses_2 = await send_commands(client_2, client_commands_2)
+            commands_1_cr = send_commands(client_1, client_commands_1)
+            responses_1_cr = rc1.route_responses(client_1)
+            commands_2_cr = send_commands(client_2, client_commands_2)
+            responses_2_cr = rc2.route_responses(client_2)
+
+            await asyncio.gather(commands_1_cr, responses_1_cr, commands_2_cr, responses_2_cr)
 
         self.assertConnectionClosedSuccessfully(client_1)
         self.assertConnectionClosedSuccessfully(client_2)
 
-        self.assertEqual(responses_1, server_responses_1)
-        self.assertEqual(responses_2, server_responses_2)
+        self.assertEqual(rc1.responses, expected_messages(server_responses_1))
+        self.assertEqual(rc2.responses, expected_messages(server_responses_2))
 
     async def test_server_error(self):
+        muxer = websocket_muxer.WebsocketMuxer()
+        exception = server_exceptions.ClientError("test error")
+
+        class ExceptionHandler(websocket_muxer.Server):
+            async def accept(self, message: str, _client: websocket_muxer.ClientSession) -> None:
+                raise exception
+
+        muxer.register("/exception_test", ExceptionHandler())
+
         async with WebsocketContextManager() as ws_ctx:
-            muxer = websocket_muxer.WebsocketMuxer()
-            exception = server_exceptions.ClientError("test error")
-
-            class ExceptionHandler(websocket_muxer.Server):
-                def accept(self, message: str):
-                    raise exception
-
-            muxer.register("/exception_test", ExceptionHandler())
-
             await ws_ctx.serve(muxer.handle_session, "localhost", 8765)
             client = await ws_ctx.connect("ws://localhost:8765/exception_test")
             await client.send("literally anything")
@@ -164,4 +211,4 @@ class WebsocketMuxerTest(unittest.IsolatedAsyncioTestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

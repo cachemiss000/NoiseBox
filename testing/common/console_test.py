@@ -1,15 +1,14 @@
 """Tests for console.py"""
 import logging
 import unittest
-from dataclasses import dataclass
 from typing import List
 from unittest import mock
 
-import common
+from absl.testing import absltest
+
 from common import print_controller
 from localcli.console import Command
 from localcli.console import Console
-from contextlib import contextmanager
 
 
 class ConsoleTest(unittest.TestCase):
@@ -143,4 +142,4 @@ class PrinterTestFixtures:
 
 
 if __name__ == '__main__':
-    unittest.main()
+    absltest.main()

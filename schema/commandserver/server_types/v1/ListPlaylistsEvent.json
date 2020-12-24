@@ -1,0 +1,39 @@
+{
+    "type": "object",
+    "properties": {
+        "playlists": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Playlist"
+            }
+        }
+    },
+    "description": "Client receives a list of playlists, usually by request.",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "definitions": {
+        "Playlist": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "songs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "A Playlist of songs that can be played by the media player."
+        }
+    }
+}
