@@ -11,3 +11,5 @@
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vlc-controller.iml
 /.run/*
+/js/package-lock.json
+/js/node_modules/
