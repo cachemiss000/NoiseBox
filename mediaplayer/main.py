@@ -69,18 +69,19 @@ class MediaPlayerMaster(object):
         commands_dict["help"] = common.commands.Help(commands_dict)
         commands_dict["commands"] = common.commands.ListCommands(commands_dict)
 
-        for input in self.console_output.commands():
-            if input.command in commands_dict:
+        for console_input in self.console_output.commands():
+            if console_input.command in commands_dict:
                 try:
-                    commands_dict[input.command].process(input.arguments)
+                    commands_dict[console_input.command].process(console_input.arguments)
                 except UserException as e:
                     print(e.user_error_message)
-                except Exception as e:
+                except Exception:
                     traceback.print_exc()
                     time.sleep(1)
 
             else:
-                print_msg("Command not found: '%s' - discarding args '%s'" % (input.command, input.arguments))
+                print_msg(
+                    "Command not found: '%s' - discarding args '%s'" % (console_input.command, console_input.arguments))
             if self.console_output.terminate:
                 break
         self.console.write("Exiting now...")
@@ -91,10 +92,10 @@ class MediaPlayerMaster(object):
         muxer.register(v1_c_types.SERVING_ADDRESS, v1)
 
         await websockets.serve(muxer.handle_session, "localhost", v1_c_types.DEFAULT_PORT)
-        print_msg("Server running @ ws://localhost:%s...", v1_c_types.DEFAULT_PORT)
+        print_msg("Server running @ ws://localhost:%s..." % v1_c_types.DEFAULT_PORT)
 
 
-def run(argv):
+def run(*_argv):
     mps = MediaPlayerMaster()
     THREAD_POOL.submit(MediaPlayerMaster.start_local_cli, mps)
     event_loop = asyncio.get_event_loop()

@@ -15,64 +15,72 @@ All commands and responses get sent via JSON, wrapped in the Command class to di
 
 As of time of writing (11/30/20) - API is subject to change as development continues.
 """
+import abc
 import json
 import logging
-from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, IntEnum
 from pathlib import Path
-from typing import Optional, List, Set, Type, Dict, Union, cast
+from typing import Optional, List, Type, Dict, Union, cast, ClassVar, Set, TypeVar, Protocol, get_args
 
-from dataclasses_json import dataclass_json
-from dataclasses_jsonschema import JsonSchemaMixin
+from pydantic import Field, validator
+from pydantic.dataclasses import dataclass
+from pydantic.main import BaseModel
 
-from messages.message_map import Message, MessageCls, message_map, MessageMapTypeHints, Types
+from common.utils import class_name
 
 VERSION = 'v1'
 
-DEFAULT_PORT = 98210
+DEFAULT_PORT = 9821
 SERVING_ADDRESS = "/noisebox/command_server/v1"
 
 logger = logging.getLogger('%s_schema' % (VERSION,))
 
 
-@dataclass_json
 @dataclass
-class Song(JsonSchemaMixin):
+class MessageObj(Protocol):
+    @abc.abstractmethod
+    def wrap(self) -> "Message":
+        """Wrap any potential base message in the Message container"""
+        pass
+
+    @abc.abstractmethod
+    def unwrap(self, message_type: Type["Types.P_T"]) -> "Types.P_T":
+        """Unwrap some message to it's base type, either a command or an event"""
+        pass
+
+
+class Song(BaseModel):
     """A song that can be played by the media player."""
 
-    # Human-friendly name of the song - must be unique in a media library, and is used to refer to it elsewhere.
-    name: Optional[str]
+    name: Optional[str] = Field(
+        description="Human-friendly name of the song - must be unique in a media library, "
+                    "and is used to refer to it elsewhere.")
 
-    # Human-friendly description of the song - only for informational purposes, and maybe un-set.
-    description: Optional[str] = None
+    description: Optional[str] = Field(
+        description="Human-friendly description of the song - only for informational purposes, and maybe un-set.")
 
-    # Additional key-value metadata, currently unspecified.
-    metadata: Optional[Dict[str, str]] = None
+    metadata: Optional[Dict[str, str]] = Field(description="Additional key-value metadata, currently unspecified.")
 
-    # Path of the file from the viewpoint of the local server.
-    local_path: Optional[str] = None
-
-
-@dataclass_json
-@dataclass
-class Playlist(JsonSchemaMixin):
-    """A Playlist of songs that can be played by the media player."""
-
-    # Human-friendly name of the playlist. Picked by the user. It must be unique in a media library, and
-    # is used to refer to it elsewhere.
-    name: Optional[str]
-
-    # Human-friendly description of the playlist, picked by the user. Informational purposes only.
-    description: Optional[str] = None
-
-    # Additional key-value metadata, currently unspecified.
-    metadata: Optional[Dict[str, str]] = None
-
-    # An ordered list of song aliases - referring to Song.name fields that will play as part of this playlist.
-    songs: Optional[List[str]] = None
+    local_path: Optional[str] = Field(description="Path of the file from the viewpoint of the local server.")
 
 
-class ErrorType(Enum):
+class Playlist(BaseModel):
+    name: Optional[str] = Field(
+        description="Human-friendly name of the playlist. Picked by the user. It must be unique in a media library, and"
+                    "is used to refer to it elsewhere.")
+
+    description: Optional[str] = Field(
+        description="Human-friendly description of the playlist, picked by the user. Informational purposes only.")
+
+    metadata: Optional[Dict[str, str]] = Field(
+        description="Human-friendly description of the playlist, picked by the user. Informational purposes only.")
+
+    songs: Optional[List[str]] = Field(
+        description="An ordered list of song aliases - referring to Song.name fields that will play "
+                    "as part of this playlist.")
+
+
+class ErrorType(IntEnum):
     """Different potential response states, indicating the success or failure of the prompting command.
 
     Should not be instantiated directly.
@@ -91,66 +99,141 @@ class ErrorType(Enum):
     INTERNAL_ERROR = 3
 
 
-class CommandCls(MessageCls, JsonSchemaMixin):
+class Message(BaseModel):
+    event: Optional["Types.EVENT_TYPES"] = Field(description="Describes something that happened to a client or server. "
+                                                             "Mutually exclusive with the 'command' field.")
+    command: Optional["Types.COMMAND_TYPES"] = Field(description="Describes something that the server should do. "
+                                                                 "Mutually exclusive with the 'event' field.")
+
+    @validator("command", always=True)
+    def ensure_one_of_command_or_event_set(cls, v, values):
+        """Ensure only command or event is set
+
+        WILL get messed up if 'command' gets put before 'event' in the field definitions, because validators
+        run such that 'values' only contains previously-defined fields.
+        """
+        if values.get('event', None) and v:
+            raise ValueError("Cannot set both command and event in a message.")
+        if not values.get('event', None) and not v:
+            raise ValueError("Must set at least one of 'event' and 'command'. Got '%s'" % (values,))
+        return v
+
+    def unwrap(self, payload_t: Type["Types.P_T"]) -> "Types.P_T":
+        if self.command:
+            if not issubclass(payload_t, Command):
+                raise TypeError("Cannot unwrap Command value '%s' to non-command type %s" % (class_name(self.command),
+                                                                                             class_name(payload_t)))
+            return cast(Types.P_T, self.command.unwrap(payload_t))
+        if self.event:
+            if not issubclass(payload_t, Event):
+                raise TypeError("Cannot unwrap Event value '%s' to non-event type %s" % (class_name(self.event),
+                                                                                         class_name(payload_t)))
+            return cast(Types.P_T, self.event.unwrap(payload_t))
+        raise ValueError("Event must be defined if command is not. \n"
+                         "Should have been checked by @validator functions.\nFor msg %s" % (self,))
+
+    def wrap(self) -> "Message":
+        return self
+
+    def is_type(self, payload_t: Type["Types.P_T"]) -> bool:
+        if isinstance(self.event, payload_t):
+            return True
+        if isinstance(self.command, payload_t):
+            return True
+        return False
+
+    def get_error(self) -> Optional["ErrorEvent"]:
+        if self.is_type(ErrorEvent):
+            return cast(ErrorEvent, self.unwrap(ErrorEvent))
+        return None
+
+    def json(self, *args, **kwargs):
+        kwargs['exclude_unset'] = True
+        return super(Message, self).json(*args, **kwargs)
+
+
+class Command(BaseModel):
     """The protocol defining what a Command payload looks like.
 
     All commands subclass CommandCls.
     """
-    def wrap(self) -> "Command":
-        return Command(message_name=self.MESSAGE_NAME, payload=self)
+    COMMAND_NAME_FIELD_DESC: ClassVar[str] = "Command sub-type - e.g. the command to perform."
+    COMMAND_NAME: ClassVar[str]  # Must have ClassVar type info in every subclass instance.
+    command_name: str
 
-    def unwrap(self, command_t: Type["Types.M_C"]) -> "Types.M_C":
-        return cast(Types.M_C, super(CommandCls, self).unwrap(command_t))
+    @classmethod
+    def create(cls: Type["Types.C_T"], **data) -> "Types.C_T":
+        data.update({"command_name": cls.COMMAND_NAME})
+        return cls(**data)
+
+    @validator('command_name', pre=True, always=True)
+    def ensure_valid_command_name(cls, this_command_name: str):
+        command_names = set(c.COMMAND_NAME for c in COMMANDS)
+        if not this_command_name:
+            raise ValueError("command_name unset")
+        if this_command_name not in command_names:
+            raise ValueError("Could not find command name '%s' in possible command names: [%s]" % (
+                this_command_name, ", ".join(command_names)))
+        return this_command_name
+
+    def unwrap(self, command_t: Type["Types.P_T"]) -> "Types.P_T":
+        if not issubclass(command_t, Command):
+            raise TypeError(
+                "Expected Command to unwrap to a subclass of Command, instead got '%s'" % (class_name(command_t),))
+
+        if self.command_name != command_t.COMMAND_NAME:
+            raise TypeError(
+                "Trying to unwrap '%s' to incompatable type %s" % (class_name(self), class_name(command_t)))
+
+        return cast(Types.P_T, self)
+
+    def wrap(self) -> Message:
+        assert any(isinstance(self, t) for t in COMMANDS), "Expected command type %s to be in '%s'" % (
+            class_name(self), (class_name(t) for t in COMMANDS))
+        # noinspection PyTypeChecker
+        return Message(command=self, event=None)
 
 
-class EventCls(MessageCls, JsonSchemaMixin):
+class Event(BaseModel):
     """The protocol defining what an Event payload looks like.
 
     All events subclass EventCls.
     """
+    EVENT_NAME: ClassVar[str]
+    EVENT_NAME_FIELD_DESC: ClassVar[str] = "Command sub-type - e.g. the command to perform."
+    event_name: str
 
-    def for_prod(self) -> "EventCls":
-        return self
+    @validator('event_name', pre=True, always=True)
+    def ensure_valid_event_name(cls, this_event_name: str):
+        event_names = set(e.EVENT_NAME for e in EVENTS)
+        if not this_event_name:
+            raise ValueError("event_name unset")
+        if this_event_name not in event_names:
+            raise ValueError("could not find event name '%s' in possible event names: [%s]" % (
+                this_event_name, ", ".join(event_names)))
+        return this_event_name
 
-    def wrap(self) -> "Event":
-        return Event(message_name=self.MESSAGE_NAME, payload=self)
+    def unwrap(self, event_t: Type["Types.P_T"]) -> "Types.P_T":
+        if not issubclass(event_t, Event):
+            raise TypeError(
+                "expected Command to unwrap to a subclass of Command, instead got '%s'" % (class_name(event_t),))
 
-    def unwrap(self, event_t: Type["Types.M_C"]) -> "Types.M_C":
-        return cast(Types.M_C, super(EventCls, self).unwrap(event_t))
+        if self.event_name != event_t.EVENT_NAME:
+            raise TypeError(
+                "trying to unwrap '%s' to incompatable type %s" % (class_name(self), class_name(event_t)))
 
+        return cast(Types.P_T, self)
 
-@dataclass_json
-@dataclass
-class Command(Message):
-    """A command is an instruction to do something. Servers receive commands, and then act on them.
+    def wrap(self) -> Message:
+        assert any(isinstance(self, t) for t in EVENTS), "Expected event type %s to be in '%s'" % (
+            class_name(self), ", ".join(class_name(t) for t in EVENTS))
+        # noinspection PyTypeChecker
+        return Message(event=self, command=None)
 
-    Commands include things like "stop playing", "go to the next song", "create a new playlist", whatever.
-    """
-    def wrap(self) -> "Command":
-        return self
-
-    def unwrap(self, command_t: Type["Types.M_C"]) -> "Types.M_C":
-        return cast(Types.M_C, super(Command, self).unwrap(command_t))
-
-
-@dataclass_json
-@dataclass
-class Event(Message):
-    """An event is information about the world, or something that happened. Clients receive events.
-
-    For instance, an event could include error information about the session, it could contain new
-    information about the player's state, it could contain requested information like "playlist names" or
-    "song names", and so on.
-
-    These are *generally* issued in response to commands, but not always. It's expected that components on
-    the client side hook themselves up to events they care about - e.g. list boxes to 'list playlist' events
-    and what have you.
-    """
-    def wrap(self) -> "Event":
-        return self
-
-    def unwrap(self, event_t: Type["Types.M_C"]) -> "Types.M_C":
-        return cast(Types.M_C, super(Event, self).unwrap(event_t))
+    @classmethod
+    def create(cls: Type["Types.E_T"], **data) -> "Types.E_T":
+        data.update({"event_name": cls.EVENT_NAME})
+        return cls(**data)
 
 
 class ErrorDataEnv(Enum):
@@ -160,126 +243,149 @@ class ErrorDataEnv(Enum):
     and no debug data, that will result in a very different debug process than if they see "data_env=PROD" and
     no debug data - so it's worth keeping around even if it's merely descriptive (rather than proscriptive) and
     self-evident 99% of the time to boot.
+
+    Attributes:
+        ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.
+        ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.
     """
-
-    # Running out in the wild. Scrub debug data.
     PRODUCTION: int = 0
-
-    # Running in dev mode. Keep debug data.
     DEBUG: int = 1
 
 
-@dataclass_json
-@dataclass
-class ErrorEvent(EventCls, Exception):
+class EventException(Exception):
+    """Throw an ErrorEvent (below) as an exception - cannot use inheritance because of the BaseModel subclass."""
+
+    def __init__(self, error_event: "ErrorEvent"):
+        self.error_event = error_event
+
+
+class ErrorEvent(Event):
     """Something bad happened and the guy on the other end of the wire needs to know about it.
 
     TODO: This should get added to a generic, versionless schema, then separately copied into the V1 schema.
     """
 
-    MESSAGE_NAME = "ERROR"
+    EVENT_NAME: ClassVar[str] = "ERROR"
+    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
-    # The user-friendly error message. Should always get set.
-    error_message: Optional[str] = None
+    error_message: Optional[str] = Field(default="",
+                                         description="The user-friendly error message. Should always get set.", )
 
-    # The type of error - e.g. "USER", or "INTERNAL" or whatever. Hints at where to look,
-    # and whether it'll get fixed if whatever caused it is tried again.
-    error_type: Optional[ErrorType] = None
+    error_type: Optional[ErrorType] = Field(
+        description='The type of error - e.g. "USER", or "INTERNAL" or whatever. Hints at where to look,'
+                    ' and whether it\'ll get fixed if whatever caused it is tried again.'
+    )
 
-    # The dev- and machine-friendly error data. May not be set for production builds.
-    error_data: Optional[str] = None
+    error_data: Optional[str] = Field(
+        description="The dev- and machine-friendly error data. May not be set for production builds.")
 
-    # Whether the return data is targeted for a dev- or prod- environment
-    error_env: Optional[Union[ErrorDataEnv, int]] = ErrorDataEnv.DEBUG
+    error_env: Optional[Union[ErrorDataEnv, int]] = Field(
+        default=ErrorDataEnv.DEBUG,
+        description="Whether the return data is targeted for a dev- or prod- environment")
 
-    # The dev- and machine-friendly command that originated this event. May not be set in
-    # production builds. May not be set for errors that had no contributing event. May
-    # be a string for commands that weren't fully parsed.
-    originating_command: Optional[str] = None
+    originating_command: Optional[str] = Field(
+        description="The dev- and machine-friendly command that originated this event. May not be set in "
+                    "production builds. May not be set for errors that had no contributing event. May "
+                    "be a string for commands that weren't fully parsed.")
 
     def for_prod(self) -> "ErrorEvent":
-        return ErrorEvent(error_message=self.error_message, error_type=self.error_type,
-                          error_env=ErrorDataEnv.PRODUCTION)
+        error_message = "Unxpected error encountered." \
+            if self.error_type == ErrorType.INTERNAL_ERROR else self.error_message
+
+        return ErrorEvent.create(error_message=error_message, error_type=self.error_type,
+                                 error_env=ErrorDataEnv.PRODUCTION)
+
+    def exception(self) -> EventException:
+        return EventException(self)
 
 
-@dataclass_json
-@dataclass
-class TogglePlayCommand(CommandCls):
+class TogglePlayCommand(Command):
     """Toggle the play state. Can optionally set the media player to the absolute "play" or "pause" state."""
+    COMMAND_NAME: ClassVar[str] = "TOGGLE_PLAY"
+    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "TOGGLE_PLAY"
-
-    # Optional field which indicates whether the server should play or pause. If unset, the server picks the
-    # opposite of the current state.
-    play_state: Optional[bool] = None
+    play_state: Optional[bool] = Field(
+        description="Optional field which indicates whether the server should play or pause. If unset, the server "
+                    "picks the opposite of the current state.")
 
 
-@dataclass_json
-@dataclass
-class PlayStateEvent(EventCls):
+class PlayStateEvent(Event):
     """Tells the client whether the media player is playing or not.."""
+    EVENT_NAME: ClassVar[str] = "PLAY_STATE"
+    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "PLAY_STATE"
-
-    # Whether media is now playing or not.
-    new_play_state: Optional[bool] = None
+    new_play_state: Optional[bool] = Field(description="Whether media is now playing or not.")
 
 
-@dataclass_json
-@dataclass
-class NextSongCommand(CommandCls):
+class NextSongCommand(Command):
     """Skip to the next song."""
+    COMMAND_NAME: ClassVar[str] = "NEXT_SONG"
+    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "NEXT_SONG"
 
-
-@dataclass_json
-@dataclass
-class SongPlayingEvent(EventCls):
+class SongPlayingEvent(Event):
     """Informs the client that a new song is currently playing."""
+    EVENT_NAME: ClassVar[str] = "SONG_PLAYING"
+    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "SONG_PLAYING"
-
-    # Info for the current song
-    current_song: Optional[Song] = None
+    current_song: Optional[Song] = Field(description="Info for the current song")
 
 
-@dataclass_json
-@dataclass
-class ListSongsCommand(CommandCls):
+class ListSongsCommand(Command):
     """Get a list of valid songs to reference."""
+    COMMAND_NAME: ClassVar[str] = "LIST_SONGS"
+    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "LIST_SONGS"
 
-
-@dataclass_json
-@dataclass
-class ListSongsEvent(EventCls):
+class ListSongsEvent(Event):
     """Client receives a list of songs, usually by request."""
+    EVENT_NAME: ClassVar[str] = "LIST_SONGS"
+    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "LIST_SONGS"
-
-    # The list of songs being returned
-    songs: Optional[List[Song]] = None
+    songs: Optional[List[Song]] = Field(description="The list of songs being returned")
 
 
-@dataclass_json
-@dataclass
-class ListPlaylistsCommand(CommandCls):
+class ListPlaylistsCommand(Command):
     """Get a list of valid playlists to reference."""
 
-    MESSAGE_NAME = "LIST_PLAYLISTS"
+    COMMAND_NAME: ClassVar[str] = "LIST_PLAYLISTS"
+    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
 
 
-@dataclass_json
-@dataclass
-class ListPlaylistsEvent(EventCls):
+class ListPlaylistsEvent(Event):
     """Client receives a list of playlists, usually by request."""
+    EVENT_NAME: ClassVar[str] = "LIST_PLAYLISTS"
+    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
-    MESSAGE_NAME = "LIST_PLAYLISTS"
+    playlists: Optional[List[Playlist]] = Field(descrption="The list of playlists being returned.")
 
-    # The list of playlists being returned.
-    playlists: Optional[List[Playlist]] = None
+
+class Types:
+    EVENT_TYPES = Union[ErrorEvent, PlayStateEvent, SongPlayingEvent, ListSongsEvent, ListPlaylistsEvent]
+    COMMAND_TYPES = Union[TogglePlayCommand, NextSongCommand, ListSongsCommand, ListPlaylistsCommand]
+    OBJECT_TYPES = Union[Song, Playlist, Event, Command, Message]
+
+    P_T = TypeVar('P_T', Event, Command)
+    E_T = TypeVar('E_T', bound=Event)
+    C_T = TypeVar('C_T', bound=Command)
+
+
+COMMANDS: Set[Type[Command]] = {t for t in get_args(Types.COMMAND_TYPES)}
+EVENTS: Set[Type[Event]] = {t for t in get_args(Types.EVENT_TYPES)}
+OBJECTS: Set[Type[BaseModel]] = {t for t in get_args(Types.OBJECT_TYPES)}
+_IGNORE_OBJECTS: Set[Type[object]] = {ErrorType, ErrorDataEnv, EventException, Types, MessageObj}
+
+
+def update_fwd_refs():
+    for c in COMMANDS:
+        c.update_forward_refs()
+    for e in EVENTS:
+        e.update_forward_refs()
+    for o in OBJECTS:
+        o.update_forward_refs()
+
+
+update_fwd_refs()
 
 
 def print_schema(base_dir: str):
@@ -288,11 +394,11 @@ def print_schema(base_dir: str):
     out_dir.mkdir(exist_ok=True)
     logger.info("printing files to: %s" % (Path(out_dir).joinpath('...'),))
     for object_cls in OBJECTS:
-        print_to_file(out_dir, object_cls.__name__, json.dumps(object_cls.json_schema(), indent=4))
+        print_to_file(out_dir, object_cls.__name__, json.dumps(object_cls.schema(), indent=4))
     for command_cls in COMMANDS:
-        print_to_file(out_dir, command_cls.__name__, json.dumps(command_cls.json_schema(), indent=4))
+        print_to_file(out_dir, command_cls.__name__, json.dumps(command_cls.schema(), indent=4))
     for response_cls in EVENTS:
-        print_to_file(out_dir, response_cls.__name__, json.dumps(response_cls.json_schema(), indent=4))
+        print_to_file(out_dir, response_cls.__name__, json.dumps(response_cls.schema(), indent=4))
     logger.info("finished writing.")
 
 
@@ -301,42 +407,9 @@ def print_to_file(out_dir, name, contents):
         file.write(contents)
 
 
-OBJECTS: Set[Type[JsonSchemaMixin]] = {Song, Playlist, Event, Command}
-COMMANDS: Set[Type[CommandCls]] = {TogglePlayCommand, NextSongCommand, ListSongsCommand, ListPlaylistsCommand}
-EVENTS: Set[Type[EventCls]] = {PlayStateEvent, SongPlayingEvent, ListSongsEvent, ListPlaylistsEvent, ErrorEvent}
-
-
-@message_map(message_name="event", message_types=EVENTS)
-class EventTypeMap(MessageMapTypeHints[Event, EventCls]):
-    """Superclass for classes which want to handle "Event" messages.
-
-    Clients should override "with_<event_name_>(...)" functions as described in 'messages.message_map.message_handler()'
-
-    ex: To handle PlayStateEvent's, implement
-      def with_play_state(ps_event: PlayStateEvent) -> Any:
-        ....
-
-    You can call "expect_<event_name>(handler: message_maps.Types.MessageHandler)" to get a quick and dirty one-event
-    EventTypeMap.
-    """
-    pass
-
-
-@message_map(message_name="command", message_types=COMMANDS)
-class CommandTypeMap(MessageMapTypeHints[Command, CommandCls]):
-    """See the EventTypeMap class documentation. This is the same, except substitute "event" with "command"."""
-    pass
-
-
-"""
-BOOK KEEPING OBJECTS:
-  These objects work to keep track of all the classes defined in this file. It's expected that, if you add new commands
-  or events, you update these dicts accordingly. The schema auto-generation stuff uses these variables to keep track
-  of what does and doesn't need schemas generated for them. 
-"""
-_IGNORE_OBJECTS: Set[Type[object]] = {ErrorType, CommandCls, EventCls, ErrorDataEnv, CommandTypeMap,
-                                      EventTypeMap}
-
-COMMAND_NAMES: Set[str] = set(map(lambda x: x.MESSAGE_NAME, COMMANDS))
-EVENT_NAMES: Set[str] = set(map(lambda x: x.MESSAGE_NAME, EVENTS))
-EVENT_NAME_CLS_MAP: Dict[str, Type[EventCls]] = {event.MESSAGE_NAME: event for event in EVENTS}
+def prettify_message(msg: Optional[Union[str, "MessageObj"]]) -> str:
+    if not msg:
+        return ""
+    if isinstance(msg, str):
+        msg = Message.parse_raw(msg)
+    return msg.wrap().json().encode('latin1').decode('unicode_escape')

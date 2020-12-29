@@ -3,8 +3,8 @@ Implements the Command class, in order to aid commandline processing.
 """
 import logging
 from abc import abstractmethod
-from typing import List
 from argparse import ArgumentParser
+from typing import List
 
 logger = logging.getLogger("media-player")
 
@@ -39,7 +39,7 @@ class Command(object):
         argv: Input string arguments from the command line.
         """
         logger.info("Processing command: %s - '%s", self.__name,  argv)
-        self.do_function(**vars(self.arg_parser.parse_args(args=argv)))
+        return self.do_function(**vars(self.arg_parser.parse_args(args=argv)))
 
     @abstractmethod
     def do_function(self, **arg_dict):

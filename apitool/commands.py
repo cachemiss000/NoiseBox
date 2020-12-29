@@ -1,7 +1,9 @@
+import websockets
+
+from commandserver.server_types.v1_command_types import TogglePlayCommand, Message, ListPlaylistsCommand, \
+    ListPlaylistsEvent, prettify_message
 from common import command
 from common.safe_arg_parse import SafeArgumentParser
-from commandserver import media_server_pb2_grpc as ms_pb_grpc
-from commandserver import media_server_pb2 as ms_pb
 
 
 class PlayCommand(command.Command):
@@ -9,13 +11,14 @@ class PlayCommand(command.Command):
     Send a command to the API to begin playing music.
     """
 
-    def __init__(self, mediarpc_stub: ms_pb_grpc.MediaControlServiceStub):
+    def __init__(self, websockets_client: websockets.WebSocketClientProtocol):
         ap = SafeArgumentParser(description="Begin playing audio")
         super(PlayCommand, self).__init__("play", ap)
-        self.stub = mediarpc_stub
+        self.ws_client = websockets_client
 
-    def do_function(self, **arg_dict):
-        self.stub.Play(ms_pb.PlayRequest())
+    async def do_function(self, **arg_dict):
+        await self.ws_client.send(TogglePlayCommand.create().wrap().json())
+        print("Response:\n%s" % (prettify_message(await self.ws_client.recv()),))
 
 
 class ListPlaylists(command.Command):
@@ -23,18 +26,17 @@ class ListPlaylists(command.Command):
     Send a command to the API to list all the playlists
     """
 
-    def __init__(self, mediarpc_stub: ms_pb_grpc.MediaControlServiceStub):
+    def __init__(self, websockets_client: websockets.WebSocketClientProtocol):
         ap = SafeArgumentParser(description="List playlists")
         super(ListPlaylists, self).__init__("listplaylists", ap)
-        self.stub = mediarpc_stub
+        self.ws_client = websockets_client
 
-    def do_function(self, **arg_dict):
-        itr_count = 0
-        response = ms_pb.ListPlaylistsResponse()
-        names = []
-        while itr_count <= 0 or (itr_count < 10 and response.next_page_token):
-            itr_count += 1
-            request = ms_pb.ListPlaylistsRequest(page_token=response.next_page_token, max_num_entries=3)
-            response = self.stub.ListPlaylists(request)
-            names.extend(response.playlist_names)
-        print("Playlists: {\n%s\n}" % (names,))
+    async def do_function(self, **arg_dict):
+        await self.ws_client.send(ListPlaylistsCommand.create().wrap().json())
+        response = Message.parse_raw(await self.ws_client.recv())
+        if response.get_error():
+            print("Received error:")
+            print(prettify_message(response.get_error()))
+            return
+
+        print("Playlists:\n%s" % (response.unwrap(ListPlaylistsEvent).playlists,))

@@ -8,7 +8,6 @@ from parameterized import parameterized
 
 from commandserver import v1_server as server
 from commandserver.server_types import v1_command_types as c_types
-from commandserver.server_types.v1_command_types import Event
 from common import test_utils
 from common.test_utils import FlagsTest, MockClient
 from medialogic import controller, media_library
@@ -48,48 +47,33 @@ class CommandParsingTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
         super(CommandParsingTest, self).setUp()
         FLAGS.debug = True
 
-    def test_parameterless_not_empty(self):
-        """Sanity test to ensure the next test isn't running on the empty set."""
-        self.assertGreater(len(server.PARAMETERLESS_COMMANDS), 1,
-                           "Parameterless commands '%s' should not be empty" % (server.PARAMETERLESS_COMMANDS,))
-
-    @parameterized.expand(server.PARAMETERLESS_COMMANDS)
-    def test_parse_empty_commands(self, command_cls: str):
-        command = {
-            "message_name": command_cls
-        }
-
-        output_command = server.MediaServer.parse_command(json.dumps(command))
-
-        self.assertTrue(isinstance(output_command, c_types.Command))
-        self.assertEqual(output_command.message_name, command_cls)
-        self.assertIsNone(output_command.payload)
-
-    def test_throws_no_command_set(self):
-        command = {
-            "payload": {
-                "play_state": True
+    async def test_event_not_defined(self):
+        message = {
+            "event": {
+                "event_name": "florbus",
             }
-        }
-
-        with self.assertRaises(c_types.ErrorEvent) as ex:
-            server.MediaServer.parse_command(json.dumps(command))
-        exception = ex.exception
-        self.assertRegex(exception.error_message, "Command name must be specified.*")
-        self.assertEqual(exception.error_type, c_types.ErrorType.CLIENT_ERROR)
-
-    async def test_command_not_defined(self):
-        command = {
-            "message_name": "florbus",
-            "payload": {}
         }
 
         mc = MockClient()
         media_server = server.MediaServer(Mock(), Mock())
-        await media_server.accept(json.dumps(command), mc)
+        await media_server.accept(json.dumps(message), mc)
 
         self.assertRegex(mc.get_error().error_message,
-                         "Command name 'florbus' is not a valid %s command" % (server.VERSION,))
+                         "Could not find event name 'florbus' in possible event names:")
+
+    async def test_command_not_defined(self):
+        message = {
+            "command": {
+                "command_name": "florbus",
+            }
+        }
+
+        mc = MockClient()
+        media_server = server.MediaServer(Mock(), Mock())
+        await media_server.accept(json.dumps(message), mc)
+
+        self.assertRegex(mc.get_error().error_message,
+                         "Could not find command name 'florbus' in possible command names:")
 
 
 class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
@@ -100,13 +84,13 @@ class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
     @parameterized.expand([(True,), (False,)])
     async def test_play_no_arg_toggles(self, starting_play_state):
         """Check to make sure playing_state is toggled."""
-        server, c, ml = mock_server()
+        this_server, c, ml = mock_server()
         c.playing_state = starting_play_state
-        command = {"message_name": c_types.TogglePlayCommand.MESSAGE_NAME}
-        expected_response = Event(message_name=c_types.PlayStateEvent.MESSAGE_NAME,
-                                  payload=c_types.PlayStateEvent(not c.playing_state))
+        command_msg = c_types.TogglePlayCommand.create().wrap()
+        expected_response = c_types.PlayStateEvent.create(
+            new_play_state=not c.playing_state).wrap()
         client = MockClient(Mock())
-        await server.accept(json.dumps(command), client)
+        await this_server.accept(command_msg.json(), client)
         self.assertEqual(client.sent_messages, [expected_response])
 
         # We use "assertEqual(..., not <expression)" instead of "assertNotEqual(....)"
@@ -119,16 +103,11 @@ class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
     @parameterized.expand([(True,), (False,)])
     async def test_playing_true_false_works(self, new_play_state):
         """Check to make sure play_state is respected."""
-        command = {
-            "message_name": c_types.TogglePlayCommand.MESSAGE_NAME,
-            "payload": {
-                "play_state": new_play_state
-            }
-        }
-        server, c, ml = mock_server()
+        command_msg = c_types.TogglePlayCommand.create(play_state=new_play_state).wrap()
+        this_server, c, ml = mock_server()
         c.playing_state = not new_play_state
         mc = MockClient()
-        await server.accept(json.dumps(command), mc)
+        await this_server.accept(command_msg.json(), mc)
 
         self.assertEqual(mc.get_only_message().unwrap(c_types.PlayStateEvent).new_play_state, new_play_state)
         self.assertEqual(c.playing(), new_play_state)
@@ -136,16 +115,11 @@ class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
     @parameterized.expand([(True,), (False,)])
     async def test_set_playing_idempotent(self, new_play_state):
         """Checks to make sure the server actually sets the playing state when called."""
-        command = {
-            "message_name": c_types.TogglePlayCommand.MESSAGE_NAME,
-            "payload": {
-                "play_state": new_play_state,
-            }
-        }
-        server, c, ml = mock_server()
+        command_msg = c_types.TogglePlayCommand.create(play_state=new_play_state).wrap()
+        this_server, c, ml = mock_server()
         c.playing_state = new_play_state
         mc = MockClient()
-        await server.accept(json.dumps(command), mc)
+        await this_server.accept(command_msg.json(), mc)
 
         self.assertEqual(mc.get_only_message().unwrap(c_types.PlayStateEvent).new_play_state, new_play_state)
         self.assertEqual(c.playing(), new_play_state)
@@ -160,24 +134,25 @@ class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
     USE_EXPLICIT_SET = "UseExplicitSet"
 
     @parameterized.expand([(USE_TOGGLE,), (USE_EXPLICIT_SET,)])
-    async def test_setting_play_thorws_exception(self, command_type):
-        command = {"message_name": c_types.TogglePlayCommand.MESSAGE_NAME}
+    async def test_setting_play_throws_exception(self, command_type):
+        command = c_types.TogglePlayCommand.create()
 
         if command_type == PlayCommandTest.USE_EXPLICIT_SET:
-            command["payload"] = {"play_state": True}
+            command.play_state = True
         else:
             assert command_type == PlayCommandTest.USE_TOGGLE
+        command_msg = command.wrap()
 
-        server, c, ml = mock_server()
-        ex = Exception("TestyMcTestface")
+        this_server, c, ml = mock_server()
+        ex = Exception("TestyMcTestFace")
 
-        def throw_ex(unused_self=None, arg=None):
+        def throw_ex(_unused_self=None, _arg=None):
             raise ex
 
         c.set_pause = c.toggle_pause = throw_ex
 
         mc = MockClient()
-        await server.accept(json.dumps(command), mc)
+        await this_server.accept(command_msg.json(), mc)
         self.assertRegex(mc.get_error().error_message, "Unexpected error.*")
         self.assertEqual(mc.get_error().error_data, str(ex))
 
@@ -187,25 +162,25 @@ class PlayCommandTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
 
         Uses FLAGS.override_flag. By default, "debug" is set to true (see top of this file).
         """
-        command = {"message_name": c_types.TogglePlayCommand.MESSAGE_NAME}
+        command = {"command_name": c_types.TogglePlayCommand.COMMAND_NAME}
 
         if command_type == PlayCommandTest.USE_TOGGLE:
             command["payload"] = {"play_state": True}
         else:
             assert command_type == PlayCommandTest.USE_EXPLICIT_SET
 
-        server, c, ml = mock_server()
+        this_server, c, ml = mock_server()
         mc = MockClient(Mock())
 
-        def throw_ex(unused_self, arg=None):
-            raise Exception("TestyMcTestface")
+        def throw_ex(_unused_self, _arg=None):
+            raise Exception("TestyMcTestFace")
 
         with test_utils.override_flag("debug", False):
             c.set_pause = c.toggle_pause = throw_ex
-            await server.accept(json.dumps(command), mc)
+            await this_server.accept(json.dumps(command), mc)
 
         response = mc.get_error()
-        self.assertRegex(response.error_message, "Unexpected error.*")
+        self.assertRegex(response.error_message, "Message failed validation.*")
         self.assertEqual(response.error_data, None)
 
 

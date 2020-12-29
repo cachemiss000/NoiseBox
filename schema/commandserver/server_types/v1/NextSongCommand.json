@@ -1,6 +1,16 @@
 {
-    "type": "object",
-    "properties": {},
+    "title": "NextSongCommand",
     "description": "Skip to the next song.",
-    "$schema": "http://json-schema.org/draft-06/schema#"
+    "type": "object",
+    "properties": {
+        "command_name": {
+            "title": "Command Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "NEXT_SONG",
+            "type": "string"
+        }
+    },
+    "required": [
+        "command_name"
+    ]
 }

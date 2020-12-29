@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Protocol, Dict, Union
+from typing import Protocol, Dict
 
 import websockets
 from absl import flags
@@ -9,8 +9,8 @@ from absl import flags
 # noinspection PyUnresolvedReferences
 import commandserver.server_flags
 from commandserver import server_codes, server_exceptions
+from commandserver.server_types.v1_command_types import MessageObj
 from common import print_controller
-from messages.message_map import Message, MessageCls
 
 FLAGS = flags.FLAGS
 
@@ -19,8 +19,8 @@ class ClientSession:
     def __init__(self, ws: websockets.WebSocketServerProtocol):
         self._ws = ws
 
-    async def send(self, message: Union[Message, MessageCls]):
-        await self._ws.send(message.wrap().to_json())
+    async def send(self, message: MessageObj):
+        await self._ws.send(message.wrap().json())
 
 
 class Server(Protocol):
@@ -74,12 +74,12 @@ class WebsocketMuxer:
                     raise server_exceptions.ClientError("this server does not accept binary frames")
                 await server.accept(message, session)
             except server_exceptions.CloseConnectionException as e:
-                self.logger.debug("client @ '%s' asked to close the server" % (path,))
+                self.logger.debug("client @ '%s' asked to close the server: %s" % (path, e))
                 await ws.close()
                 return
             except server_exceptions.ClientError as e:
                 self.logger.warn("client @ '%s' misbehaved: '%s', closing the connection" % (path, e))
-                await ws.close(server_codes.BAD_CLIENT, str(e))
+                await ws.close(server_codes.BAD_CLIENT, e.get_safe_close_message())
                 return
 
         self.logger.debug("server loop finished for connection path '%s'" % (path,))

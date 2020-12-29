@@ -2,8 +2,8 @@
 This module defines objects used to manage a media library pointing at audio files in a file system.
 """
 
-from typing import List, Dict, Tuple, Any
 import os
+from typing import List, Dict, Tuple, Any
 
 from common.exceptions import UserException, SystemException
 
@@ -41,9 +41,9 @@ class Song(object):
         return str(self)
 
     @staticmethod
-    def parse_v1(primitive: Dict[str, str]):
+    def parse_v1(primitive: Dict[str, object]):
         """Used to parse the first serialization version of a song from json."""
-        return Song(primitive["alias"], primitive["uri"], primitive.get("description", ""))
+        return Song(str(primitive["alias"]), str(primitive["uri"]), str(primitive.get("description", "")))
 
     def to_primitive(self) -> Dict[str, object]:
         """Transforms 'self' to a dict that can be serialized."""
@@ -55,7 +55,7 @@ class Song(object):
         }
 
     @staticmethod
-    def from_primitive(primitive: Dict[str, str]):
+    def from_primitive(primitive: Dict[str, object]):
         """Transforms a dict (presumably read from json) into a Song object."""
         version = primitive[VERSION_FIELD]
         if not isinstance(version, float):

@@ -18,7 +18,7 @@ class SystemPrintController(PrintController):
     """Prints messages to stdout."""
 
     def print(self, message, *args):
-        print(message, *args)
+        print(message % args)
 
 
 class MetaPrintController(PrintController):

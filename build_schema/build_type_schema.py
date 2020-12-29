@@ -23,7 +23,7 @@ def print_v1():
     v1.print_schema(str(out_dir.absolute()))
 
 
-def run(argv):
+def run(*_argv):
     print_v1()
 
 

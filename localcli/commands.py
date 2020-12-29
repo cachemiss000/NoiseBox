@@ -5,14 +5,15 @@ These commandline commands perform basic functionality for controlling the media
 basic testing from the command line, as well as configuration and scripting for users who know what they're doing.
 """
 
-from common.safe_arg_parse import SafeArgumentParser
-from medialogic import media_library
 import json
 import pathlib
+
 from common.command import Command
-from medialogic.controller import Controller
 from common.exceptions import UserException
 from common.print_controller import print_msg
+from common.safe_arg_parse import SafeArgumentParser
+from medialogic import media_library
+from medialogic.controller import Controller
 
 
 class IllegalArgument(UserException):
@@ -22,6 +23,7 @@ class IllegalArgument(UserException):
 
 class ListAudioDevices(Command):
     """List audio devices to the commandline."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="List audio devices")
         super().__init__("listdevices", ap)
@@ -33,6 +35,7 @@ class ListAudioDevices(Command):
 
 class SetDevice(Command):
     """Sets the audio device based on the ListAudioDevices command."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="List audio devices")
         ap.add_argument("device_index", help="The index of the device to set as the output")
@@ -45,6 +48,7 @@ class SetDevice(Command):
 
 class GetDevice(Command):
     """Gets the current audio device and prints it to the command line."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Show the current audio device")
         super().__init__("getdevice", ap)
@@ -56,6 +60,7 @@ class GetDevice(Command):
 
 class AddSong(Command):
     """Adds a new song to the Media Library."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Adds a new song to the library")
         ap.add_argument("song_alias", help="Alias by which the song shall forevermore be named")
@@ -79,6 +84,7 @@ class AddSong(Command):
 
 class PlaySong(Command):
     """Begins playing a song through the current media device, based on the input song alias."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Play a single song")
         ap.add_argument("song_alias", help="Alias of the song to play")
@@ -91,6 +97,7 @@ class PlaySong(Command):
 
 class Queue(Command):
     """Queues a new song to play after the current set of songs have been played."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Queue up a set of things")
         ap.add_argument("alias", help="Alias of the song or playlist to queue")
@@ -103,6 +110,7 @@ class Queue(Command):
 
 class Play(Command):
     """Begins playing if not currently playing."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Start playing")
         super().__init__("play", ap)
@@ -115,6 +123,7 @@ class Play(Command):
 
 class Pause(Command):
     """Pauses the currently playing song."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Toggle pause the playing song")
         super().__init__("pause", ap)
@@ -126,6 +135,7 @@ class Pause(Command):
 
 class Stop(Command):
     """Stops the currently playing song."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Stop the currently playing song")
         super().__init__("stop", ap)
@@ -140,6 +150,7 @@ class CreatePlaylist(Command):
 
     The playlist starts off empty.
     """
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Create a new playlist to start adding songs")
         ap.add_argument("playlist_name", help="The name of the playlist being created.")
@@ -152,6 +163,7 @@ class CreatePlaylist(Command):
 
 class AddSongToPlaylist(Command):
     """Adds a single song to the playlist based on the input alias."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Add a song to a playlist")
         ap.add_argument("playlist_name", help="The name of the playlist to add the song to")
@@ -179,8 +191,10 @@ class ListSongs(Command):
             else:
                 print_msg("  %s: %s" % (song.alias, song.uri))
 
+
 class ListPlaylists(Command):
     """Lists all playlists in the current media library on the commandline."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Lists all playlists in the library")
         super().__init__("listplaylists", ap)
@@ -189,7 +203,7 @@ class ListPlaylists(Command):
     def do_function(self):
         playlists = self.controller.media_library.list_playlists()
         for playlist in playlists:
-                print_msg("  %s: %s" % (playlist[0], playlist[1]))
+            print_msg("  %s: %s" % (playlist[0], playlist[1]))
 
 
 class SaveLibrary(Command):
@@ -207,7 +221,10 @@ class SaveLibrary(Command):
             raise IllegalArgument("Expected a name for the library. Instead got '%s'" % (library_name,))
 
         json_str = json.dumps(self.controller.media_library.to_primitive())
-        file = open("%s/Media Libraries/%s.json" % (pathlib.Path(__file__).parent.absolute(), library_name,), mode="w")
+        lib_path = pathlib.Path.cwd().joinpath("Media Libraries").joinpath(library_name + ".json")
+        lib_path.parent.mkdir(parents=True, exist_ok=True)
+
+        file = open(lib_path, mode="w")
         file.write(json_str)
         file.close()
 
@@ -226,7 +243,8 @@ class LoadLibrary(Command):
         if library_name == "" or library_name is None:
             raise IllegalArgument("Expected a name for the library. Instead got '%s'" % (library_name,))
 
-        file = open("%s/../Media Libraries/%s.json" % (pathlib.Path(__file__).parent.absolute(), library_name), mode="r")
+        lib_path = pathlib.Path.cwd().joinpath("Media Libraries").joinpath(library_name + ".json")
+        file = open(lib_path, mode="r")
         json_str = file.read()
         ml_primitive = json.loads(json_str)
         self.controller.media_library.copy_from(media_library.MediaLibrary.from_primitive(ml_primitive))
@@ -234,6 +252,7 @@ class LoadLibrary(Command):
 
 class DescribeSong(Command):
     """Adds a description to a song in the current media library, based on the alias of the song."""
+
     def __init__(self, controller: Controller):
         ap = SafeArgumentParser(description="Adds a description to a song.")
         ap.add_argument("song_alias", help="The alias of the song to update.")
@@ -249,5 +268,3 @@ class DescribeSong(Command):
         song = self.controller.media_library.get_song(song_alias)
         song.description = description
         self.controller.media_library.add_song(song, expect_overwrite=True)
-
-

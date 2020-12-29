@@ -1,40 +1,74 @@
 {
+    "title": "ErrorEvent",
+    "description": "Something bad happened and the guy on the other end of the wire needs to know about it.\n\nTODO: This should get added to a generic, versionless schema, then separately copied into the V1 schema.",
     "type": "object",
     "properties": {
+        "event_name": {
+            "title": "Event Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "ERROR",
+            "type": "string"
+        },
         "error_message": {
+            "title": "Error Message",
+            "description": "The user-friendly error message. Should always get set.",
+            "default": "",
             "type": "string"
         },
         "error_type": {
-            "type": "integer",
+            "description": "The type of error - e.g. \"USER\", or \"INTERNAL\" or whatever. Hints at where to look, and whether it'll get fixed if whatever caused it is tried again.",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/ErrorType"
+                }
+            ]
+        },
+        "error_data": {
+            "title": "Error Data",
+            "description": "The dev- and machine-friendly error data. May not be set for production builds.",
+            "type": "string"
+        },
+        "error_env": {
+            "title": "Error Env",
+            "description": "Whether the return data is targeted for a dev- or prod- environment",
+            "default": 1,
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/ErrorDataEnv"
+                },
+                {
+                    "type": "integer"
+                }
+            ]
+        },
+        "originating_command": {
+            "title": "Originating Command",
+            "description": "The dev- and machine-friendly command that originated this event. May not be set in production builds. May not be set for errors that had no contributing event. May be a string for commands that weren't fully parsed.",
+            "type": "string"
+        }
+    },
+    "required": [
+        "event_name"
+    ],
+    "definitions": {
+        "ErrorType": {
+            "title": "ErrorType",
+            "description": "Different potential response states, indicating the success or failure of the prompting command.\n\nShould not be instantiated directly.",
             "enum": [
                 0,
                 1,
                 2,
                 3
-            ]
-        },
-        "error_data": {
-            "type": "string"
-        },
-        "error_env": {
-            "oneOf": [
-                {
-                    "type": "integer",
-                    "enum": [
-                        0,
-                        1
-                    ]
-                },
-                {
-                    "type": "integer"
-                }
             ],
-            "default": 1
+            "type": "integer"
         },
-        "originating_command": {
-            "type": "string"
+        "ErrorDataEnv": {
+            "title": "ErrorDataEnv",
+            "description": "Dictates what kind of error data is attached to an exception.\n\nUsed to indicate to the viewer whether debug data has been scrubbed. If a programmer sees \"data_env=DEBUG\"\nand no debug data, that will result in a very different debug process than if they see \"data_env=PROD\" and\nno debug data - so it's worth keeping around even if it's merely descriptive (rather than proscriptive) and\nself-evident 99% of the time to boot.\n\nAttributes:\n    ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.\n    ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.",
+            "enum": [
+                0,
+                1
+            ]
         }
-    },
-    "description": "Something bad happened and the guy on the other end of the wire needs to know about it.\n\n    TODO: This should get added to a generic, versionless schema, then separately copied into the V1 schema.\n    ",
-    "$schema": "http://json-schema.org/draft-06/schema#"
+    }
 }

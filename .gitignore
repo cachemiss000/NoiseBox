@@ -11,3 +11,4 @@
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vlc-controller.iml
 /.run/*
+/mypy.ini

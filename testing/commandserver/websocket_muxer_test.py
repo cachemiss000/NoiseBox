@@ -2,15 +2,15 @@ import asyncio
 import logging
 import tracemalloc
 import unittest
-from dataclasses import dataclass
 from typing import List
 
 import websockets
 from absl.testing import absltest
 
 from commandserver import websocket_muxer, server_codes, server_exceptions
+from commandserver.server_types import v1_command_types as c_types
+from commandserver.server_types.v1_command_types import Message
 from common.test_utils import FlagsTest
-from messages import message_map
 
 CLOSE_MESSAGE = "close sesame"
 
@@ -19,7 +19,7 @@ tracemalloc.start(1000)
 
 class TestServer(websocket_muxer.Server):
 
-    def __init__(self, expect_list: List[str], response_list: List[message_map.Message],
+    def __init__(self, expect_list: List[c_types.Message], response_list: List[c_types.Message],
                  close_message: str = CLOSE_MESSAGE):
         self.expect_list = expect_list
         self.response_list = response_list
@@ -30,52 +30,53 @@ class TestServer(websocket_muxer.Server):
             raise server_exceptions.CloseConnectionException
 
         expected = self.expect_list.pop(0)
-        if message != expected:
+        if Message.parse_raw(message) != expected:
             raise server_exceptions.ClientError("expected '%s' got '%s'" % (expected, message))
         await client.send(self.response_list.pop(0))
 
 
-async def send_commands(ws: websockets.WebSocketClientProtocol, messages: List[str],
+async def send_commands(ws: websockets.WebSocketClientProtocol, messages: List[c_types.MessageObj],
                         close_message: str = CLOSE_MESSAGE):
     try:
         for message in messages:
-            await ws.send(message)
+            await ws.send(message.wrap().json())
         await ws.send(close_message)
     except websockets.ConnectionClosedError as e:
-        logging.exception("Connection closed early")
+        logging.exception("Connection closed early: %s" % (e,))
 
 
-@dataclass
-class TestMessage(message_map.MessageCls):
-    MESSAGE_NAME = "TEST"
-
-    value: str
+def events_from(*argv) -> List[c_types.Event]:
+    return [event_from(arg) for arg in argv]
 
 
-def messages_from(*argv) -> List[message_map.Message]:
-    return [message_from(arg) for arg in argv]
+def event_from(song_name: str) -> c_types.Event:
+    return c_types.SongPlayingEvent.create(current_song=c_types.Song(name=song_name))
 
 
-def message_from(message: str) -> message_map.Message:
-    return message_map.Message(message_name=TestMessage.MESSAGE_NAME, payload=TestMessage(value=message))
+def commands_from(*argv: bool) -> List[c_types.Command]:
+    return [command_from(arg) for arg in argv]
 
 
-def expected_messages(messages: List[message_map.Message]) -> List[TestMessage]:
-    return [message.payload for message in messages]
+def command_from(arg: bool) -> c_types.Command:
+    return c_types.TogglePlayCommand.create(play_state=arg)
 
 
-@message_map.message_map(message_types=[TestMessage])
-class ResponseCollector(message_map.MessageMapTypeHints[message_map.Message, message_map.MessageCls]):
+def expected_messages(messages: List[c_types.Message]) -> List[c_types.Event]:
+    return [message.unwrap(c_types.SongPlayingEvent) for message in messages]
+
+
+def wrap_all(*argv: c_types.MessageObj) -> List[c_types.Message]:
+    return list(arg.wrap() for arg in argv)
+
+
+class ResponseCollector:
 
     def __init__(self):
-        self.responses: List[TestMessage] = []
-
-    def with_test(self, test_message: TestMessage):
-        self.responses.append(test_message)
+        self.responses: List[c_types.Message] = []
 
     async def route_responses(self, ws: websockets.WebSocketClientProtocol):
         async for message in ws:
-            self.handle_message(message_map.Message.from_json(message))
+            self.responses.append(c_types.Message.parse_raw(message).event)
 
 
 class WebsocketContextManager:
@@ -134,10 +135,10 @@ class WebsocketMuxerTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
 
     async def test_websocket_returns_response(self):
         muxer = websocket_muxer.WebsocketMuxer()
-        client_commands = ["florgus1", "florgus2", "florgus3"]
-        server_responses = messages_from("blorgus1", "blorgus2", "blorgus3")
-        test_server = TestServer(expect_list=list(client_commands),
-                                 response_list=list(server_responses))
+        client_commands = commands_from(True, False, True)
+        server_responses = events_from("blorgus1", "blorgus2", "blorgus3")
+        test_server = TestServer(expect_list=wrap_all(*client_commands),
+                                 response_list=wrap_all(*server_responses))
         rc = ResponseCollector()
 
         async with WebsocketContextManager() as ws_ctx:
@@ -151,22 +152,22 @@ class WebsocketMuxerTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
             await asyncio.gather(collection_cr, commands_cr)
 
         self.assertConnectionClosedSuccessfully(client)
-        self.assertListEqual(rc.responses, expected_messages(server_responses))
+        self.assertListEqual(rc.responses, server_responses)
 
     async def test_multiple_paths(self):
         muxer = websocket_muxer.WebsocketMuxer()
 
-        client_commands_1 = ["florgus1"]
-        server_responses_1 = messages_from("blorgus1")
-        test_server_1 = TestServer(expect_list=list(client_commands_1),
-                                   response_list=list(server_responses_1))
+        client_commands_1 = commands_from(True, False)
+        server_responses_1 = events_from("blorgus1", "blorgus2")
+        test_server_1 = TestServer(expect_list=wrap_all(*client_commands_1),
+                                   response_list=wrap_all(*server_responses_1))
         muxer.register("/test1", test_server_1)
         rc1 = ResponseCollector()
 
-        client_commands_2 = ["florgus2"]
-        server_responses_2 = messages_from("blorgus2")
-        test_server_2 = TestServer(expect_list=list(client_commands_2),
-                                   response_list=list(server_responses_2))
+        client_commands_2 = commands_from(True)
+        server_responses_2 = events_from("blorgus2")
+        test_server_2 = TestServer(expect_list=wrap_all(*client_commands_2),
+                                   response_list=wrap_all(*server_responses_2))
         muxer.register("/test2", test_server_2)
         rc2 = ResponseCollector()
 
@@ -185,8 +186,8 @@ class WebsocketMuxerTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
         self.assertConnectionClosedSuccessfully(client_1)
         self.assertConnectionClosedSuccessfully(client_2)
 
-        self.assertEqual(rc1.responses, expected_messages(server_responses_1))
-        self.assertEqual(rc2.responses, expected_messages(server_responses_2))
+        self.assertEqual(rc1.responses, expected_messages(wrap_all(*server_responses_1)))
+        self.assertEqual(rc2.responses, expected_messages(wrap_all(*server_responses_2)))
 
     async def test_server_error(self):
         muxer = websocket_muxer.WebsocketMuxer()

@@ -1,25 +1,14 @@
 {
-    "allOf": [
-        {
-            "$ref": "#/definitions/Message"
-        },
-        {
-            "type": "object",
-            "properties": {}
+    "title": "Event",
+    "description": "The protocol defining what an Event payload looks like.\n\nAll events subclass EventCls.",
+    "type": "object",
+    "properties": {
+        "event_name": {
+            "title": "Event Name",
+            "type": "string"
         }
-    ],
-    "description": "An event is information about the world, or something that happened. Clients receive events.\n\n    For instance, an event could include error information about the session, it could contain new\n    information about the player's state, it could contain requested information like \"playlist names\" or\n    \"song names\", and so on.\n\n    These are *generally* issued in response to commands, but not always. It's expected that components on\n    the client side hook themselves up to events they care about - e.g. list boxes to 'list playlist' events\n    and what have you.\n    ",
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "definitions": {
-        "Message": {
-            "type": "object",
-            "properties": {
-                "message_name": {
-                    "type": "string"
-                },
-                "payload": {}
-            },
-            "description": "Contains a wrapped MessageCls, including naming information.\n\n    Payload is typically stored in an unprocessed state, because the \"dataclass_json\" library is bad at dealing with\n    type ambiguity. Call \"unwrap\" with the type indicated by the 'message_name' field to get the appropriate message\n    (or, more commonly, use a @message_map annotated class with handle_message(...) to route the message to a function\n    that can handle it).\n\n    Attributes:\n        message_name: Name of the message, as defined in MessageCls.MESSAGE_NAME\n        payload: The meat of the message. Use 'unwrap()' to get this in a programmer-friendly format.\n    "
-        }
-    }
+    },
+    "required": [
+        "event_name"
+    ]
 }

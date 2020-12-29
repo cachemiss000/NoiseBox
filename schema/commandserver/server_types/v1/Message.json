@@ -1,0 +1,344 @@
+{
+    "title": "Message",
+    "type": "object",
+    "properties": {
+        "event": {
+            "title": "Event",
+            "description": "Describes something that happened to a client or server. Mutually exclusive with the 'command' field.",
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/ErrorEvent"
+                },
+                {
+                    "$ref": "#/definitions/PlayStateEvent"
+                },
+                {
+                    "$ref": "#/definitions/SongPlayingEvent"
+                },
+                {
+                    "$ref": "#/definitions/ListSongsEvent"
+                },
+                {
+                    "$ref": "#/definitions/ListPlaylistsEvent"
+                }
+            ]
+        },
+        "command": {
+            "title": "Command",
+            "description": "Describes something that the server should do. Mutually exclusive with the 'event' field.",
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TogglePlayCommand"
+                },
+                {
+                    "$ref": "#/definitions/NextSongCommand"
+                },
+                {
+                    "$ref": "#/definitions/ListSongsCommand"
+                },
+                {
+                    "$ref": "#/definitions/ListPlaylistsCommand"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "ErrorType": {
+            "title": "ErrorType",
+            "description": "Different potential response states, indicating the success or failure of the prompting command.\n\nShould not be instantiated directly.",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "type": "integer"
+        },
+        "ErrorDataEnv": {
+            "title": "ErrorDataEnv",
+            "description": "Dictates what kind of error data is attached to an exception.\n\nUsed to indicate to the viewer whether debug data has been scrubbed. If a programmer sees \"data_env=DEBUG\"\nand no debug data, that will result in a very different debug process than if they see \"data_env=PROD\" and\nno debug data - so it's worth keeping around even if it's merely descriptive (rather than proscriptive) and\nself-evident 99% of the time to boot.\n\nAttributes:\n    ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.\n    ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.",
+            "enum": [
+                0,
+                1
+            ]
+        },
+        "ErrorEvent": {
+            "title": "ErrorEvent",
+            "description": "Something bad happened and the guy on the other end of the wire needs to know about it.\n\nTODO: This should get added to a generic, versionless schema, then separately copied into the V1 schema.",
+            "type": "object",
+            "properties": {
+                "event_name": {
+                    "title": "Event Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "ERROR",
+                    "type": "string"
+                },
+                "error_message": {
+                    "title": "Error Message",
+                    "description": "The user-friendly error message. Should always get set.",
+                    "default": "",
+                    "type": "string"
+                },
+                "error_type": {
+                    "description": "The type of error - e.g. \"USER\", or \"INTERNAL\" or whatever. Hints at where to look, and whether it'll get fixed if whatever caused it is tried again.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ErrorType"
+                        }
+                    ]
+                },
+                "error_data": {
+                    "title": "Error Data",
+                    "description": "The dev- and machine-friendly error data. May not be set for production builds.",
+                    "type": "string"
+                },
+                "error_env": {
+                    "title": "Error Env",
+                    "description": "Whether the return data is targeted for a dev- or prod- environment",
+                    "default": 1,
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/ErrorDataEnv"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ]
+                },
+                "originating_command": {
+                    "title": "Originating Command",
+                    "description": "The dev- and machine-friendly command that originated this event. May not be set in production builds. May not be set for errors that had no contributing event. May be a string for commands that weren't fully parsed.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "event_name"
+            ]
+        },
+        "PlayStateEvent": {
+            "title": "PlayStateEvent",
+            "description": "Tells the client whether the media player is playing or not..",
+            "type": "object",
+            "properties": {
+                "event_name": {
+                    "title": "Event Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "PLAY_STATE",
+                    "type": "string"
+                },
+                "new_play_state": {
+                    "title": "New Play State",
+                    "description": "Whether media is now playing or not.",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "event_name"
+            ]
+        },
+        "Song": {
+            "title": "Song",
+            "description": "A song that can be played by the media player.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "description": "Human-friendly name of the song - must be unique in a media library, and is used to refer to it elsewhere.",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "Human-friendly description of the song - only for informational purposes, and maybe un-set.",
+                    "type": "string"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "Additional key-value metadata, currently unspecified.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "local_path": {
+                    "title": "Local Path",
+                    "description": "Path of the file from the viewpoint of the local server.",
+                    "type": "string"
+                }
+            }
+        },
+        "SongPlayingEvent": {
+            "title": "SongPlayingEvent",
+            "description": "Informs the client that a new song is currently playing.",
+            "type": "object",
+            "properties": {
+                "event_name": {
+                    "title": "Event Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "SONG_PLAYING",
+                    "type": "string"
+                },
+                "current_song": {
+                    "title": "Current Song",
+                    "description": "Info for the current song",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/Song"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "event_name"
+            ]
+        },
+        "ListSongsEvent": {
+            "title": "ListSongsEvent",
+            "description": "Client receives a list of songs, usually by request.",
+            "type": "object",
+            "properties": {
+                "event_name": {
+                    "title": "Event Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "LIST_SONGS",
+                    "type": "string"
+                },
+                "songs": {
+                    "title": "Songs",
+                    "description": "The list of songs being returned",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Song"
+                    }
+                }
+            },
+            "required": [
+                "event_name"
+            ]
+        },
+        "Playlist": {
+            "title": "Playlist",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "description": "Human-friendly name of the playlist. Picked by the user. It must be unique in a media library, andis used to refer to it elsewhere.",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "Human-friendly description of the playlist, picked by the user. Informational purposes only.",
+                    "type": "string"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "description": "Human-friendly description of the playlist, picked by the user. Informational purposes only.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "songs": {
+                    "title": "Songs",
+                    "description": "An ordered list of song aliases - referring to Song.name fields that will play as part of this playlist.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "ListPlaylistsEvent": {
+            "title": "ListPlaylistsEvent",
+            "description": "Client receives a list of playlists, usually by request.",
+            "type": "object",
+            "properties": {
+                "event_name": {
+                    "title": "Event Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "LIST_PLAYLISTS",
+                    "type": "string"
+                },
+                "playlists": {
+                    "title": "Playlists",
+                    "descrption": "The list of playlists being returned.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Playlist"
+                    }
+                }
+            },
+            "required": [
+                "event_name"
+            ]
+        },
+        "TogglePlayCommand": {
+            "title": "TogglePlayCommand",
+            "description": "Toggle the play state. Can optionally set the media player to the absolute \"play\" or \"pause\" state.",
+            "type": "object",
+            "properties": {
+                "command_name": {
+                    "title": "Command Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "TOGGLE_PLAY",
+                    "type": "string"
+                },
+                "play_state": {
+                    "title": "Play State",
+                    "description": "Optional field which indicates whether the server should play or pause. If unset, the server picks the opposite of the current state.",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "command_name"
+            ]
+        },
+        "NextSongCommand": {
+            "title": "NextSongCommand",
+            "description": "Skip to the next song.",
+            "type": "object",
+            "properties": {
+                "command_name": {
+                    "title": "Command Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "NEXT_SONG",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "command_name"
+            ]
+        },
+        "ListSongsCommand": {
+            "title": "ListSongsCommand",
+            "description": "Get a list of valid songs to reference.",
+            "type": "object",
+            "properties": {
+                "command_name": {
+                    "title": "Command Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "LIST_SONGS",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "command_name"
+            ]
+        },
+        "ListPlaylistsCommand": {
+            "title": "ListPlaylistsCommand",
+            "description": "Get a list of valid playlists to reference.",
+            "type": "object",
+            "properties": {
+                "command_name": {
+                    "title": "Command Name",
+                    "description": "Command sub-type - e.g. the command to perform.",
+                    "pattern": "LIST_PLAYLISTS",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "command_name"
+            ]
+        }
+    }
+}

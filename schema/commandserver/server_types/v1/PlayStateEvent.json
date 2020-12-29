@@ -1,10 +1,21 @@
 {
+    "title": "PlayStateEvent",
+    "description": "Tells the client whether the media player is playing or not..",
     "type": "object",
     "properties": {
+        "event_name": {
+            "title": "Event Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "PLAY_STATE",
+            "type": "string"
+        },
         "new_play_state": {
+            "title": "New Play State",
+            "description": "Whether media is now playing or not.",
             "type": "boolean"
         }
     },
-    "description": "Tells the client whether the media player is playing or not..",
-    "$schema": "http://json-schema.org/draft-06/schema#"
+    "required": [
+        "event_name"
+    ]
 }
