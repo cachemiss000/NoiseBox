@@ -59,7 +59,7 @@ class CommandParsingTest(FlagsTest, unittest.IsolatedAsyncioTestCase):
         await media_server.accept(json.dumps(message), mc)
 
         self.assertRegex(mc.get_error().error_message,
-                         "Could not find event name 'florbus' in possible event names:")
+                         "could not find event name 'florbus' in possible event names:")
 
     async def test_command_not_defined(self):
         message = {
