@@ -12,12 +12,12 @@ from absl.testing import absltest
 from medialogic import controller
 
 
-def create_fake_audio_device(description, next):
+def create_fake_audio_device(description, next_device):
     """Creates a fake audio object that looks like VLC's audio object."""
     device_mock = mock.MagicMock()
     device_mock.contents.description = description
     device_mock.contents.device = description
-    device_mock.contents.next = next
+    device_mock.contents.next = next_device
     device_mock.freed = False
 
     def free():
@@ -30,6 +30,7 @@ def create_fake_audio_device(description, next):
 
 class VLCLinkedListNull(object):
     """Represents a null pointer as you'd see in VLC's linked lists."""
+
     def __init__(self):
         pass
 
@@ -46,7 +47,7 @@ def build_list(*descriptions: str):
     for description in reversed(descriptions):
         bytes_description = bytearray()
         bytes_description.extend(map(ord, description))
-        new_item = create_fake_audio_device(description=bytes_description, next=tail)
+        new_item = create_fake_audio_device(description=bytes_description, next_device=tail)
         tail = new_item
     return tail
 
@@ -63,14 +64,14 @@ class AudioDeviceTest(unittest.TestCase):
         devices = controller.AudioDevices(build_list("device_1"))
         devices.free()
         self.assertEqual(str(devices), controller.FREED_ERROR_STRING)
-        assert (free_device_mock.called_count)
+        self.assertTrue(free_device_mock.called_count)
 
     @patch('vlc.libvlc_audio_output_device_list_release')
     def testFreeAudioDeviceCausesThrow(self, free_device_mock):
         devices = controller.AudioDevices(build_list("device_1"))
         devices.free()
         self.assertRaises(controller.UseAfterFreeException, lambda: devices.device_for_index(1))
-        assert (free_device_mock.called_count)
+        self.assertTrue(free_device_mock.called_count)
 
     def testDeviceForIndex(self):
         devices = controller.AudioDevices(build_list("device_1", "device_2", "device_3"))

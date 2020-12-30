@@ -1,39 +1,58 @@
 {
+    "title": "ListPlaylistsEvent",
+    "description": "Client receives a list of playlists, usually by request.",
     "type": "object",
     "properties": {
+        "event_name": {
+            "title": "Event Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "LIST_PLAYLISTS",
+            "type": "string"
+        },
         "playlists": {
+            "title": "Playlists",
+            "descrption": "The list of playlists being returned.",
             "type": "array",
             "items": {
                 "$ref": "#/definitions/Playlist"
             }
         }
     },
-    "description": "Client receives a list of playlists, usually by request.",
-    "$schema": "http://json-schema.org/draft-06/schema#",
+    "required": [
+        "event_name"
+    ],
     "definitions": {
         "Playlist": {
+            "title": "Playlist",
             "type": "object",
             "properties": {
                 "name": {
+                    "title": "Name",
+                    "description": "Human-friendly name of the playlist. Picked by the user. It must be unique in a media library, andis used to refer to it elsewhere.",
                     "type": "string"
                 },
                 "description": {
+                    "title": "Description",
+                    "description": "Human-friendly description of the playlist, picked by the user. Informational purposes only.",
                     "type": "string"
                 },
                 "metadata": {
+                    "title": "Metadata",
+                    "description": "Human-friendly description of the playlist, picked by the user. Informational purposes only.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
                 },
                 "songs": {
+                    "title": "Songs",
+                    "description": "An ordered list of song aliases - referring to Song.name fields that will play as part of this playlist.",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 }
-            },
-            "description": "A Playlist of songs that can be played by the media player."
+            }
         }
     }
 }

@@ -283,7 +283,7 @@ class SwitchOracleTest(unittest.TestCase):
         self.assertIsNone(no_song_available_rv)
         # Collect will return "None" first because we've memoized
         # "None" above, and collect calls "current_song()" first.
-        self.assertListEqual(collect(o), [None] + songs)
+        self.assertListEqual(collect(o), [None, *songs])
 
     def test_set_to_none(self):
         songs = ["1", "2", "3"]
@@ -355,7 +355,6 @@ class SwitchOracleTest(unittest.TestCase):
         self.assertEqual(first_song_on_p1_rv, "1")
         self.assertEqual(memoized_first_song_from_p1_rv, "1")
         self.assertEqual(new_first_song_from_p2_rv, "2")
-
 
     def test_memoizing_null(self):
         songs1 = ["1"]

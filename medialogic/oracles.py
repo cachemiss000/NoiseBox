@@ -166,7 +166,9 @@ class ChainOracle(MemoizingOracle):
         return self.__oracles[self.__pointer]
 
     def _inner_get_first_song(self) -> Union[str, None]:
-        if self.__oracles is None or len(self.__oracles) == 0:
+        if self.__oracles is None:
+            self.__oracles = []
+        if len(self.__oracles) == 0:
             # Ensure that next time next_song() gets called, we force ourselves to play the first song of whatever
             # oracles have been added since then.
             self.__oracles.insert(0, PlaylistOracle([]))
@@ -178,8 +180,7 @@ class ChainOracle(MemoizingOracle):
         if self.__oracles[self.__pointer].current_song() is None:
             # Recursively buzz through the list to see if there are any valid songs. If there aren't,
             # pretend like we never looked in the first place.
-            if (len(self.__oracles) > self.__pointer):
-                pointer_save = self.__pointer
+            if len(self.__oracles) > self.__pointer:
                 self.__pointer += 1
                 song = self._inner_get_first_song()
                 if song is not None:
@@ -322,7 +323,7 @@ class RepeatingOracle(Oracle):
     Play a playlist, but forever... or at least the number of "times" passed in initially.
     """
 
-    def __init__(self, playlist: List[str], times=None):
+    def __init__(self, playlist: Optional[List[str]], times=None):
         super(RepeatingOracle, self).__init__()
         self.__playlist = playlist
         # We subtract 1 here because we go through the list once by default before resetting in "next_song".

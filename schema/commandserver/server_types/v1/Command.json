@@ -1,12 +1,10 @@
 {
-    "title": "NextSongCommand",
-    "description": "Skip to the next song.",
+    "title": "Command",
+    "description": "The protocol defining what a Command payload looks like.\n\nAll commands subclass CommandCls.",
     "type": "object",
     "properties": {
         "command_name": {
             "title": "Command Name",
-            "description": "Command sub-type - e.g. the command to perform.",
-            "pattern": "NEXT_SONG",
             "type": "string"
         }
     },

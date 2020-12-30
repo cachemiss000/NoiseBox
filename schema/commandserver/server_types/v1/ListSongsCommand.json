@@ -1,6 +1,16 @@
 {
-    "type": "object",
-    "properties": {},
+    "title": "ListSongsCommand",
     "description": "Get a list of valid songs to reference.",
-    "$schema": "http://json-schema.org/draft-06/schema#"
+    "type": "object",
+    "properties": {
+        "command_name": {
+            "title": "Command Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "LIST_SONGS",
+            "type": "string"
+        }
+    },
+    "required": [
+        "command_name"
+    ]
 }

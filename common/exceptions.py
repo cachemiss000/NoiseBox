@@ -5,6 +5,7 @@ Spells out some basic, codebase-wide exceptions.
 
 class UserException(Exception):
     """Used to indicate a user error."""
+
     def __init__(self, user_error_message):
         super().__init__(user_error_message)
         self.user_error_message = user_error_message

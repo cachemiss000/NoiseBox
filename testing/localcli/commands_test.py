@@ -25,14 +25,14 @@ class AddSongTest(unittest.TestCase):
         c = get_controller()
         add = AddSong(c)
         with mock.patch("medialogic.media_library.os.path.isfile", lambda _: True):
-            add.do_function("Test", "c:\something.mp3")
-            self.assertEqual(c.media_library.get_song("Test"), Song(alias="Test", uri="c:\something.mp3"))
+            add.do_function("Test", "c:\\something.mp3")
+            self.assertEqual(c.media_library.get_song("Test"), Song(alias="Test", uri="c:\\something.mp3"))
 
     def testWrongArguments(self):
         c = get_controller()
         add = AddSong(c)
 
-        self.assertRaises(IllegalArgument, lambda: add.do_function(song_alias="", song_path="c:\Something.mp3"))
+        self.assertRaises(IllegalArgument, lambda: add.do_function(song_alias="", song_path="c:\\Something.mp3"))
         self.assertRaises(IllegalArgument, lambda: add.do_function(song_alias="Test", song_path=""))
         self.assertRaises(IllegalArgument, lambda: add.do_function(song_alias="", song_path=""))
 

@@ -1,10 +1,21 @@
 {
+    "title": "TogglePlayCommand",
+    "description": "Toggle the play state. Can optionally set the media player to the absolute \"play\" or \"pause\" state.",
     "type": "object",
     "properties": {
+        "command_name": {
+            "title": "Command Name",
+            "description": "Command sub-type - e.g. the command to perform.",
+            "pattern": "TOGGLE_PLAY",
+            "type": "string"
+        },
         "play_state": {
+            "title": "Play State",
+            "description": "Optional field which indicates whether the server should play or pause. If unset, the server picks the opposite of the current state.",
             "type": "boolean"
         }
     },
-    "description": "Toggle the play state. Can optionally set the media player to the absolute \"play\" or \"pause\" state.",
-    "$schema": "http://json-schema.org/draft-06/schema#"
+    "required": [
+        "command_name"
+    ]
 }

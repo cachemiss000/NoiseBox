@@ -1,10 +1,4 @@
-from typing import Type, Iterable
-
-# Imported for type info.
-# Because message_map uses UnsupportedMessageType, we need to use the fully qualified
-# type name, using this import style.
-import messages.message_map
-from common.utils import class_name
+import re
 
 
 class CloseConnectionException(Exception):
@@ -14,16 +8,22 @@ class CloseConnectionException(Exception):
 
 class ClientError(Exception):
     """Close the server because the client misbehaved."""
-    pass
 
+    def __init__(self, reason: str, *args: str):
+        self.reason = reason % args
 
-class UnsupportedMessageType(Exception):
-    def __init__(self, *_argv, routing_cls: "messages.message_map.Types.T_MAP", message_name: str,
-                 message: "messages.message_map.Message",
-                 expected_message_ti: Iterable[Type["messages.message_map.Types.M_C"]]):
-        super().__init__(
-            "Routing class '%s' does not support %s type '%s'. Only supports '%s'" % (
-                class_name(routing_cls), message_name, message.message_name,
-                [class_name(this_msg_t) for this_msg_t in expected_message_ti],), )
-        self.found_message = message
-        self.expected_message_ti = expected_message_ti
+    def get_safe_close_message(self) -> str:
+        """Get a message that can be used safely as the 'close reason' on a client websocket connection."""
+        if len(self.reason) < 125:
+            return self.reason
+
+        def add_trunc(msg: str) -> str:
+            return msg + " <trunc>"
+
+        total_message = ""
+        for word in re.findall(r'\S*\s*', self.reason):
+            new_msg = "%s %s" % (total_message, word.strip())
+            if len(add_trunc(new_msg)) > 125:
+                return add_trunc(total_message)
+            total_message = new_msg
+        assert False, "Should not have been able to iterate through the whole message."

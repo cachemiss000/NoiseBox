@@ -49,7 +49,7 @@ class SongTests(unittest.TestCase):
         ml = MediaLibrary()
 
         self.assertRaises(media_library.NotFoundException,
-                          lambda: ml.add_song(song(uri="C:\something\ invalid.mp3")))
+                          lambda: ml.add_song(song(uri="C:\\something\\ invalid.mp3")))
 
     def test_overwrite_works_when_expected(self):
         ml = MediaLibrary()
@@ -84,6 +84,7 @@ class SongTests(unittest.TestCase):
 
         self.assertListEqual(ml.list_songs(), [s1, s2, s3])
 
+    # noinspection PyTypeChecker
     def test_adding_non_song_throws(self):
         ml = MediaLibrary()
         self.assertRaisesRegex(media_library.IllegalArgument, ".*'alias'.*'str'", lambda: ml.add_song("alias"))
@@ -160,10 +161,11 @@ class PlaylistTests(unittest.TestCase):
         ml.add_song(s2)
 
         ml.add_song_to_playlist(s1.alias, "test")
-        ml.get_playlist("test").append(s2)
+        ml.get_playlist("test").append(s2.alias)
 
         self.assertListEqual(ml.get_playlist("test"), [s1.alias])
 
+    # noinspection PyTypeChecker
     def test_cant_add_song_directly(self):
         """Make sure users can't change playlists by getting them."""
         ml = MediaLibrary()
@@ -206,7 +208,7 @@ class SongTest(unittest.TestCase):
 
     def test_v1_parse(self):
         s = song()  # make a song so we have a valid URI.
-        dict = {
+        song_dict = {
             media_library.VERSION_FIELD: 1.0,
             Song.ALIAS_FIELD: "something_cool",
             Song.URI_FIELD: s.uri,
@@ -214,10 +216,10 @@ class SongTest(unittest.TestCase):
         }
 
         expected_song = song(name="something_cool", uri=s.uri, description="yo, cool cat")
-        self.assertEqual(Song.from_primitive(dict), expected_song)
+        self.assertEqual(Song.from_primitive(song_dict), expected_song)
 
         # We need to check this because description isn't checked by the eq function.
-        self.assertEqual(Song.from_primitive(dict).description, expected_song.description)
+        self.assertEqual(Song.from_primitive(song_dict).description, expected_song.description)
 
 
 class MediaLibrarySerializationTest(unittest.TestCase):

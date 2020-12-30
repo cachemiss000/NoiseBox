@@ -14,6 +14,7 @@ from time import sleep
 
 import vlc  # type: ignore
 
+# noinspection PyUnresolvedReferences
 _VLC_PLAYING_STATES = [
     vlc.State.Playing,
     vlc.State.Buffering,
@@ -29,7 +30,7 @@ class UnspecifiedVLCError(Exception):
 
 
 def next_song_cb(player):
-    def cb(*args, **kwargs):
+    def cb(*_args, **_kwargs):
         player.next_song()
 
     return cb

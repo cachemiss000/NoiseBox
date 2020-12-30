@@ -13,3 +13,4 @@
 /.run/*
 /js/package-lock.json
 /js/node_modules/
+/mypy.ini
