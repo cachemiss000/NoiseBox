@@ -292,7 +292,7 @@ class ErrorEvent(Event):
     error_data: Optional[str] = Field(
         description="The dev- and machine-friendly error data. May not be set for production builds.")
 
-    error_env: Optional[Union[ErrorDataEnv, int]] = Field(
+    error_env: Optional[Union[ErrorDataEnv, str]] = Field(
         default=ErrorDataEnv.DEBUG,
         description="Whether the return data is targeted for a dev- or prod- environment")
 
