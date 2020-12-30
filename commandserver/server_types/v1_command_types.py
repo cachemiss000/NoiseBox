@@ -22,7 +22,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 from typing import Optional, List, Type, Dict, Union, cast, ClassVar, Set, TypeVar, Protocol, get_args
 
-from pydantic import Field, validator
+from pydantic import Field, validator, root_validator
 from pydantic.dataclasses import dataclass
 from pydantic.main import BaseModel
 
@@ -166,6 +166,12 @@ class Command(BaseModel):
         data.update({"command_name": cls.COMMAND_NAME})
         return cls(**data)
 
+    @root_validator(pre=True)
+    def ensure_command_name_set(cls, values):
+        if "command_name" not in values:
+            raise ValueError('event_name unset')
+        return values
+
     @validator('command_name', pre=True, always=True)
     def ensure_valid_command_name(cls, this_command_name: str):
         command_names = set(c.COMMAND_NAME for c in COMMANDS)
@@ -202,6 +208,12 @@ class Event(BaseModel):
     EVENT_NAME: ClassVar[str]
     EVENT_NAME_FIELD_DESC: ClassVar[str] = "Command sub-type - e.g. the command to perform."
     event_name: str
+
+    @root_validator(pre=True)
+    def ensure_event_name_set(cls, values):
+        if "event_name" not in values:
+            raise ValueError('event_name unset')
+        return values
 
     @validator('event_name', pre=True, always=True)
     def ensure_valid_event_name(cls, this_event_name: str):
@@ -266,7 +278,7 @@ class ErrorEvent(Event):
     """
 
     EVENT_NAME: ClassVar[str] = "ERROR"
-    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
+    event_name: str = Field(default=EVENT_NAME, const=True, regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
     error_message: Optional[str] = Field(default="",
                                          description="The user-friendly error message. Should always get set.", )
@@ -302,7 +314,8 @@ class ErrorEvent(Event):
 class TogglePlayCommand(Command):
     """Toggle the play state. Can optionally set the media player to the absolute "play" or "pause" state."""
     COMMAND_NAME: ClassVar[str] = "TOGGLE_PLAY"
-    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
+    command_name: str = Field(default=COMMAND_NAME, const=True, regex=COMMAND_NAME,
+                              description=Command.COMMAND_NAME_FIELD_DESC)
 
     play_state: Optional[bool] = Field(
         description="Optional field which indicates whether the server should play or pause. If unset, the server "
@@ -312,7 +325,7 @@ class TogglePlayCommand(Command):
 class PlayStateEvent(Event):
     """Tells the client whether the media player is playing or not.."""
     EVENT_NAME: ClassVar[str] = "PLAY_STATE"
-    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
+    event_name: str = Field(default=EVENT_NAME, const=True, regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
     new_play_state: Optional[bool] = Field(description="Whether media is now playing or not.")
 
@@ -320,13 +333,14 @@ class PlayStateEvent(Event):
 class NextSongCommand(Command):
     """Skip to the next song."""
     COMMAND_NAME: ClassVar[str] = "NEXT_SONG"
-    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
+    command_name: str = Field(default=COMMAND_NAME, const=True, regex=COMMAND_NAME,
+                              description=Command.COMMAND_NAME_FIELD_DESC)
 
 
 class SongPlayingEvent(Event):
     """Informs the client that a new song is currently playing."""
     EVENT_NAME: ClassVar[str] = "SONG_PLAYING"
-    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
+    event_name: str = Field(default=EVENT_NAME, const=True, regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
     current_song: Optional[Song] = Field(description="Info for the current song")
 
@@ -334,13 +348,14 @@ class SongPlayingEvent(Event):
 class ListSongsCommand(Command):
     """Get a list of valid songs to reference."""
     COMMAND_NAME: ClassVar[str] = "LIST_SONGS"
-    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
+    command_name: str = Field(default=COMMAND_NAME, const=True, regex=COMMAND_NAME,
+                              description=Command.COMMAND_NAME_FIELD_DESC)
 
 
 class ListSongsEvent(Event):
     """Client receives a list of songs, usually by request."""
     EVENT_NAME: ClassVar[str] = "LIST_SONGS"
-    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
+    event_name: str = Field(default=EVENT_NAME, const=True, regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
     songs: Optional[List[Song]] = Field(description="The list of songs being returned")
 
@@ -349,13 +364,14 @@ class ListPlaylistsCommand(Command):
     """Get a list of valid playlists to reference."""
 
     COMMAND_NAME: ClassVar[str] = "LIST_PLAYLISTS"
-    command_name: str = Field(regex=COMMAND_NAME, description=Command.COMMAND_NAME_FIELD_DESC)
+    command_name: str = Field(default=COMMAND_NAME, const=True, regex=COMMAND_NAME,
+                              description=Command.COMMAND_NAME_FIELD_DESC)
 
 
 class ListPlaylistsEvent(Event):
     """Client receives a list of playlists, usually by request."""
     EVENT_NAME: ClassVar[str] = "LIST_PLAYLISTS"
-    event_name: str = Field(regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
+    event_name: str = Field(default=EVENT_NAME, const=True, regex=EVENT_NAME, description=Event.EVENT_NAME_FIELD_DESC)
 
     playlists: Optional[List[Playlist]] = Field(descrption="The list of playlists being returned.")
 
@@ -389,16 +405,15 @@ update_fwd_refs()
 
 
 def print_schema(base_dir: str):
-    """Write out the JSON schemas for this version's schema to a corresponding subdirectory."""
-    out_dir = Path(base_dir).joinpath(VERSION)
+    """Write out the JSON schemas for this version's schema to a corresponding subdirectory.
+
+    We only need one schema - Message - which will spit out schemas for everything else. Save it
+    to v1_command_schema.json
+    """
+    out_dir = Path(base_dir)
     out_dir.mkdir(exist_ok=True)
     logger.info("printing files to: %s" % (Path(out_dir).joinpath('...'),))
-    for object_cls in OBJECTS:
-        print_to_file(out_dir, object_cls.__name__, json.dumps(object_cls.schema(), indent=4))
-    for command_cls in COMMANDS:
-        print_to_file(out_dir, command_cls.__name__, json.dumps(command_cls.schema(), indent=4))
-    for response_cls in EVENTS:
-        print_to_file(out_dir, response_cls.__name__, json.dumps(response_cls.schema(), indent=4))
+    print_to_file(out_dir, "v1_command_schema", json.dumps(Message.schema(), indent=4))
     logger.info("finished writing.")
 
 

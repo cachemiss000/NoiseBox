@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import itertools
+import json
 import re
 import unittest
 from collections import Set
@@ -13,6 +14,30 @@ from common.test_utils import get_default_command, get_default_event, default_so
 
 MODULE_NAME = "v1_command_types"
 MODULE_PATH = "commandserver.server_types." + MODULE_NAME
+
+
+class ParsingTest(unittest.TestCase):
+
+    def test_event_name_unset(self):
+        message = {
+            "event": {
+                "error_message": "errors go burrrrr"
+            }
+        }
+
+        with self.assertRaises(ValidationError) as e:
+            types.Message.parse_raw(json.dumps(message))
+
+    def test_command_name_unset(self):
+        message = {
+            "command": {
+                "play_state": True
+            }
+        }
+
+        with self.assertRaises(ValidationError) as e:
+            types.Message.parse_raw(json.dumps(message))
+
 
 
 class SanityTest(unittest.TestCase):

@@ -71,6 +71,7 @@
                     "title": "Event Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "ERROR",
+                    "const": "ERROR",
                     "type": "string"
                 },
                 "error_message": {
@@ -110,10 +111,7 @@
                     "description": "The dev- and machine-friendly command that originated this event. May not be set in production builds. May not be set for errors that had no contributing event. May be a string for commands that weren't fully parsed.",
                     "type": "string"
                 }
-            },
-            "required": [
-                "event_name"
-            ]
+            }
         },
         "PlayStateEvent": {
             "title": "PlayStateEvent",
@@ -124,6 +122,7 @@
                     "title": "Event Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "PLAY_STATE",
+                    "const": "PLAY_STATE",
                     "type": "string"
                 },
                 "new_play_state": {
@@ -131,10 +130,7 @@
                     "description": "Whether media is now playing or not.",
                     "type": "boolean"
                 }
-            },
-            "required": [
-                "event_name"
-            ]
+            }
         },
         "Song": {
             "title": "Song",
@@ -175,6 +171,7 @@
                     "title": "Event Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "SONG_PLAYING",
+                    "const": "SONG_PLAYING",
                     "type": "string"
                 },
                 "current_song": {
@@ -186,10 +183,7 @@
                         }
                     ]
                 }
-            },
-            "required": [
-                "event_name"
-            ]
+            }
         },
         "ListSongsEvent": {
             "title": "ListSongsEvent",
@@ -200,6 +194,7 @@
                     "title": "Event Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "LIST_SONGS",
+                    "const": "LIST_SONGS",
                     "type": "string"
                 },
                 "songs": {
@@ -210,10 +205,7 @@
                         "$ref": "#/definitions/Song"
                     }
                 }
-            },
-            "required": [
-                "event_name"
-            ]
+            }
         },
         "Playlist": {
             "title": "Playlist",
@@ -256,6 +248,7 @@
                     "title": "Event Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "LIST_PLAYLISTS",
+                    "const": "LIST_PLAYLISTS",
                     "type": "string"
                 },
                 "playlists": {
@@ -266,10 +259,7 @@
                         "$ref": "#/definitions/Playlist"
                     }
                 }
-            },
-            "required": [
-                "event_name"
-            ]
+            }
         },
         "TogglePlayCommand": {
             "title": "TogglePlayCommand",
@@ -280,6 +270,7 @@
                     "title": "Command Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "TOGGLE_PLAY",
+                    "const": "TOGGLE_PLAY",
                     "type": "string"
                 },
                 "play_state": {
@@ -287,10 +278,7 @@
                     "description": "Optional field which indicates whether the server should play or pause. If unset, the server picks the opposite of the current state.",
                     "type": "boolean"
                 }
-            },
-            "required": [
-                "command_name"
-            ]
+            }
         },
         "NextSongCommand": {
             "title": "NextSongCommand",
@@ -301,12 +289,10 @@
                     "title": "Command Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "NEXT_SONG",
+                    "const": "NEXT_SONG",
                     "type": "string"
                 }
-            },
-            "required": [
-                "command_name"
-            ]
+            }
         },
         "ListSongsCommand": {
             "title": "ListSongsCommand",
@@ -317,12 +303,10 @@
                     "title": "Command Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "LIST_SONGS",
+                    "const": "LIST_SONGS",
                     "type": "string"
                 }
-            },
-            "required": [
-                "command_name"
-            ]
+            }
         },
         "ListPlaylistsCommand": {
             "title": "ListPlaylistsCommand",
@@ -333,12 +317,10 @@
                     "title": "Command Name",
                     "description": "Command sub-type - e.g. the command to perform.",
                     "pattern": "LIST_PLAYLISTS",
+                    "const": "LIST_PLAYLISTS",
                     "type": "string"
                 }
-            },
-            "required": [
-                "command_name"
-            ]
+            }
         }
     }
 }
