@@ -55,7 +55,10 @@ def override_flag(key, value):
 class FlagsTest(unittest.TestCase):
     def setUp(self):
         super(FlagsTest, self).setUp()
-        FLAGS(sys.argv)
+        try:
+            FLAGS(sys.argv[sys.argv.index("--") + 1:])
+        except ValueError:
+            FLAGS([sys.argv[0]])
 
 
 class MockClient(ClientSession):
