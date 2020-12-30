@@ -21,8 +21,16 @@ export type ErrorMessage = string;
  * Different potential response states, indicating the success or failure of the prompting command.
  *
  * Should not be instantiated directly.
+ *
+ * Attributes:
+ *     ErrorType.USER_ERROR: Failed successfully - the command failed for normal reasons due to end user error
+ *     ErrorType.CLIENT_ERROR: Failed due to client implementation - the command failed because the client code did
+ *     something wrong.
+ *     ErrorType.FAILURE: An error caused the process to fail - e.g. IO error, what have you.
+ *     ErrorType.INTERNAL_ERROR: Something really went wrong, and failed for an "unexpected" reason resulting in an
+ *     uncaught exception or the like.
  */
-export type ErrorType = 0 | 1 | 2 | 3;
+export type ErrorType = "user_error" | "client_error" | "failure" | "internal_error";
 /**
  * The dev- and machine-friendly error data. May not be set for production builds.
  */
@@ -30,7 +38,7 @@ export type ErrorData = string;
 /**
  * Whether the return data is targeted for a dev- or prod- environment
  */
-export type ErrorEnv = (ErrorDataEnv | number) & number;
+export type ErrorEnv = ErrorDataEnv | number;
 /**
  * Dictates what kind of error data is attached to an exception.
  *
@@ -43,7 +51,7 @@ export type ErrorEnv = (ErrorDataEnv | number) & number;
  *     ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.
  *     ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.
  */
-export type ErrorDataEnv = 0 | 1;
+export type ErrorDataEnv = "production" | "debug";
 /**
  * The dev- and machine-friendly command that originated this event. May not be set in production builds. May not be set for errors that had no contributing event. May be a string for commands that weren't fully parsed.
  */
@@ -129,10 +137,8 @@ export type CommandName3 = string;
 export interface Message {
   event?: Event;
   command?: Command;
-
   [k: string]: unknown;
 }
-
 /**
  * Something bad happened and the guy on the other end of the wire needs to know about it.
  *
@@ -148,30 +154,24 @@ export interface ErrorEvent {
   error_data?: ErrorData;
   error_env?: ErrorEnv;
   originating_command?: OriginatingCommand;
-
   [k: string]: unknown;
 }
-
 /**
  * Tells the client whether the media player is playing or not..
  */
 export interface PlayStateEvent {
   event_name?: EventName1;
   new_play_state?: NewPlayState;
-
   [k: string]: unknown;
 }
-
 /**
  * Informs the client that a new song is currently playing.
  */
 export interface SongPlayingEvent {
   event_name?: EventName2;
   current_song?: CurrentSong;
-
   [k: string]: unknown;
 }
-
 /**
  * A song that can be played by the media player.
  */
@@ -180,86 +180,69 @@ export interface Song {
   description?: Description;
   metadata?: Metadata;
   local_path?: LocalPath;
-
   [k: string]: unknown;
 }
-
 /**
  * Additional key-value metadata, currently unspecified.
  */
 export interface Metadata {
   [k: string]: string;
 }
-
 /**
  * Client receives a list of songs, usually by request.
  */
 export interface ListSongsEvent {
   event_name?: EventName3;
   songs?: Songs;
-
   [k: string]: unknown;
 }
-
 /**
  * Client receives a list of playlists, usually by request.
  */
 export interface ListPlaylistsEvent {
   event_name?: EventName4;
   playlists?: Playlists;
-
   [k: string]: unknown;
 }
-
 export interface Playlist {
   name?: Name1;
   description?: Description1;
   metadata?: Metadata1;
   songs?: Songs1;
-
   [k: string]: unknown;
 }
-
 /**
  * Human-friendly description of the playlist, picked by the user. Informational purposes only.
  */
 export interface Metadata1 {
   [k: string]: string;
 }
-
 /**
  * Toggle the play state. Can optionally set the media player to the absolute "play" or "pause" state.
  */
 export interface TogglePlayCommand {
   command_name?: CommandName;
   play_state?: PlayState;
-
   [k: string]: unknown;
 }
-
 /**
  * Skip to the next song.
  */
 export interface NextSongCommand {
   command_name?: CommandName1;
-
   [k: string]: unknown;
 }
-
 /**
  * Get a list of valid songs to reference.
  */
 export interface ListSongsCommand {
   command_name?: CommandName2;
-
   [k: string]: unknown;
 }
-
 /**
  * Get a list of valid playlists to reference.
  */
 export interface ListPlaylistsCommand {
   command_name?: CommandName3;
-
   [k: string]: unknown;
 }

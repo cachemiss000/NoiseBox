@@ -45,21 +45,20 @@
     "definitions": {
         "ErrorType": {
             "title": "ErrorType",
-            "description": "Different potential response states, indicating the success or failure of the prompting command.\n\nShould not be instantiated directly.",
+            "description": "Different potential response states, indicating the success or failure of the prompting command.\n\nShould not be instantiated directly.\n\nAttributes:\n    ErrorType.USER_ERROR: Failed successfully - the command failed for normal reasons due to end user error\n    ErrorType.CLIENT_ERROR: Failed due to client implementation - the command failed because the client code did\n    something wrong.\n    ErrorType.FAILURE: An error caused the process to fail - e.g. IO error, what have you.\n    ErrorType.INTERNAL_ERROR: Something really went wrong, and failed for an \"unexpected\" reason resulting in an\n    uncaught exception or the like.",
             "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "type": "integer"
+                "user_error",
+                "client_error",
+                "failure",
+                "internal_error"
+            ]
         },
         "ErrorDataEnv": {
             "title": "ErrorDataEnv",
             "description": "Dictates what kind of error data is attached to an exception.\n\nUsed to indicate to the viewer whether debug data has been scrubbed. If a programmer sees \"data_env=DEBUG\"\nand no debug data, that will result in a very different debug process than if they see \"data_env=PROD\" and\nno debug data - so it's worth keeping around even if it's merely descriptive (rather than proscriptive) and\nself-evident 99% of the time to boot.\n\nAttributes:\n    ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.\n    ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.",
             "enum": [
-                0,
-                1
+                "production",
+                "debug"
             ]
         },
         "ErrorEvent": {
@@ -96,7 +95,7 @@
                 "error_env": {
                     "title": "Error Env",
                     "description": "Whether the return data is targeted for a dev- or prod- environment",
-                    "default": 1,
+                    "default": "debug",
                     "anyOf": [
                         {
                             "$ref": "#/definitions/ErrorDataEnv"

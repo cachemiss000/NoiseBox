@@ -18,7 +18,7 @@ As of time of writing (11/30/20) - API is subject to change as development conti
 import abc
 import json
 import logging
-from enum import Enum, IntEnum
+from enum import Enum
 from pathlib import Path
 from typing import Optional, List, Type, Dict, Union, cast, ClassVar, Set, TypeVar, Protocol, get_args
 
@@ -80,23 +80,24 @@ class Playlist(BaseModel):
                     "as part of this playlist.")
 
 
-class ErrorType(IntEnum):
+class ErrorType(Enum):
+
     """Different potential response states, indicating the success or failure of the prompting command.
 
     Should not be instantiated directly.
+
+    Attributes:
+        ErrorType.USER_ERROR: Failed successfully - the command failed for normal reasons due to end user error
+        ErrorType.CLIENT_ERROR: Failed due to client implementation - the command failed because the client code did
+        something wrong.
+        ErrorType.FAILURE: An error caused the process to fail - e.g. IO error, what have you.
+        ErrorType.INTERNAL_ERROR: Something really went wrong, and failed for an "unexpected" reason resulting in an
+        uncaught exception or the like.
     """
-
-    # Failed successfully - the command failed for normal reasons due to end user error
-    USER_ERROR = 0
-
-    # Failed due to client implementation - the command failed because the client code did something wrong.
-    CLIENT_ERROR = 1
-
-    # An error caused the process to fail - e.g. IO error, what have you.
-    FAILURE = 2
-
-    # Something really went wrong, and failed for an "unexpected" reason resulting in an uncaught exception or the like.
-    INTERNAL_ERROR = 3
+    USER_ERROR = "user_error"
+    CLIENT_ERROR = "client_error"
+    FAILURE = "failure"
+    INTERNAL_ERROR = "internal_error"
 
 
 class Message(BaseModel):
@@ -260,8 +261,8 @@ class ErrorDataEnv(Enum):
         ErrorDataEnv.PRODUCTION: Running out in the wild. Scrub debug data.
         ErrorDataEnv.DEBUG: Running in dev mode. Keep debug data.
     """
-    PRODUCTION: int = 0
-    DEBUG: int = 1
+    PRODUCTION: str = "production"
+    DEBUG: str = "debug"
 
 
 class EventException(Exception):
